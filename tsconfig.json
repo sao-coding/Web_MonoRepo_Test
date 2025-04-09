@@ -1,0 +1,5 @@
+{
+  "exclude": ["apps/**", "packages/**"],
+  "extends": "@msi/tsconfig/base.json",
+  "include": ["**/*.ts"]
+}

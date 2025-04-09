@@ -1,0 +1,46 @@
+{
+  "name": "monorepo",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "build:packages": "turbo build --filter=./packages/*",
+    "check-types": "turbo run check-types",
+    "commit": "pnpm cz",
+    "cz": "cross-env NODE_OPTIONS=\"--experimental-transform-types --disable-warning=ExperimentalWarning\" czg",
+    "dev": "turbo run dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "prepare": "husky && pnpm build:packages",
+    "knip": "knip"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@msi/eslint-config": "workspace:*",
+    "@msi/prettier-config": "workspace:*",
+    "@msi/tsconfig": "workspace:*",
+    "@types/node": "^22.14.0",
+    "cross-env": "^7.0.3",
+    "cz-git": "^1.11.1",
+    "czg": "^1.11.1",
+    "husky": "^9.1.7",
+    "knip": "^5.47.0",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "tsup": "8.3.0",
+    "turbo": "^2.4.4",
+    "eslint": "^9.23.0",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.7.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  }
+}

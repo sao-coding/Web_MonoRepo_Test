@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "exclude": ["node_modules"],
+  "extends": "@msi/tsconfig/react-library.json",
+  "include": ["**/*.ts", "**/*.tsx", "eslint.config.mjs"]
+}
