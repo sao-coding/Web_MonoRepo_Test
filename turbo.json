@@ -1,14 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "remoteCache": { "apiUrl": "http://192.168.2.40:3000", "teamSlug": "test" },
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
@@ -16,6 +13,10 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
-  }
+  },
+  "ui": "tui"
 }
