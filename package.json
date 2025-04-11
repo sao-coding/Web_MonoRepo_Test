@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:apps": "turbo build --filter=./apps/*",
     "build:packages": "turbo build --filter=./packages/*",
     "check-types": "turbo run check-types",
     "commit": "pnpm cz",
@@ -22,15 +23,14 @@
     "@msi/tsconfig": "workspace:*",
     "@types/node": "^22.14.0",
     "cross-env": "^7.0.3",
-    "cz-git": "^1.11.1",
     "czg": "^1.11.1",
+    "eslint": "^9.24.0",
     "husky": "^9.1.7",
     "knip": "^5.48.0",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "tsup": "8.4.0",
     "turbo": "^2.5.0",
-    "eslint": "^9.24.0",
     "typescript": "5.8.3"
   },
   "engines": {
