@@ -62,7 +62,7 @@
     "eslint": "^9.21.0"
   },
   "publishConfig": {
-    "access": "public"
+    "@msi:registry": "https://gitlab.sao-x.com/api/v4/packages/npm/"
   },
   "lint-staged": {
     "*.{cjs,mjs,js,jsx,cts,mts,ts,tsx,json}": "eslint --fix"
