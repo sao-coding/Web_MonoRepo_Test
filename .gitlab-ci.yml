@@ -19,6 +19,5 @@ publish:
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
     - pnpm install --frozen-lockfile
-    - pnpm build:packages
     - ls -al
-    - pnpm publish --no-git-checks
+    - pnpm -r publish --no-git-checks
