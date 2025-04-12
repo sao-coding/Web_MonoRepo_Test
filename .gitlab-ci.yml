@@ -12,8 +12,6 @@ before_script:
 publish:eslint-config:
   stage: publish
   only: ['tags']
-  needs:
-    - test
   script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
@@ -29,8 +27,6 @@ publish:eslint-config:
 publish:prettier-config:
   stage: publish
   only: ['tags']
-  needs:
-    - test
   script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
@@ -46,8 +42,6 @@ publish:prettier-config:
 publish:tsconfig:
   stage: publish
   only: ['tags']
-  needs:
-    - test
   script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
@@ -63,8 +57,6 @@ publish:tsconfig:
 publish:ui:
   stage: publish
   only: ['tags']
-  needs:
-    - test
   script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
@@ -80,8 +72,6 @@ publish:ui:
 publish:utils:
   stage: publish
   only: ['tags']
-  needs:
-    - test
   script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
