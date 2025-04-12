@@ -1,6 +1,6 @@
 {
   "name": "@msi/eslint-config",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "The eslint config for tszhong0411's projects",
   "license": "MIT",
   "author": "tszhong0411 <me@honghong.me> (https://github.com/tszhong0411/)",
@@ -62,7 +62,7 @@
     "eslint": "^9.21.0"
   },
   "publishConfig": {
-    "@msi:registry": "https://gitlab.sao-x.com/api/v4/packages/npm/"
+    "@msi:registry": "https://gitlab.sao-x.com/api/v4/projects/3/packages/npm/"
   },
   "lint-staged": {
     "*.{cjs,mjs,js,jsx,cts,mts,ts,tsx,json}": "eslint --fix"
