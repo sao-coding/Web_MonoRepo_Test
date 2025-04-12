@@ -5,13 +5,15 @@ stages:
   - test
   - publish
 
+# 全局 before_script，適用於所有階段
+before_script:
+  - npm install --global corepack@latest
+  - corepack enable
+  - corepack prepare pnpm@latest-10 --activate
+  - pnpm config set store-dir .pnpm-store
+
 install:
   stage: install
-  before_script:
-    - npm install --global corepack@latest
-    - corepack enable
-    - corepack prepare pnpm@latest-10 --activate
-    - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
   cache:
@@ -58,17 +60,16 @@ publish:eslint-config:
   needs:
     - test
   script:
-  script:
     - echo CI_PROJECT_ID $CI_PROJECT_ID
     - echo CI_JOB_TOKEN $CI_JOB_TOKEN
     - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
-    - npm ci
-    - npm run build
+    - pnpm install --frozen-lockfile
+    - pnpm build
     - ls -al
-    - npm publish
+    - pnpm publish
 
 publish:prettier-config:
   stage: publish
@@ -82,10 +83,10 @@ publish:prettier-config:
     - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
-    - npm ci
-    - npm run build
+    - pnpm install --frozen-lockfile
+    - pnpm build
     - ls -al
-    - npm publish
+    - pnpm publish
 
 publish:tsconfig:
   stage: publish
@@ -99,10 +100,10 @@ publish:tsconfig:
     - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
-    - npm ci
-    - npm run build
+    - pnpm install --frozen-lockfile
+    - pnpm build
     - ls -al
-    - npm publish
+    - pnpm publish
 
 publish:ui:
   stage: publish
@@ -116,10 +117,10 @@ publish:ui:
     - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
-    - npm ci
-    - npm run build
+    - pnpm install --frozen-lockfile
+    - pnpm build
     - ls -al
-    - npm publish
+    - pnpm publish
 
 publish:utils:
   stage: publish
@@ -133,7 +134,7 @@ publish:utils:
     - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - cat .npmrc
-    - npm ci
-    - npm run build
+    - pnpm install --frozen-lockfile
+    - pnpm build
     - ls -al
-    - npm publish
+    - pnpm publish
