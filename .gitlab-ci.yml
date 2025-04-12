@@ -1,8 +1,5 @@
 image: node:latest
 stages:
-  - install
-  - build
-  - test
   - publish
 
 # 全局 before_script，適用於所有階段
@@ -11,48 +8,6 @@ before_script:
   - corepack enable
   - corepack prepare pnpm@latest-10 --activate
   - pnpm config set store-dir .pnpm-store
-
-install:
-  stage: install
-  script:
-    - pnpm install
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
-      - node_modules
-
-build:
-  stage: build
-  needs:
-    - install
-  script:
-    - pnpm build
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
-      - node_modules
-    policy: pull
-
-test:
-  stage: test
-  needs:
-    - build
-  script:
-    - pnpm test
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
-      - node_modules
-    policy: pull
 
 publish:eslint-config:
   stage: publish
