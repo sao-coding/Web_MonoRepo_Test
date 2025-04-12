@@ -1,26 +1,139 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/pipeline/#customization
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+image: node:latest
 stages:
-- build
-- test
-- deploy
-- review
-- dast
-- staging
-- canary
-- production
-- incremental rollout 10%
-- incremental rollout 25%
-- incremental rollout 50%
-- incremental rollout 100%
-- performance
-- cleanup
-sast:
+  - install
+  - build
+  - test
+  - publish
+
+install:
+  stage: install
+  before_script:
+    - npm install --global corepack@latest
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - pnpm config set store-dir .pnpm-store
+  script:
+    - pnpm install
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+      - node_modules
+
+build:
+  stage: build
+  needs:
+    - install
+  script:
+    - pnpm build
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+      - node_modules
+    policy: pull
+
+test:
   stage: test
-include:
-- template: Auto-DevOps.gitlab-ci.yml
+  needs:
+    - build
+  script:
+    - pnpm test
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+      - node_modules
+    policy: pull
+
+publish:eslint-config:
+  stage: publish
+  only: ['tags']
+  needs:
+    - test
+  script:
+  script:
+    - echo CI_PROJECT_ID $CI_PROJECT_ID
+    - echo CI_JOB_TOKEN $CI_JOB_TOKEN
+    - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - cat .npmrc
+    - npm ci
+    - npm run build
+    - ls -al
+    - npm publish
+
+publish:prettier-config:
+  stage: publish
+  only: ['tags']
+  needs:
+    - test
+  script:
+    - echo CI_PROJECT_ID $CI_PROJECT_ID
+    - echo CI_JOB_TOKEN $CI_JOB_TOKEN
+    - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - cat .npmrc
+    - npm ci
+    - npm run build
+    - ls -al
+    - npm publish
+
+publish:tsconfig:
+  stage: publish
+  only: ['tags']
+  needs:
+    - test
+  script:
+    - echo CI_PROJECT_ID $CI_PROJECT_ID
+    - echo CI_JOB_TOKEN $CI_JOB_TOKEN
+    - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - cat .npmrc
+    - npm ci
+    - npm run build
+    - ls -al
+    - npm publish
+
+publish:ui:
+  stage: publish
+  only: ['tags']
+  needs:
+    - test
+  script:
+    - echo CI_PROJECT_ID $CI_PROJECT_ID
+    - echo CI_JOB_TOKEN $CI_JOB_TOKEN
+    - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - cat .npmrc
+    - npm ci
+    - npm run build
+    - ls -al
+    - npm publish
+
+publish:utils:
+  stage: publish
+  only: ['tags']
+  needs:
+    - test
+  script:
+    - echo CI_PROJECT_ID $CI_PROJECT_ID
+    - echo CI_JOB_TOKEN $CI_JOB_TOKEN
+    - echo "@game:registry=https://gitlab.sao-x.com/api/v4/packages/npm/" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//gitlab.sao-x.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - cat .npmrc
+    - npm ci
+    - npm run build
+    - ls -al
+    - npm publish

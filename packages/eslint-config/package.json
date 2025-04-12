@@ -1,6 +1,6 @@
 {
   "name": "@msi/eslint-config",
-  "version": "0.1.35",
+  "version": "0.0.0",
   "description": "The eslint config for tszhong0411's projects",
   "license": "MIT",
   "author": "tszhong0411 <me@honghong.me> (https://github.com/tszhong0411/)",
