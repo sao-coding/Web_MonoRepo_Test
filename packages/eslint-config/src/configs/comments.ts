@@ -4,7 +4,7 @@ import { eslintCommentsPlugin } from '@/plugins'
 
 export const comments: Linter.Config[] = [
   {
-    name: 'tszhong0411:comments',
+    name: 'msi:comments',
     plugins: {
       'eslint-comments': eslintCommentsPlugin
     },

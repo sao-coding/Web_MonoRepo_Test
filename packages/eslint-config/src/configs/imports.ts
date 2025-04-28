@@ -4,7 +4,7 @@ import { importPlugin } from '@/plugins'
 
 export const imports: Linter.Config[] = [
   {
-    name: 'tszhong0411:imports',
+    name: 'msi:imports',
     plugins: {
       import: importPlugin as unknown as Record<string, unknown>
     },

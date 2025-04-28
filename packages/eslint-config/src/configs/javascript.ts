@@ -6,7 +6,7 @@ import { eslintPlugin, unusedImportsPlugin } from '@/plugins'
 
 export const javascript: Linter.Config[] = [
   {
-    name: 'tszhong0411:javascript',
+    name: 'msi:javascript',
     languageOptions: {
       ecmaVersion: 2022,
       globals: {
