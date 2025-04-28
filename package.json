@@ -7,6 +7,9 @@
     "build:apps": "turbo build --filter=./apps/*",
     "build:packages": "turbo build --filter=./packages/*",
     "check-types": "turbo run check-types",
+    "check": "turbo lint && pnpm turbo run check-types && pnpm check:knip && pnpm check:spelling",
+    "check:knip": "knip",
+    "check:spelling": "cspell",
     "commit": "pnpm cz",
     "cz": "cross-env NODE_OPTIONS=\"--experimental-transform-types --disable-warning=ExperimentalWarning\" czg",
     "dev": "turbo run dev",
@@ -23,6 +26,7 @@
     "@msi/tsconfig": "workspace:*",
     "@types/node": "^22.14.0",
     "cross-env": "^7.0.3",
+    "cspell": "^8.19.3",
     "czg": "^1.11.1",
     "eslint": "^9.24.0",
     "husky": "^9.1.7",
@@ -36,11 +40,17 @@
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@10.7.1",
+  "packageManager": "pnpm@10.10.0",
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
       "esbuild",
-      "sharp"
+      "prisma",
+      "protobufjs",
+      "sharp",
+      "ttf2woff2",
+      "unrs-resolver"
     ]
   }
 }
