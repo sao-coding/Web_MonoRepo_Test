@@ -1,6 +1,7 @@
 services:
   web:
     image: 192.168.2.40:5005/msi/monorepo/web:main
+    container_name: msi-web
     ports:
       - '3001:3000' # host:container
     environment:
