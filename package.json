@@ -13,6 +13,7 @@
     "commit": "pnpm cz",
     "cz": "cross-env NODE_OPTIONS=\"--experimental-transform-types --disable-warning=ExperimentalWarning\" czg",
     "dev": "turbo run dev",
+    "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "prepare": "husky && pnpm build:packages",
@@ -34,7 +35,7 @@
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "tsup": "8.4.0",
-    "turbo": "^2.5.0",
+    "turbo": "^2.5.3",
     "typescript": "5.8.3"
   },
   "engines": {
