@@ -59,6 +59,6 @@ web-deploy:
     - echo "🚀 查看伺服器 Docker 狀態"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a"
     - echo "🧹 執行清除舊容器腳本"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/docker/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
     - echo "🆕 啟動新容器"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker run -d --name web -p 3001:3000 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
