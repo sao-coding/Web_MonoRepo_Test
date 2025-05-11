@@ -33,7 +33,9 @@ RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(
 
 # Build the project
 # prettier.config.js
+# turbo.json
 COPY --from=builder /builder/prettier.config.js .
+COPY --from=builder /builder/turbo.json .
 COPY --from=builder /builder/out/full/ .
 
 # Uncomment and use build args to enable remote caching
