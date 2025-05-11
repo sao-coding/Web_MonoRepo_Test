@@ -9,7 +9,7 @@ check-affected:
   image: node:20
   script:
     - npm install -g turbo
-    - turbo run build --dry=json --filter=... > affected.json
+    - turbo run build --dry=json --filter=[HEAD^1] > affected.json
     - |
       AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
       echo "AFFECTED=$AFFECTED"
