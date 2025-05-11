@@ -1,27 +1,35 @@
-FROM node:18-alpine AS base
+FROM node:22-slim AS base
 
-# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
-# Make sure you update both files!
+FROM base AS pnpm-base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-FROM base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk update
-RUN apk add --no-cache libc6-compat
-# Set working directory
-WORKDIR /app
-RUN yarn global add turbo
-COPY . .
-RUN turbo prune web --docker
+FROM pnpm-base AS builder
+COPY . /builder
+WORKDIR /builder
+RUN  --mount=type=cache,target=${PNPM_HOME} \
+  pnpm config set store-dir ${PNPM_HOME}
+#
+#RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
+RUN pnpm add -g turbo
+
+RUN turbo prune status-hub-frontend --docker
 
 # Add lockfile and package.json's of isolated subworkspace
-FROM base AS installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
+FROM pnpm-base AS installer
 WORKDIR /app
 
 # First install the dependencies (as they change less often)
 COPY --from=builder /app/out/json/ .
-RUN yarn install
+
+RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM before after install: $(ls -la ${PNPM_HOME})"
+
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm config set store-dir ${PNPM_HOME}
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm add -g turbo
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline
+
+RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
 
 # Build the project
 COPY --from=builder /app/out/full/ .
@@ -33,7 +41,14 @@ ENV TURBO_TEAM=$TURBO_TEAM
 ARG TURBO_TOKEN
 ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo build
+RUN --mount=type=secret,id=TURBO_TOKEN \
+    if [ -f /run/secrets/TURBO_TOKEN ]; then \
+        echo "Building with TURBO_TOKEN" && \
+        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm turbo build; \
+    else \
+        echo "Building without TURBO_TOKEN" && \
+        pnpm turbo build --filter=status-hub-frontend; \
+    fi
 
 FROM base AS runner
 WORKDIR /app
