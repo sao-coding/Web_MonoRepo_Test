@@ -12,7 +12,7 @@ check-affected:
     - npm install -g turbo
     - git fetch origin $CI_DEFAULT_BRANCH
     - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
-    - turbo run build --dry=json --filter=[$BASE]...HEAD > affected.json
+    - turbo run build --dry=json --filter=[HEAD^1] > affected.json
     - |
       AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
       echo "AFFECTED=$AFFECTED"
