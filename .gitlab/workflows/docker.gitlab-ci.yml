@@ -11,6 +11,7 @@ build:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
     IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+    CI_REGISTRY: 'http://192.168.2.40:5005' # 覆盖默认的 CI_REGISTRY
   script:
     - echo "Building Docker image..."
     - apk add --no-cache curl bash tar
