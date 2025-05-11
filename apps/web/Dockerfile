@@ -14,7 +14,7 @@ RUN  --mount=type=cache,target=${PNPM_HOME} \
 #RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
 RUN pnpm add -g turbo
 
-RUN turbo prune status-hub-frontend --docker
+RUN turbo prune web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM pnpm-base AS installer
@@ -47,7 +47,7 @@ RUN --mount=type=secret,id=TURBO_TOKEN \
         TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm turbo build; \
     else \
         echo "Building without TURBO_TOKEN" && \
-        pnpm turbo build --filter=status-hub-frontend; \
+        pnpm turbo build --filter=web; \
     fi
 
 FROM base AS runner
