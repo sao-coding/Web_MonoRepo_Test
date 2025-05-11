@@ -11,8 +11,9 @@ check-affected:
     - apt-get update && apt-get install -y jq
     - npm install -g turbo
     - git fetch origin $CI_DEFAULT_BRANCH
-    - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
-    - turbo run build --dry=json --filter=...[origin/$CI_DEFAULT_BRANCH] > affected.json
+    # - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
+    # - turbo run build --dry=json --filter=...[origin/$CI_DEFAULT_BRANCH] > affected.json
+    - turbo run build --dry=json --filter=...[HEAD^1] > affected.json
     - |
       if [ -s affected.json ]; then
         AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
