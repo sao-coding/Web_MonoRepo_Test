@@ -38,6 +38,9 @@ export default function Home() {
             Get started by editing <code>apps/web/app/page.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
+          <li>
+            <code>sao-coding</code>到此一遊
+          </li>
         </ol>
 
         <div className={styles.ctas}>
