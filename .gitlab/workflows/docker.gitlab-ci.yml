@@ -15,5 +15,5 @@ build:
   script:
     - echo "Building Docker image..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG .
+    - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
     - docker push $IMAGE_TAG
