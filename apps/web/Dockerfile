@@ -32,6 +32,8 @@ RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --pref
 RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
 
 # Build the project
+# prettier.config.js
+COPY --from=builder /builder/prettier.config.js .
 COPY --from=builder /builder/out/full/ .
 
 # Uncomment and use build args to enable remote caching
