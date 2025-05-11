@@ -21,7 +21,7 @@ FROM pnpm-base AS installer
 WORKDIR /app
 
 # First install the dependencies (as they change less often)
-COPY --from=builder /app/out/json/ .
+COPY --from=builder /builder/out/json/ .
 
 RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM before after install: $(ls -la ${PNPM_HOME})"
 
@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --pref
 RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
 
 # Build the project
-COPY --from=builder /app/out/full/ .
+COPY --from=builder /builder/out/full/ .
 
 # Uncomment and use build args to enable remote caching
 ARG TURBO_TEAM
