@@ -13,5 +13,6 @@ export default defineConfig({
     '.vscode-insiders',
     'package.json'
   ],
-  useGitignore: true
+  useGitignore: true,
+  words: ['nixpacks']
 })
