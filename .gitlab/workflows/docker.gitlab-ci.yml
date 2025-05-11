@@ -45,7 +45,7 @@ debug-ssh:
 
 web-deploy:
   stage: deploy
-  image: gitlab/dind:latest
+  image: debian:bullseye
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -54,8 +54,11 @@ web-deploy:
     - ssh-add deploy.pem
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a" # 查看當前 Docker 映像與容器狀態
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # 執行清除腳本
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker run -d --name web -p 3001:3000 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # 啟動新的容器
+    - echo "🚀 查看伺服器 Docker 狀態"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a"
+    - echo "🧹 執行清除舊容器腳本"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - echo "🆕 啟動新容器"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker run -d --name web -p 3001:3000 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
