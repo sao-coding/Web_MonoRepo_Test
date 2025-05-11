@@ -8,8 +8,11 @@ check-affected:
   stage: check
   image: node:20
   script:
+    - apt-get update && apt-get install -y jq
     - npm install -g turbo
-    - turbo run build --dry=json --filter=[HEAD^1] > affected.json
+    - git fetch origin $CI_DEFAULT_BRANCH
+    - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
+    - turbo run build --dry=json --filter=[$BASE]...HEAD > affected.json
     - |
       AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
       echo "AFFECTED=$AFFECTED"
