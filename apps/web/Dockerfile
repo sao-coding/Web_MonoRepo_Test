@@ -1,11 +1,16 @@
 FROM node:18-alpine AS base
 
-# Enable corepack to use pnpm
+# 設置 PNPM 環境
+ENV PNPM_HOME=/usr/local/bin
+ENV PATH=$PNPM_HOME:$PATH
+# 啟用 corepack 使用 pnpm
 RUN corepack enable
 
 FROM base AS builder
 RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
+# 執行 pnpm setup 並安裝 turbo
+RUN pnpm setup
 RUN pnpm add -g turbo
 COPY . .
 RUN turbo prune web --docker
