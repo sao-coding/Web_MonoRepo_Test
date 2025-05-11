@@ -1,40 +1,34 @@
 stages:
-  - check
   - build
   - deploy
 
-# 🧪 檢查有變動的子專案
-check-affected:
-  stage: check
-  image: node:20
-  script:
-    - apt-get update && apt-get install -y jq
-    - npm install -g turbo
-    - git fetch origin $CI_DEFAULT_BRANCH
-    # - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
-    # - turbo run build --dry=json --filter=...[origin/$CI_DEFAULT_BRANCH] > affected.json
-    - turbo run build --dry=json --filter=...[HEAD^1] > affected.json
-    - |
-      if [ -s affected.json ]; then
-        AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
-        echo "AFFECTED=$AFFECTED"
-        echo "AFFECTED_SERVICES=$AFFECTED" >> affected.env
-      else
-        echo "No changes detected. Skipping deployment."
-      fi
-  artifacts:
-    reports:
-      dotenv: affected.env
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/web:$CI_COMMIT_REF_NAME
 
-# 🚀 部署變動的子專案
-deploy:
+web-build:
+  stage: build
+  image: docker:latest
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  services:
+    - name: docker:dind
+      command: ['--insecure-registry=192.168.2.40:5005']
+  variables:
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  script:
+    - echo "Building Docker image..."
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
+    - docker push $IMAGE_TAG
+
+web-deploy:
   stage: deploy
   image: debian:bullseye
-  dependencies:
-    - check-affected
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - apt-get install -y jq
     - eval $(ssh-agent -s)
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
     - chmod 400 deploy.pem
@@ -43,21 +37,16 @@ deploy:
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - echo "🔍 有變動的子專案：$AFFECTED_SERVICES"
-    - echo "📦 傳送 docker-compose.yml 至伺服器"
-    - scp docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/only/docker/docker-compose.yml
-
-    - echo "🧹 清除舊容器（僅針對變動服務）"
-    - |
-      for service in $(echo $AFFECTED_SERVICES | tr ',' ' '); do
-        ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/only/docker && docker compose stop $service || true"
-        ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/only/docker && docker compose rm -f $service || true"
-      done
-
-    - echo "🚀 部署變動的服務"
-    - |
-      for service in $(echo $AFFECTED_SERVICES | tr ',' ' '); do
-        ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/only/docker && docker compose up -d --build $service"
-      done
-
-    - echo "✅ 完成差異化部署"
+    - echo "🚀 查看伺服器 Docker 狀態"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a"
+    - echo "📤 傳輸 docker-compose.yml 至伺服器 docker/msi 目錄"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "mkdir -p /home/${SSH_USER}/docker/msi"
+    - scp $(pwd)/docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/${SSH_USER}/docker/msi/
+    - echo "🧹 停止並移除現有容器"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker-compose down"
+    - echo "🔄 拉取最新映像檔"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG"
+    - echo "🆙 使用 docker-compose 啟動服務"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker-compose up -d"
+    - echo "✅ 部署完成，查看運行中的容器"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
