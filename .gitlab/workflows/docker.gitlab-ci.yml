@@ -3,6 +3,9 @@ stages:
   - test
   - deploy
 
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/web:$CI_COMMIT_REF_NAME
+
 web-build:
   stage: build
   image: docker:latest
@@ -16,32 +19,11 @@ web-build:
     DOCKER_TLS_CERTDIR: ''
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/web:$CI_COMMIT_REF_NAME
   script:
     - echo "Building Docker image..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
     - docker push $IMAGE_TAG
-
-debug-ssh:
-  stage: test
-  image: debian:bullseye
-
-  before_script:
-    - apt-get update && apt-get install -y openssh-client
-    - echo "🔍 檢查 SSH_PRIVATE_KEY 長度："
-    - echo "$SSH_PRIVATE_KEY" | wc -c
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > deploy.pem
-    - chmod 400 deploy.pem
-    - eval $(ssh-agent -s)
-    - ssh-add deploy.pem
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-
-  script:
-    - echo "🧪 嘗試 SSH 連線到 ${SSH_USER}@${SSH_SERVER_IP}..."
-    - ssh -v ${SSH_USER}@${SSH_SERVER_IP} "echo ✅ SSH 連線成功"
 
 web-deploy:
   stage: deploy
@@ -59,6 +41,6 @@ web-deploy:
     - echo "🚀 查看伺服器 Docker 狀態"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a"
     - echo "🧹 執行清除舊容器腳本"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/docker/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "bash /home/only/docker/clear-docker.sh web $IMAGE_TAG"
     - echo "🆕 啟動新容器"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker run -d --name web -p 3001:3000 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker run -d --name web -p 3001:3000 $IMAGE_TAG"
