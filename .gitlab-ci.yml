@@ -1,2 +1,2 @@
 include:
-  - local: .gitlab/workflows/publish.gitlab-ci.yml
+  - local: .gitlab/workflows/docker.gitlab-ci.yml
