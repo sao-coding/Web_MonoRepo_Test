@@ -12,11 +12,15 @@ check-affected:
     - npm install -g turbo
     - git fetch origin $CI_DEFAULT_BRANCH
     - BASE=$(git merge-base HEAD origin/$CI_DEFAULT_BRANCH)
-    - turbo run build --dry=json --filter=[HEAD^1] > affected.json
+    - turbo run build --dry=json --filter=...[origin/$CI_DEFAULT_BRANCH] > affected.json
     - |
-      AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
-      echo "AFFECTED=$AFFECTED"
-      echo "AFFECTED_SERVICES=$AFFECTED" >> affected.env
+      if [ -s affected.json ]; then
+        AFFECTED=$(jq -r '.pipeline.build.tasks[].package' affected.json | grep "^apps/" | cut -d/ -f2 | paste -sd "," -)
+        echo "AFFECTED=$AFFECTED"
+        echo "AFFECTED_SERVICES=$AFFECTED" >> affected.env
+      else
+        echo "No changes detected. Skipping deployment."
+      fi
   artifacts:
     reports:
       dotenv: affected.env
