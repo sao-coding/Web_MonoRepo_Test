@@ -43,10 +43,10 @@ web-deploy:
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "mkdir -p /home/${SSH_USER}/docker/msi"
     - scp $(pwd)/docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/${SSH_USER}/docker/msi/
     - echo "🧹 停止並移除現有容器"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker-compose down"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker compose down"
     - echo "🔄 拉取最新映像檔"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG"
     - echo "🆙 使用 docker-compose 啟動服務"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker-compose up -d"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker compose up -d"
     - echo "✅ 部署完成，查看運行中的容器"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
