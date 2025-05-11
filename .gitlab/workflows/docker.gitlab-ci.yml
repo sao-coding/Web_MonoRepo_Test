@@ -2,7 +2,7 @@ build:
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  image: docker:19.03.12
+  image: docker:latest
   stage: build
   services:
     - docker:dind
@@ -10,6 +10,7 @@ build:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
   script:
     - echo "Building Docker image..."
+    - apk add --no-cache curl bash
     - curl -sSL https://nixpacks.com/install | bash
     - nixpacks build
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
