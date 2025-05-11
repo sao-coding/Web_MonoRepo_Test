@@ -1,9 +1,13 @@
-build:
+stages:
+  - build
+  - deploy
+
+web-build:
+  stage: build
+  image: docker:latest
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  image: docker:latest
-  stage: build
   services:
     - name: docker:dind
       command: ['--insecure-registry=192.168.2.40:5005']
@@ -11,9 +15,26 @@ build:
     DOCKER_TLS_CERTDIR: ''
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/web:latest
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/web:$CI_COMMIT_REF_NAME
   script:
     - echo "Building Docker image..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
     - docker push $IMAGE_TAG
+
+web-deploy:
+  stage: deploy
+  image: gitlab/dind:latest
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
+    - chmod 400 deploy.pem
+    - ssh-add deploy.pem
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh ${SSH_USER}@${SERVER_IP} "docker images && docker ps -a" # 查看當前 Docker 映像與容器狀態
+    - ssh ${SSH_USER}@${SERVER_IP} "bash /home/only/clear-docker.sh web $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # 執行清除腳本
+    - ssh ${SSH_USER}@${SERVER_IP} "docker run -d --name web -p 3001:3000 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME" # 啟動新的容器
