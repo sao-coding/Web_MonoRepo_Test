@@ -14,5 +14,5 @@ export default defineConfig({
     'package.json'
   ],
   useGitignore: true,
-  words: ['nixpacks']
+  words: ['nixpacks', 'knip']
 })
