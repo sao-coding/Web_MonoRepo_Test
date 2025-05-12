@@ -1,7 +1,7 @@
 import type { KnipConfig } from 'knip'
 
 const config: KnipConfig = {
-  ignore: ['**/fixtures/**', 'packages/ui/**'],
+  ignore: ['**/fixtures/**', 'packages/ui/**', 'cspell.config.mjs'],
   vitest: {
     config: ['vitest.{config,shared,workspace}.ts']
   },
