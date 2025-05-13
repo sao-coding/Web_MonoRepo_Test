@@ -37,6 +37,9 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 RUN apt-get update && apt-get install -y tree && \
     tree -a -I 'node_modules|.next' .
 
+# 添加此行來檢查 package.json 中的構建腳本
+RUN cat package.json | grep -A 10 scripts
+
 RUN --mount=type=secret,id=TURBO_TOKEN \
     if [ -f /run/secrets/TURBO_TOKEN ]; then \
         echo "Building with TURBO_TOKEN" && \
