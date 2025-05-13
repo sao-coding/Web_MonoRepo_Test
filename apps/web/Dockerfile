@@ -33,13 +33,17 @@ ARG TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
 
+# 印出目錄結構 tree 排除 node_modules .next
+RUN apt-get update && apt-get install -y tree && \
+    tree -a -I 'node_modules|.next' .
+
 RUN --mount=type=secret,id=TURBO_TOKEN \
     if [ -f /run/secrets/TURBO_TOKEN ]; then \
         echo "Building with TURBO_TOKEN" && \
-        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm turbo build; \
+        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) turbo build; \
     else \
         echo "Building without TURBO_TOKEN" && \
-        pnpm turbo build --filter=web; \
+        turbo build --filter=web; \
     fi
 
 # 建立 runner 階段，運行應用程式
