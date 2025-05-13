@@ -40,10 +40,10 @@ RUN apt-get update && apt-get install -y tree && \
 RUN --mount=type=secret,id=TURBO_TOKEN \
     if [ -f /run/secrets/TURBO_TOKEN ]; then \
         echo "Building with TURBO_TOKEN" && \
-        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) turbo build; \
+        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm build; \
     else \
         echo "Building without TURBO_TOKEN" && \
-        turbo build --filter=web; \
+        pnpm build --filter=web; \
     fi
 
 # 建立 runner 階段，運行應用程式
