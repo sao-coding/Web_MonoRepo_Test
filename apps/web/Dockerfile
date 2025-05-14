@@ -22,7 +22,7 @@ COPY --from=builder /builder/out/json/ .
 
 # 使用快取管理以加速安裝
 RUN --mount=type=cache,target=${PNPM_HOME} pnpm config set store-dir ${PNPM_HOME} 
-RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline --ignore-scripts 
 
 # 複製完整專案檔案
 COPY --from=builder /builder/out/full/ .
