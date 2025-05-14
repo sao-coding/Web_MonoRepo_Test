@@ -1,22 +1,25 @@
 services:
-  web: # 服务名，Swarm 会根据该名称创建服务
-    image: 192.168.2.40:5005/msi/monorepo/web:main # 服务所用的镜像地址
-    container_name: msi_stack_web # 容器名称，保持一致以便管理
-    ports:
-      - '3001:3000' # 将容器的 3000 端口映射到宿主机的 3001 端口
+  web:
+    image: 192.168.2.40:5005/msi/monorepo/web:main # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
+    container_name: msi_stack_web # 容器名稱
     environment:
-      - NODE_ENV=production # 设置环境变量，指明环境为生产模式
+      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
     deploy:
-      replicas: 3 # 服务副本数，Swarm 会确保运行 3 个副本
+      replicas: 3 # 設定啟動 3 個副本
       update_config:
-        parallelism: 1 # 每次更新只更新一个副本，保证滚动更新
-        delay: 10s # 每次更新之间等待 10 秒，避免过多容器同时停止
-        failure_action: rollback # 更新失败时回滚到上一个版本
+        parallelism: 1 # 在更新時，一次更新 1 個副本
+        delay: 10s # 每次更新之間等待 10 秒
+        failure_action: rollback # 如果更新失敗，則回滾
       restart_policy:
-        condition: any # 只要容器退出就会自动重启，无论是正常退出还是异常退出
+        condition: any # 任何情況下都會重啟容器
+    ports:
+      - target: 3000 # 容器內部的端口設定為 3000
+        published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
+        protocol: tcp # 使用 TCP 協議
+        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
     networks:
-      - msi # 指定使用的网络，多个服务可以共享该网络
+      - msi # 使用名為 "msi" 的 overlay 網絡
 
 networks:
   msi:
-    driver: overlay # 使用 Swarm 网络驱动（overlay），适用于跨主机的服务通信
+    driver: overlay # 使用 overlay 驅動程式，適合於 Docker Swarm 集群
