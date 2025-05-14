@@ -15,17 +15,24 @@ WORKDIR /builder
 COPY . . 
 RUN pnpm add -g turbo && turbo prune web --docker
 
+# 複製 prettier.config.js 到 Docker 映像
+# 確保 prettier.config.js 被複製到最終映像中
+COPY prettier.config.js /builder/prettier.config.js
+
 # 建立 installer 階段，安裝依賴
 FROM pnpm-base AS installer
 WORKDIR /app
 COPY --from=builder /builder/out/json/ .
 
 # 使用快取管理以加速安裝
-RUN --mount=type=cache,target=${PNPM_HOME} pnpm config set store-dir ${PNPM_HOME} 
-RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline --ignore-scripts 
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm config set store-dir ${PNPM_HOME}
+RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
 
 # 複製完整專案檔案
 COPY --from=builder /builder/out/full/ .
+
+# 複製 prettier.config.js 到應用程式目錄
+COPY --from=builder /builder/prettier.config.js /app/
 
 # 使用 Turbo Token 進行構建
 ARG TURBO_TEAM
