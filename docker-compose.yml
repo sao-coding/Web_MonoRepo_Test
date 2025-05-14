@@ -15,8 +15,8 @@ services:
       restart_policy:
         condition: any # 只要容器退出就会自动重启，无论是正常退出还是异常退出
     networks:
-      - webnet # 指定使用的网络，多个服务可以共享该网络
+      - msi # 指定使用的网络，多个服务可以共享该网络
 
 networks:
-  webnet:
+  msi:
     driver: overlay # 使用 Swarm 网络驱动（overlay），适用于跨主机的服务通信
