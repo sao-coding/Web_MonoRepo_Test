@@ -6,7 +6,7 @@ services:
       - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
       - HOSTNAME=0.0.0.0
     deploy:
-      replicas: 3 # 設定啟動 3 個副本
+      replicas: 2 # 設定啟動 2 個副本
       update_config:
         parallelism: 1 # 在更新時，一次更新 1 個副本
         delay: 10s # 每次更新之間等待 10 秒
