@@ -45,6 +45,6 @@ web-deploy:
     - echo "🔄 拉取最新映像檔"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG"
     - echo "🧹 停止並移除現有服務 (保持不停機)"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
     - echo "✅ 部署完成，查看運行中的容器"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"

@@ -38,9 +38,6 @@ export default function Home() {
             Get started by editing <code>apps/web/app/page.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
-          <li>
-            <code>npm run dev</code> to start the development server.
-          </li>
         </ol>
 
         <div className={styles.ctas}>
