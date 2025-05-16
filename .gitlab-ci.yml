@@ -10,6 +10,7 @@ before_script:
   - corepack enable
   - corepack prepare pnpm@latest-10 --activate
   - pnpm config set store-dir .pnpm-store
+  - pnpm install -g turbo@latest
 
 install_dependencies:
   stage: install
