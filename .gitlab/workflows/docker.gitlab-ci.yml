@@ -1,6 +1,3 @@
-include:
-  - local: .gitlab/workflows/docker.gitlab-ci.yml
-
 stages:
   - detect
   - build
