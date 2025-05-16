@@ -16,7 +16,8 @@ detect-changes:
     - echo "檢測變更的項目..."
     - npx turbo-ignore --task=build > affected.txt || true
     - export TURBO_FILTER=$(cat affected.txt | tr '\n' ',' | sed 's/,$//')
-    - echo "變更的項目: $TURBO_FILTER"
+    - echo "變更的項目:"
+    - echo $TURBO_FILTER | tr ',' '\n' | while read project; do echo "  - $project"; done
   artifacts:
     reports:
       dotenv: affected.env
@@ -36,7 +37,8 @@ web-build:
     DOCKER_DRIVER: overlay2
   script:
     - if [[ -z "$TURBO_FILTER" ]]; then echo "沒有變更的項目，跳過構建"; exit 0; fi
-    - echo "Building Docker images for affected projects: $TURBO_FILTER"
+    - echo "Building Docker images for affected projects:"
+    - echo $TURBO_FILTER | tr ',' '\n' | while read project; do echo "  - $project"; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - for project in $(echo $TURBO_FILTER | tr ',' '\n'); do
       echo "Building Docker image for $project...";
@@ -58,7 +60,8 @@ web-deploy:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
     - if [[ -z "$TURBO_FILTER" ]]; then echo "沒有變更的項目，跳過部署"; exit 0; fi
-    - echo "🚀 部署變更的項目: $TURBO_FILTER"
+    - echo "🚀 部署變更的項目:"
+    - echo $TURBO_FILTER | tr ',' '\n' | while read project; do echo "  - $project"; done
     - for project in $(echo $TURBO_FILTER | tr ',' '\n'); do
       echo "Deploying $project...";
       ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $CI_REGISTRY_IMAGE/$project:$CI_COMMIT_REF_NAME && docker stack deploy -c /home/${SSH_USER}/docker/$project/docker-compose.yml $project --with-registry-auth";
