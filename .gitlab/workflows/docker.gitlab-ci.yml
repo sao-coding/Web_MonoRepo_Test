@@ -1,9 +1,25 @@
+include:
+  - local: .gitlab/workflows/docker.gitlab-ci.yml
+
 stages:
+  - detect
   - build
   - deploy
 
 variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE/web:$CI_COMMIT_REF_NAME
+  TURBO_FILTER: ''
+
+detect-changes:
+  stage: detect
+  image: node:22-slim
+  script:
+    - echo "檢測變更的項目..."
+    - npx turbo-ignore --task=build > affected.txt || true
+    - export TURBO_FILTER=$(cat affected.txt | tr '\n' ',' | sed 's/,$//')
+    - echo "變更的項目: $TURBO_FILTER"
+  artifacts:
+    reports:
+      dotenv: affected.env
 
 web-build:
   stage: build
@@ -19,10 +35,14 @@ web-build:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   script:
-    - echo "Building Docker image..."
+    - if [[ -z "$TURBO_FILTER" ]]; then echo "沒有變更的項目，跳過構建"; exit 0; fi
+    - echo "Building Docker images for affected projects: $TURBO_FILTER"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -f ./apps/web/Dockerfile -t $IMAGE_TAG . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
-    - docker push $IMAGE_TAG
+    - for project in $(echo $TURBO_FILTER | tr ',' '\n'); do
+      echo "Building Docker image for $project...";
+      docker build -f ./apps/$project/Dockerfile -t $CI_REGISTRY_IMAGE/$project:$CI_COMMIT_REF_NAME . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache;
+      docker push $CI_REGISTRY_IMAGE/$project:$CI_COMMIT_REF_NAME;
+      done
 
 web-deploy:
   stage: deploy
@@ -37,14 +57,9 @@ web-deploy:
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - echo "🚀 查看伺服器 Docker 狀態"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker images && docker ps -a"
-    - echo "📤 傳輸 docker-compose.yml 至伺服器 docker/msi 目錄"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "mkdir -p /home/${SSH_USER}/docker/msi"
-    - scp $(pwd)/docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/${SSH_USER}/docker/msi/
-    - echo "🔄 拉取最新映像檔"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG"
-    - echo "🧹 停止並移除現有服務 (保持不停機)"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
-    - echo "✅ 部署完成，查看運行中的容器"
-    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
+    - if [[ -z "$TURBO_FILTER" ]]; then echo "沒有變更的項目，跳過部署"; exit 0; fi
+    - echo "🚀 部署變更的項目: $TURBO_FILTER"
+    - for project in $(echo $TURBO_FILTER | tr ',' '\n'); do
+      echo "Deploying $project...";
+      ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $CI_REGISTRY_IMAGE/$project:$CI_COMMIT_REF_NAME && docker stack deploy -c /home/${SSH_USER}/docker/$project/docker-compose.yml $project --with-registry-auth";
+      done
