@@ -4,7 +4,6 @@ stages:
   - install
   - build
 
-# 全局 before_script，適用於所有階段
 before_script:
   - export SHELL=/bin/bash
   - npm install --global corepack@latest
@@ -15,6 +14,8 @@ before_script:
   - pnpm setup
   - pnpm config set store-dir .pnpm-store
   - pnpm install -g turbo@latest
+  # ⬇️ 確保 Git 比較時能抓到 Merge Request 的目標分支
+  - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
 
 install_dependencies:
   stage: install
@@ -26,7 +27,8 @@ build:
   stage: build
   image: node:18
   script:
-    - pnpm install --frozen-lockfile
-    - turbo run build --affected --base=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    # 告訴 turbo 要比較哪個 base 分支
+    - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - turbo run build --affected
   only:
     - merge_requests
