@@ -4,10 +4,14 @@ stages:
 
 # 全局 before_script，適用於所有階段
 before_script:
+  # 安裝 corepack
   - npm install --global corepack@latest
   - corepack enable
   - corepack prepare pnpm@latest-10 --activate
+  # 初始化 pnpm 設置，確保 global-bin-dir 和 store-dir 配置正確
+  - pnpm setup
   - pnpm config set store-dir .pnpm-store
+  # 安裝 turbo
   - pnpm install -g turbo@latest
 
 install_dependencies:
