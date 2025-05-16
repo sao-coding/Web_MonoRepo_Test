@@ -1,7 +1,6 @@
 # include:
 #   - local: .gitlab/workflows/docker.gitlab-ci.yml
 stages:
-  - install
   - build
 
 before_script:
@@ -17,18 +16,13 @@ before_script:
   # ⬇️ 確保 Git 比較時能抓到 Merge Request 的目標分支
   - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
 
-install_dependencies:
-  stage: install
-  image: node:18
-  script:
-    - turbo -h
-
 build:
   stage: build
   image: node:18
   script:
     # 告訴 turbo 要比較哪個 base 分支
     - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - pnpm install --frozen-lockfile
     - turbo run build --affected
   only:
     - merge_requests
