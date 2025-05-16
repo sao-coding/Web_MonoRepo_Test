@@ -2,12 +2,18 @@ stages:
   - install
   - build
 
+# 全局 before_script，適用於所有階段
+before_script:
+  - npm install --global corepack@latest
+  - corepack enable
+  - corepack prepare pnpm@latest-10 --activate
+  - pnpm config set store-dir .pnpm-store
+
 install_dependencies:
   stage: install
   image: node:18
   script:
-    - npm install -g turbo
-    - npm install
+    - pnpm install --frozen-lockfile
 
 build:
   stage: build
