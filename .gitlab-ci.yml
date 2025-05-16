@@ -16,7 +16,7 @@ install_dependencies:
   image: node:18
   script:
     - pnpm install --frozen-lockfile
-    - pnpm add turbo@latest
+    - pnpm add turbo@latest -w
     - turbo -h
 
 build:
@@ -25,7 +25,7 @@ build:
   script:
     - echo "🚀 Building affected projects..."
     - pnpm install --frozen-lockfile
-    - pnpm add turbo@latest
+    - pnpm add turbo@latest -w
     - turbo build --affected --base=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
   only:
     - merge_requests
