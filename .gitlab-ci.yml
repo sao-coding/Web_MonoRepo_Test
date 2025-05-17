@@ -7,21 +7,19 @@ stages:
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
 
-before_script:
-  - export SHELL=/bin/bash
-  - npm install --global corepack@latest
-  - corepack enable
-  - corepack prepare pnpm@latest-10 --activate
-  - export PNPM_HOME="/root/.local/share/pnpm"
-  - export PATH="$PNPM_HOME:$PATH"
-  - pnpm setup
-  - pnpm config set store-dir .pnpm-store
-  - pnpm install -g turbo@latest
-
 check-affected:
   stage: check
   image: node:latest
   before_script:
+    - export SHELL=/bin/bash
+    - npm install --global corepack@latest
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - export PNPM_HOME="/root/.local/share/pnpm"
+    - export PATH="$PNPM_HOME:$PATH"
+    - pnpm setup
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install -g turbo@latest
     - apt-get update && apt-get install -y jq
   script:
     - turbo run build --affected --dry=json > affected-packages.json
@@ -92,6 +90,16 @@ deploy-docker:
 publish-npm:
   stage: publish-npm
   image: node:latest
+  before_script:
+    - export SHELL=/bin/bash
+    - npm install --global corepack@latest
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - export PNPM_HOME="/root/.local/share/pnpm"
+    - export PATH="$PNPM_HOME:$PATH"
+    - pnpm setup
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install -g turbo@latest
   script:
     - 'if [ -z "$AFFECTED_PACKAGES" ]; then echo "沒有受影響的套件，跳過 NPM 發布"; exit 0; fi'
     - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
