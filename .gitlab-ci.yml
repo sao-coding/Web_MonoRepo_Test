@@ -96,6 +96,7 @@ deploy-docker:
 
     # 檢查檔案是否為有效私鑰 (不會輸出私鑰內容)
     - echo "檢查私鑰檔案格式："
+    - cat deploy.pem
     - ssh-keygen -l -f deploy.pem || echo "私鑰格式無效，請確認 GitLab CI/CD 變數設定正確"
 
     # 繼續原有流程
