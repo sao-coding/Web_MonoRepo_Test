@@ -1,71 +1,80 @@
+# 使用 Node.js 22-slim 作為基礎映像
 FROM node:22-slim AS base
 
+# 新增應用名稱參數，預設為
+ARG APP_NAME
+ENV APP_NAME=$APP_NAME
+
+# 設定 pnpm 安裝與核心設定
 FROM base AS pnpm-base
-ENV PNPM_HOME="/pnpm"
+ENV PNPM_HOME="/pnpm" 
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN corepack enable 
 
+# 使用 pnpm-base 建立 builder 階段
 FROM pnpm-base AS builder
-COPY . /builder
 WORKDIR /builder
-RUN  --mount=type=cache,target=${PNPM_HOME} \
-  pnpm config set store-dir ${PNPM_HOME}
-#
-#RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
-RUN pnpm add -g turbo
 
-RUN turbo prune docs --docker
+# 複製專案檔案並進行修剪
+COPY . .
+RUN pnpm add -g turbo && turbo prune ${APP_NAME} --docker
 
-# Add lockfile and package.json's of isolated subworkspace
+# 複製 prettier.config.js 到 Docker 映像
+# 確保 prettier.config.js 被複製到最終映像中
+COPY prettier.config.js /builder/prettier.config.js
+
+# 建立 installer 階段，安裝依賴
 FROM pnpm-base AS installer
 WORKDIR /app
-
-# First install the dependencies (as they change less often)
 COPY --from=builder /builder/out/json/ .
 
-RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM before after install: $(ls -la ${PNPM_HOME})"
-
+# 使用快取管理以加速安裝
 RUN --mount=type=cache,target=${PNPM_HOME} pnpm config set store-dir ${PNPM_HOME}
-RUN --mount=type=cache,target=${PNPM_HOME} pnpm add -g turbo
 RUN --mount=type=cache,target=${PNPM_HOME} pnpm install --frozen-lockfile --prefer-offline --ignore-scripts
 
-RUN --mount=type=cache,target=${PNPM_HOME} echo "PNPM contents after install: $(ls -la ${PNPM_HOME})"
-
-# Build the project
-# prettier.config.js
-COPY --from=builder /builder/prettier.config.js .
+# 複製完整專案檔案
 COPY --from=builder /builder/out/full/ .
 
-# Uncomment and use build args to enable remote caching
-ARG TURBO_TEAM
-ENV TURBO_TEAM=$TURBO_TEAM
+# 複製 prettier.config.js 到應用程式目錄
+COPY --from=builder /builder/prettier.config.js /app/
 
+# 使用 Turbo Token 進行構建
+ARG TURBO_TEAM
 ARG TURBO_TOKEN
+ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
+
+# 印出目錄結構 tree 排除 node_modules .next
+RUN apt-get update && apt-get install -y tree && \
+    tree -a -I 'node_modules|.next' .
+
+# 添加此行來檢查 package.json 中的構建腳本
+RUN cat package.json | grep -A 10 scripts
 
 RUN --mount=type=secret,id=TURBO_TOKEN \
     if [ -f /run/secrets/TURBO_TOKEN ]; then \
         echo "Building with TURBO_TOKEN" && \
-        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm turbo build; \
+        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm build; \
     else \
         echo "Building without TURBO_TOKEN" && \
-        pnpm turbo build --filter=docs; \
+        pnpm build --filter=${APP_NAME} && \
     fi
 
+# 建立 runner 階段，運行應用程式
 FROM base AS runner
 WORKDIR /app
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-USER nextjs
+# 設定 nodejs 使用者
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs 
+USER nextjs 
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/public ./apps/docs/public
+# 複製所需檔案並設定所有者
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
 
+# 開放埠口並啟動應用程式
 EXPOSE 3000
-
-CMD node apps/docs/server.js
+# CMD node apps/web/server.js
+CMD ["sh", "-c", "node apps/${APP_NAME}/server.js"]
