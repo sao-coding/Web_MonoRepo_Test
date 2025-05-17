@@ -28,8 +28,8 @@ check-affected:
         echo "沒有包受到影響，跳過後續步驟"
         exit 0
       fi
-    - export AFFECTED_APPS=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and .directory | startswith("apps/")) | .package' affected-packages.json | sort -u | tr '\n' ' ')
-    - export AFFECTED_PACKAGES=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and .directory | startswith("packages/")) | .package' affected-packages.json | sort -u | tr '\n' ' ')
+    - export AFFECTED_APPS=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and (.directory | type=="string") and (.directory | startswith("apps/"))) | .package' affected-packages.json | sort -u | tr '\n' ' ')
+    - export AFFECTED_PACKAGES=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and (.directory | type=="string") and (.directory | startswith("packages/"))) | .package' affected-packages.json | sort -u | tr '\n' ' ')
     - 'echo "受影響的應用程式: $AFFECTED_APPS"'
     - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
     - |
