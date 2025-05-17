@@ -57,7 +57,7 @@ RUN --mount=type=secret,id=TURBO_TOKEN \
         TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm build; \
     else \
         echo "Building without TURBO_TOKEN" && \
-        pnpm build --filter=${APP_NAME} && \
+        pnpm build --filter=${APP_NAME}; \
     fi
 
 # 建立 runner 階段，運行應用程式
