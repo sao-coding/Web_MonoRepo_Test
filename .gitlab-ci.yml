@@ -4,9 +4,6 @@ stages:
   - deploy-docker
   - publish-npm
 
-variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-
 check-affected:
   stage: check
   image: node:latest
@@ -69,8 +66,8 @@ build-docker:
       for app in $AFFECTED_APPS; do
         echo "構建 Docker 映像檔: $app"
         echo "使用的參數: APP_NAME=$app, TURBO_TEAM=$TURBO_TEAM, TURBO_TOKEN=$TURBO_TOKEN"
-        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
-        docker push $IMAGE_TAG-$app
+        docker build -f ./apps/$app/Dockerfile -t $CI_REGISTRY_IMAGE/$app:latest . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
+        docker push $CI_REGISTRY_IMAGE/$app:latest
       done
   needs:
     - job: check-affected
@@ -97,7 +94,7 @@ deploy-docker:
     - |
       for app in $AFFECTED_APPS; do
         echo "🔄 拉取最新映像檔: $app"
-        ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG-$app"
+        ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $CI_REGISTRY_IMAGE/$app:latest"
       done
     - echo "🧹 停止並移除現有服務 (保持不停機)"
     - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"

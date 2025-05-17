@@ -1,6 +1,6 @@
 services:
   web:
-    image: 192.168.2.40:5005/msi/monorepo/web:main # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
+    image: 192.168.2.40:5005/msi/monorepo/web:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
     container_name: msi_stack_web # 容器名稱
     environment:
       - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
@@ -23,7 +23,7 @@ services:
       - msi # 使用名為 "msi" 的 overlay 網絡
 
   docs:
-    image: 192.168.2.40:5005/msi/monorepo/docs:main # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
+    image: 192.168.2.40:5005/msi/monorepo/docs:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
     container_name: msi_stack_docs # 容器名稱
     environment:
       - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
