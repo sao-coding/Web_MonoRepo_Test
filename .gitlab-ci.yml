@@ -21,6 +21,8 @@ before_script:
 check-affected:
   stage: check
   image: node:latest
+  before_script:
+    - apt-get update && apt-get install -y jq
   script:
     - turbo run build --affected --dry=json > affected-packages.json
     - |
