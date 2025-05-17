@@ -85,11 +85,6 @@ deploy-docker:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
 
-    # 檢查開頭格式 (僅顯示前 10 個字符)
-    - echo "檢查私鑰開頭格式 (前 10 個字符)："
-    - echo "${SSH_PRIVATE_KEY}" | head -c 10
-    - echo
-
     # 使用常規處理流程
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
     - chmod 400 deploy.pem
