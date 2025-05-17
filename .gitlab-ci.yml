@@ -54,12 +54,18 @@ build-docker:
   services:
     - name: docker:dind
       command: ['--insecure-registry=192.168.2.40:5005']
+  variables:
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
   script:
     - 'if [ -z "$AFFECTED_APPS" ]; then echo "沒有受影響的應用程式，跳過 Docker 構建"; exit 0; fi'
+    - echo "Docker 登入"
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - |
       for app in $AFFECTED_APPS; do
         echo "構建 Docker 映像檔: $app"
-        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app .
+        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
         docker push $IMAGE_TAG-$app
       done
   needs:
