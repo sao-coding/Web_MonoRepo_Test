@@ -86,12 +86,15 @@ deploy-docker:
     - eval $(ssh-agent -s)
 
     # 使用常規處理流程
+    - echo "Debugging: Printing SSH_PRIVATE_KEY content (for debugging only)"
+    - echo "${SSH_PRIVATE_KEY}"
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
     - chmod 400 deploy.pem
 
-    # 檢查檔案是否為有效私鑰 (不會輸出私鑰內容)
-    - echo "檢查私鑰檔案格式："
+    # 檢查檔案是否為有效私鑰並印出內容進行偵錯
+    - echo "Debugging: Printing deploy.pem content (for debugging only)"
     - cat deploy.pem
+    - echo "檢查私鑰檔案格式："
     - ssh-keygen -l -f deploy.pem || echo "私鑰格式無效，請確認 GitLab CI/CD 變數設定正確"
 
     # 繼續原有流程
