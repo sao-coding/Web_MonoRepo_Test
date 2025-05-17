@@ -20,6 +20,7 @@ before_script:
 
 check-affected:
   stage: check
+  image: node:latest
   script:
     - turbo run build --affected --dry=json > affected-packages.json
     - |
@@ -69,6 +70,7 @@ deploy-docker:
 
 publish-npm:
   stage: publish-npm
+  image: node:latest
   script:
     - 'if [ -z "$AFFECTED_PACKAGES" ]; then echo "沒有受影響的套件，跳過 NPM 發布"; exit 0; fi'
     - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
