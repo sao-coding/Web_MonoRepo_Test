@@ -5,6 +5,7 @@ services:
     environment:
       - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
       - HOSTNAME=0.0.0.0
+      - PORT=3001
     deploy:
       replicas: 2 # 設定啟動 2 個副本
       update_config:
@@ -14,7 +15,7 @@ services:
       restart_policy:
         condition: any # 任何情況下都會重啟容器
     ports:
-      - target: 3000 # 容器內部的端口設定為 3000
+      - target: 3001 # 容器內部的端口設定為 3001
         published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
         protocol: tcp # 使用 TCP 協議
         mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
@@ -27,6 +28,7 @@ services:
     environment:
       - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
       - HOSTNAME=0.0.0.0
+      - PORT=3002
     deploy:
       replicas: 2 # 設定啟動 2 個副本
       update_config:
@@ -36,7 +38,7 @@ services:
       restart_policy:
         condition: any # 任何情況下都會重啟容器
     ports:
-      - target: 3000 # 容器內部的端口設定為 3000
+      - target: 3002 # 容器內部的端口設定為 3002
         published: 3002 # 將容器的 3000 端口映射到宿主機的 3002 端口
         protocol: tcp # 使用 TCP 協議
         mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
