@@ -10,6 +10,8 @@ variables:
 check-affected:
   stage: check
   image: node:latest
+  only:
+    - merge_requests
   before_script:
     - export SHELL=/bin/bash
     - npm install --global corepack@latest
@@ -100,32 +102,31 @@ deploy-docker:
     - job: build-docker
   rules:
     - if: '$AFFECTED_APPS != ""'
-
-publish-npm:
-  stage: publish-npm
-  image: node:latest
-  before_script:
-    - export SHELL=/bin/bash
-    - npm install --global corepack@latest
-    - corepack enable
-    - corepack prepare pnpm@latest-10 --activate
-    - export PNPM_HOME="/root/.local/share/pnpm"
-    - export PATH="$PNPM_HOME:$PATH"
-    - pnpm setup
-    - pnpm config set store-dir .pnpm-store
-    - pnpm install -g turbo@latest
-  script:
-    - 'if [ -z "$AFFECTED_PACKAGES" ]; then echo "沒有受影響的套件，跳過 NPM 發布"; exit 0; fi'
-    - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
-    - echo "//${CI_SERVER_HOST}/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
-    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
-    - |
-      for package in $AFFECTED_PACKAGES; do
-        echo "發布 NPM 套件: $package"
-        cd packages/$package && pnpm publish --no-git-checks && cd -
-      done
-  needs:
-    - job: check-affected
-      artifacts: true
-  rules:
-    - if: '$AFFECTED_PACKAGES != ""'
+# publish-npm:
+#   stage: publish-npm
+#   image: node:latest
+#   before_script:
+#     - export SHELL=/bin/bash
+#     - npm install --global corepack@latest
+#     - corepack enable
+#     - corepack prepare pnpm@latest-10 --activate
+#     - export PNPM_HOME="/root/.local/share/pnpm"
+#     - export PATH="$PNPM_HOME:$PATH"
+#     - pnpm setup
+#     - pnpm config set store-dir .pnpm-store
+#     - pnpm install -g turbo@latest
+#   script:
+#     - 'if [ -z "$AFFECTED_PACKAGES" ]; then echo "沒有受影響的套件，跳過 NPM 發布"; exit 0; fi'
+#     - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
+#     - echo "//${CI_SERVER_HOST}/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+#     - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+#     - |
+#       for package in $AFFECTED_PACKAGES; do
+#         echo "發布 NPM 套件: $package"
+#         cd packages/$package && pnpm publish --no-git-checks && cd -
+#       done
+#   needs:
+#     - job: check-affected
+#       artifacts: true
+#   rules:
+#     - if: '$AFFECTED_PACKAGES != ""'
