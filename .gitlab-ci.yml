@@ -91,12 +91,18 @@ deploy-docker:
     - chmod 700 ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - 'if [ -z "$AFFECTED_APPS" ]; then echo "沒有受影響的應用程式，跳過部署"; exit 0; fi'
+    - echo "📤 傳輸 docker-compose.yml 至伺服器 docker/msi 目錄"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "mkdir -p /home/${SSH_USER}/docker/msi"
+    - scp $(pwd)/docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/${SSH_USER}/docker/msi/
     - |
       for app in $AFFECTED_APPS; do
-        echo "部署應用程式: $app"
-        ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG-$app && docker run -d --name $app -p 3000:3000 $IMAGE_TAG-$app"
+        echo "🔄 拉取最新映像檔: $app"
+        ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG-$app"
       done
+    - echo "🧹 停止並移除現有服務 (保持不停機)"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
+    - echo "✅ 部署完成，查看運行中的容器"
+    - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
   needs:
     - job: check-affected
       artifacts: true
