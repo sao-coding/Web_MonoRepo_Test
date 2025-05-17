@@ -49,11 +49,11 @@ RUN cat package.json | grep -A 10 scripts
 
 RUN --mount=type=secret,id=TURBO_TOKEN \
     if [ -f /run/secrets/TURBO_TOKEN ]; then \
-        echo "Building with TURBO_TOKEN" && \
-        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) && \
+        echo "Building with TURBO_TOKEN"; \
+        export TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN); \
         pnpm build; \
     else \
-        echo "Building without TURBO_TOKEN" && \
+        echo "Building without TURBO_TOKEN"; \
         pnpm build --filter=web; \
     fi
 
