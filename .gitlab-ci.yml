@@ -65,7 +65,7 @@ build-docker:
     - |
       for app in $AFFECTED_APPS; do
         echo "構建 Docker 映像檔: $app"
-        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app . --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
+        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
         docker push $IMAGE_TAG-$app
       done
   needs:
