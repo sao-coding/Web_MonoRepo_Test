@@ -32,6 +32,20 @@ check-affected:
     - export AFFECTED_PACKAGES=$(jq -r '.packages[] | select(.location | startswith("packages/")) | .name' affected-packages.json)
     - 'echo "受影響的應用程式: $AFFECTED_APPS"'
     - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
+    - |
+      if [ -z "$AFFECTED_APPS" ]; then
+        echo "AFFECTED_APPS=" >> build.env
+      else
+        echo "AFFECTED_APPS=$AFFECTED_APPS" >> build.env
+      fi
+      if [ -z "$AFFECTED_PACKAGES" ]; then
+        echo "AFFECTED_PACKAGES=" >> build.env
+      else
+        echo "AFFECTED_PACKAGES=$AFFECTED_PACKAGES" >> build.env
+      fi
+  artifacts:
+    reports:
+      dotenv: build.env
 
 build-docker:
   stage: build-docker
@@ -47,6 +61,11 @@ build-docker:
         docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app .
         docker push $IMAGE_TAG-$app
       done
+  needs:
+    - job: check-affected
+      artifacts: true
+  rules:
+    - if: $AFFECTED_APPS
 
 deploy-docker:
   stage: deploy-docker
