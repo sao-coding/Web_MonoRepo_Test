@@ -37,7 +37,7 @@ services:
         condition: any # 任何情況下都會重啟容器
     ports:
       - target: 3000 # 容器內部的端口設定為 3000
-        published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
+        published: 3002 # 將容器的 3000 端口映射到宿主機的 3002 端口
         protocol: tcp # 使用 TCP 協議
         mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
     networks:
