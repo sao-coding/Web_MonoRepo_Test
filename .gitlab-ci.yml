@@ -1,28 +1,76 @@
-# include:
-#   - local: .gitlab/workflows/docker.gitlab-ci.yml
 stages:
-  - build
+  - check
+  - build-docker
+  - deploy-docker
+  - publish-npm
 
-before_script:
-  - export SHELL=/bin/bash
-  - npm install --global corepack@latest
-  - corepack enable
-  - corepack prepare pnpm@latest-10 --activate
-  - export PNPM_HOME="/root/.local/share/pnpm"
-  - export PATH="$PNPM_HOME:$PATH"
-  - pnpm setup
-  - pnpm config set store-dir .pnpm-store
-  - pnpm install -g turbo@latest
-  # ⬇️ 確保 Git 比較時能抓到 Merge Request 的目標分支
-  - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
 
-build:
-  stage: build
-  image: node:18
+check-affected:
+  stage: check
+  image: node:latest
   script:
-    # 告訴 turbo 要比較哪個 base 分支
-    - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - pnpm install --frozen-lockfile
-    - turbo run build --affected
-  only:
-    - merge_requests
+    - npm install --global corepack@latest
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - pnpm install -g turbo@latest
+    - turbo run build --affected --dry=json > affected-packages.json
+    - |
+      if [ "$(jq '.packages | length' affected-packages.json)" -eq 0 ]; then
+        echo "沒有包受到影響，跳過後續步驟"
+        exit 0
+      fi
+    - export AFFECTED_APPS=$(jq -r '.packages[] | select(.location | startswith("apps/")) | .name' affected-packages.json)
+    - export AFFECTED_PACKAGES=$(jq -r '.packages[] | select(.location | startswith("packages/")) | .name' affected-packages.json)
+    - 'echo "受影響的應用程式: $AFFECTED_APPS"'
+    - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
+
+build-docker:
+  stage: build-docker
+  image: docker:latest
+  services:
+    - name: docker:dind
+      command: ['--insecure-registry=192.168.2.40:5005']
+  script:
+    - 'if [ -z "$AFFECTED_APPS" ]; then echo "沒有受影響的應用程式，跳過 Docker 構建"; exit 0; fi'
+    - |
+      for app in $AFFECTED_APPS; do
+        echo "構建 Docker 映像檔: $app"
+        docker build -f ./apps/$app/Dockerfile -t $IMAGE_TAG-$app .
+        docker push $IMAGE_TAG-$app
+      done
+
+deploy-docker:
+  stage: deploy-docker
+  image: debian:bullseye
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
+    - chmod 400 deploy.pem
+    - ssh-add deploy.pem
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+  script:
+    - 'if [ -z "$AFFECTED_APPS" ]; then echo "沒有受影響的應用程式，跳過部署"; exit 0; fi'
+    - |
+      for app in $AFFECTED_APPS; do
+        echo "部署應用程式: $app"
+        ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG-$app && docker run -d --name $app -p 3000:3000 $IMAGE_TAG-$app"
+      done
+
+publish-npm:
+  stage: publish-npm
+  image: node:latest
+  script:
+    - 'if [ -z "$AFFECTED_PACKAGES" ]; then echo "沒有受影響的套件，跳過 NPM 發布"; exit 0; fi'
+    - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
+    - echo "//${CI_SERVER_HOST}/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - |
+      for package in $AFFECTED_PACKAGES; do
+        echo "發布 NPM 套件: $package"
+        cd packages/$package && pnpm publish --no-git-checks && cd -
+      done
