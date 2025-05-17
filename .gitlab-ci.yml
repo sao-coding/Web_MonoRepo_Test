@@ -21,6 +21,7 @@ check-affected:
     - pnpm config set store-dir .pnpm-store
     - pnpm install -g turbo@latest
     - apt-get update && apt-get install -y jq
+    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
   script:
     - turbo run build --affected --dry=json > affected-packages.json
     - |
@@ -86,6 +87,12 @@ deploy-docker:
         echo "部署應用程式: $app"
         ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $IMAGE_TAG-$app && docker run -d --name $app -p 3000:3000 $IMAGE_TAG-$app"
       done
+  needs:
+    - job: check-affected
+      artifacts: true
+    - job: build-docker
+  rules:
+    - if: $AFFECTED_APPS
 
 publish-npm:
   stage: publish-npm
@@ -110,3 +117,8 @@ publish-npm:
         echo "發布 NPM 套件: $package"
         cd packages/$package && pnpm publish --no-git-checks && cd -
       done
+  needs:
+    - job: check-affected
+      artifacts: true
+  rules:
+    - if: $AFFECTED_PACKAGES
