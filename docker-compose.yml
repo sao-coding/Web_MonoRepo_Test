@@ -21,6 +21,28 @@ services:
     networks:
       - msi # 使用名為 "msi" 的 overlay 網絡
 
+  docs:
+    image: 192.168.2.40:5005/msi/monorepo/docs:main # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
+    container_name: msi_stack_docs # 容器名稱
+    environment:
+      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
+      - HOSTNAME=0.0.0.0
+    deploy:
+      replicas: 2 # 設定啟動 2 個副本
+      update_config:
+        parallelism: 1 # 在更新時，一次更新 1 個副本
+        delay: 10s # 每次更新之間等待 10 秒
+        failure_action: rollback # 如果更新失敗，則回滾
+      restart_policy:
+        condition: any # 任何情況下都會重啟容器
+    ports:
+      - target: 3000 # 容器內部的端口設定為 3000
+        published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
+        protocol: tcp # 使用 TCP 協議
+        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
+    networks:
+      - msi # 使用名為 "msi" 的 overlay 網絡
+
 networks:
   msi:
     driver: overlay # 使用 overlay 驅動程式，適合於 Docker Swarm 集群
