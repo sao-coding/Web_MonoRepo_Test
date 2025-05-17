@@ -85,19 +85,10 @@ deploy-docker:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
 
-    # 安全地檢查私鑰格式
-    - echo "檢查 SSH_PRIVATE_KEY 變數是否存在"
-    - if [ -z "$SSH_PRIVATE_KEY" ]; then echo "錯誤: SSH_PRIVATE_KEY 變數為空"; exit 1; fi
-
     # 檢查開頭格式 (僅顯示前 10 個字符)
     - echo "檢查私鑰開頭格式 (前 10 個字符)："
     - echo "${SSH_PRIVATE_KEY}" | head -c 10
     - echo
-
-    # 檢查是否有正確的 BEGIN/END 標記
-    - echo "檢查私鑰格式標記："
-    - echo "${SSH_PRIVATE_KEY}" | grep -E "BEGIN .* PRIVATE KEY" || echo "錯誤: 未找到私鑰開始標記"
-    - echo "${SSH_PRIVATE_KEY}" | grep -E "END .* PRIVATE KEY" || echo "錯誤: 未找到私鑰結束標記"
 
     # 使用常規處理流程
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
