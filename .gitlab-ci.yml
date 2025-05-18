@@ -20,9 +20,9 @@ check-affected:
     - pnpm config set store-dir .pnpm-store
     - pnpm install -g turbo@latest
     - apk update && apk add jq git bash
-    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
+    # - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
   script:
-    - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    # - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - turbo run build --affected --dry=json > affected-packages.json
     - |
       if [ "$(jq '.packages | length' affected-packages.json)" -eq 0 ]; then
