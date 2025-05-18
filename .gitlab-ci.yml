@@ -19,7 +19,7 @@ check-affected:
     - pnpm setup
     - pnpm config set store-dir .pnpm-store
     - pnpm install -g turbo@latest
-    - apt-get update && apt-get install -y jq
+    - apk update && apk add jq git bash
     - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
   script:
     - export TURBO_SCM_BASE=origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
@@ -78,7 +78,7 @@ deploy-docker:
   stage: deploy-docker
   image: alpine:latest
   before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk update && apk add openssh-client bash
     - eval $(ssh-agent -s)
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
     - chmod 400 deploy.pem
