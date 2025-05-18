@@ -73,7 +73,7 @@ build-docker:
     - job: check-affected
       artifacts: true
   rules:
-    - if: '$AFFECTED_PACKAGES =~ /\S+/'
+    - if: '$AFFECTED_APPS =~ /\S+/'
 
 deploy-docker:
   stage: deploy-docker
@@ -105,7 +105,7 @@ deploy-docker:
       artifacts: true
     - job: build-docker
   rules:
-    - if: '$AFFECTED_PACKAGES =~ /\S+/'
+    - if: '$AFFECTED_APPS =~ /\S+/'
 
 publish-npm:
   stage: publish-npm
