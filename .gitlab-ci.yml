@@ -60,7 +60,6 @@ build-docker:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   before_script:
-    # 判斷AFFECTED_APPS是否為空
     - |
       if [ -z "$AFFECTED_APPS" ]; then
         echo "AFFECTED_APPS 為空，跳過構建步驟"
@@ -117,7 +116,6 @@ publish-npm:
   stage: publish-npm
   image: node:lts-alpine3.20
   before_script:
-    # 判斷AFFECTED_PACKAGES是否為空
     - |
       if [ -z "$AFFECTED_PACKAGES" ]; then
         echo "AFFECTED_PACKAGES 為空，跳過發佈步驟"
