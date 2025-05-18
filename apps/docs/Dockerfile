@@ -1,5 +1,5 @@
-# 使用 Node.js 22-slim 作為基礎映像
-FROM node:22-slim AS base
+# 使用 Node.js node:lts-alpine3.20 作為基礎映像
+FROM node:lts-alpine3.20 AS base
 
 # 新增應用名稱參數，預設為
 ARG APP_NAME
@@ -44,21 +44,17 @@ ARG TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
 
-# 印出目錄結構 tree 排除 node_modules .next
-RUN apt-get update && apt-get install -y tree && \
-    tree -a -I 'node_modules|.next' .
-
 # 添加此行來檢查 package.json 中的構建腳本
 RUN cat package.json | grep -A 10 scripts
 
-RUN --mount=type=secret,id=TURBO_TOKEN \
-    if [ -f /run/secrets/TURBO_TOKEN ]; then \
+RUN if [ -n "$TURBO_TOKEN" ]; then \
         echo "Building with TURBO_TOKEN" && \
-        TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN) pnpm build; \
+        pnpm build; \
     else \
         echo "Building without TURBO_TOKEN" && \
         pnpm build --filter=${APP_NAME}; \
     fi
+
 
 # 建立 runner 階段，運行應用程式
 FROM base AS runner

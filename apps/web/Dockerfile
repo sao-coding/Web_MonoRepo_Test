@@ -1,5 +1,9 @@
-# 使用 Node.js 22-slim 作為基礎映像
-FROM node:22-slim AS base
+# 使用 Node.js node:lts-alpine3.20 作為基礎映像
+FROM node:lts-alpine3.20 AS base
+
+# 新增應用名稱參數，預設為
+ARG APP_NAME
+ENV APP_NAME=$APP_NAME
 
 # 設定 pnpm 安裝與核心設定
 FROM base AS pnpm-base
@@ -12,8 +16,8 @@ FROM pnpm-base AS builder
 WORKDIR /builder
 
 # 複製專案檔案並進行修剪
-COPY . . 
-RUN pnpm add -g turbo && turbo prune web --docker
+COPY . .
+RUN pnpm add -g turbo && turbo prune ${APP_NAME} --docker
 
 # 複製 prettier.config.js 到 Docker 映像
 # 確保 prettier.config.js 被複製到最終映像中
@@ -40,22 +44,17 @@ ARG TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
 
-# 印出目錄結構 tree 排除 node_modules .next
-RUN apt-get update && apt-get install -y tree && \
-    tree -a -I 'node_modules|.next' .
-
 # 添加此行來檢查 package.json 中的構建腳本
 RUN cat package.json | grep -A 10 scripts
 
-RUN --mount=type=secret,id=TURBO_TOKEN \
-    if [ -f /run/secrets/TURBO_TOKEN ]; then \
-        echo "Building with TURBO_TOKEN"; \
-        export TURBO_TOKEN=$(cat /run/secrets/TURBO_TOKEN); \
+RUN if [ -n "$TURBO_TOKEN" ]; then \
+        echo "Building with TURBO_TOKEN" && \
         pnpm build; \
     else \
-        echo "Building without TURBO_TOKEN"; \
-        pnpm build --filter=web; \
+        echo "Building without TURBO_TOKEN" && \
+        pnpm build --filter=${APP_NAME}; \
     fi
+
 
 # 建立 runner 階段，運行應用程式
 FROM base AS runner
@@ -67,10 +66,11 @@ RUN addgroup --system --gid 1001 nodejs && \
 USER nextjs 
 
 # 複製所需檔案並設定所有者
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./ 
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
 
 # 開放埠口並啟動應用程式
 EXPOSE 3000
-CMD node apps/web/server.js
+# CMD node apps/web/server.js
+CMD ["sh", "-c", "node apps/${APP_NAME}/server.js"]
