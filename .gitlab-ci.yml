@@ -44,6 +44,7 @@ check-affected:
       else
         echo "AFFECTED_PACKAGES=$AFFECTED_PACKAGES" >> build.env
       fi
+    - cat build.env
   artifacts:
     reports:
       dotenv: build.env
@@ -120,6 +121,7 @@ publish-npm:
     - pnpm config set store-dir .pnpm-store
     - pnpm install -g turbo@latest
   script:
+    - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
     - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
     - echo "//${CI_SERVER_HOST}/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
