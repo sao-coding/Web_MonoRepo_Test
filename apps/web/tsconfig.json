@@ -1,29 +1,24 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
+    "noEmit": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "~/*": [
-        "./public/*"
-      ]
+      "@/*": ["./src/*"],
+      "~/*": ["./public/*"]
     },
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "allowJs": true,
-    "noEmit": true
+    ]
   },
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "extends": "@msi/tsconfig/nextjs.json",
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "postcss.config.mjs",
     "eslint.config.mjs",
     "next-env.d.ts",
     "next.config.js",
