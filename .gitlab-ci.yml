@@ -1,8 +1,8 @@
 stages:
   - check
-  - publish-npm
   - build-docker
   - deploy-docker
+  - publish-npm
 
 check-affected:
   stage: check
