@@ -1,8 +1,8 @@
 stages:
   - check
+  - publish-npm
   - build-docker
   - deploy-docker
-  - publish-npm
 
 check-affected:
   stage: check
@@ -111,6 +111,9 @@ deploy-docker:
     - job: check-affected
       artifacts: true
     - job: build-docker
+  rules:
+    - changes:
+        - apps/**/*
 
 publish-npm:
   stage: publish-npm
