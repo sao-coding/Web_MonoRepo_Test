@@ -59,6 +59,13 @@ build-docker:
     DOCKER_TLS_CERTDIR: ''
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
+  before_script:
+    # 判斷AFFECTED_APPS是否為空
+    - |
+      if [ -z "$AFFECTED_APPS" ]; then
+        echo "AFFECTED_APPS 為空，跳過構建步驟"
+        exit 0
+      fi
   script:
     - echo "Docker 登入"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -110,6 +117,12 @@ publish-npm:
   stage: publish-npm
   image: node:lts-alpine3.20
   before_script:
+    # 判斷AFFECTED_PACKAGES是否為空
+    - |
+      if [ -z "$AFFECTED_PACKAGES" ]; then
+        echo "AFFECTED_PACKAGES 為空，跳過發佈步驟"
+        exit 0
+      fi
     - export SHELL=/bin/bash
     - npm install --global corepack@latest
     - corepack enable
@@ -128,7 +141,8 @@ publish-npm:
     - |
       for package in $AFFECTED_PACKAGES; do
         echo "發布 NPM 套件: $package"
-        cd packages/$package && pnpm publish --no-git-checks && cd -
+          package_dir=$(echo $package | sed 's|^@msi/||')
+          cd packages/$package_dir && pnpm publish --no-git-checks && cd -
       done
   needs:
     - job: check-affected
