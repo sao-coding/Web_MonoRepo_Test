@@ -22,7 +22,8 @@ check-affected:
     - apk update && apk add jq git bash
     # - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
   script:
-    - export TURBO_SCM_BASE=origin/main
+    - export TURBO_SCM_BASE=$(git merge-base main HEAD) # 設定基準提交
+    - export TURBO_SCM_HEAD=HEAD # 設定頭部提交
     - turbo run build --affected --dry=json > affected-packages.json
     - |
       if [ "$(jq '.packages | length' affected-packages.json)" -eq 0 ]; then
