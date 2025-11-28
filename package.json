@@ -48,6 +48,7 @@
       "@prisma/client",
       "@prisma/engines",
       "@tailwindcss/oxide",
+      "core-js-pure",
       "esbuild",
       "prisma",
       "protobufjs",

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import './globals.css'
+import '@msi/ui/globals.css'
 
 import { Providers } from './providers'
 

@@ -8,5 +8,5 @@
   },
   "exclude": ["node_modules"],
   "extends": "@msi/tsconfig/base.json",
-  "include": ["**/*.ts", "eslint.config.mjs"]
+  "include": ["**/*.ts", "eslint.config.ts"]
 }

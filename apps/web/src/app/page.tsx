@@ -1,4 +1,4 @@
-import { Button } from '@msi/ui'
+import { Button } from '@msi/ui/components/button'
 
 const Home = () => {
   return (

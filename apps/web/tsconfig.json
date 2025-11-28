@@ -5,6 +5,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@msi/ui/*": ["../../packages/ui/src/*"],
       "~/*": ["./public/*"]
     },
     "plugins": [
@@ -19,7 +20,7 @@
     "**/*.ts",
     "**/*.tsx",
     "postcss.config.mjs",
-    "eslint.config.mjs",
+    "eslint.config.ts",
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"

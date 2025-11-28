@@ -13,7 +13,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "eslint.config.mjs",
+    "eslint.config.ts",
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"

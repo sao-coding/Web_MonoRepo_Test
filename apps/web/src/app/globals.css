@@ -1,5 +1,0 @@
-@import 'tailwindcss';
-@import '@msi/ui/styles/preset.css';
-@import '@msi/ui/styles/shiki.css';
-@import '@msi/ui/styles/typography.css';
-@source '../../../../packages/ui/src/**/*.{js,jsx,ts,tsx}';
