@@ -56,5 +56,8 @@
       "ttf2woff2",
       "unrs-resolver"
     ]
+  },
+  "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.11"
   }
 }
