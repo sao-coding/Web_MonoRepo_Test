@@ -4,8 +4,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "ui": "@workspace/ui/components",
-    "utils": "@workspace/ui/lib/utils"
+    "ui": "@msi/ui/components",
+    "utils": "@msi/ui/lib/utils"
   },
   "iconLibrary": "lucide",
   "rsc": true,

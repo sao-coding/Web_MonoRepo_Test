@@ -17,7 +17,7 @@
     "start": "turbo start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint",
-    "prepare": "husky && pnpm build:packages",
+    "prepare-fixme": "husky && pnpm build:packages",
     "knip": "knip"
   },
   "devDependencies": {
