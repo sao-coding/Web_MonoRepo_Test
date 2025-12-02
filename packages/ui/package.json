@@ -87,6 +87,7 @@
   },
   "exports": {
     "./globals.css": "./src/styles/globals.css",
+    "./styles/preset.css": "./src/styles/preset.css",
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",

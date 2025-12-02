@@ -1,12 +1,12 @@
 'use client'
 
+import { Button } from '@msi/ui/components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@msi/ui/components/card'
+
+import { Input } from '@msi/ui/components/input'
+import { Label } from '@msi/ui/components/label'
 import { Loader2Icon } from 'lucide-react'
 import { toast } from 'sonner'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
 
 const LoginPage = () => {
