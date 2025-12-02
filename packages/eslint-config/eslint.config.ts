@@ -1,12 +1,5 @@
-import msi from './dist/index.js'
+import { defineConfig } from './src'
 
-export default msi({
-  project: './tsconfig.json',
-  tsconfigRootDir: import.meta.dirname,
-  react: true,
-  next: true,
-  playwright: true,
-  testingLibrary: true,
-  turbo: true,
-  typescript: true
+export default defineConfig({
+    tsconfigRootDir: import.meta.dirname
 })
