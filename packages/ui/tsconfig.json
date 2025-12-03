@@ -6,6 +6,6 @@
     }
   },
   "exclude": ["node_modules", "dist"],
-  "extends": "@msi/tsconfig/react-library.json",
+  "extends": "@msi/typescript-config/react-library.json",
   "include": ["**/*.ts", "**/*.tsx", "eslint.config.ts"]
 }

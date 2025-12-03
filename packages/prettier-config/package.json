@@ -36,7 +36,7 @@
     "prettier": "3.x"
   },
   "devDependencies": {
-    "@msi/tsconfig": "workspace:*",
+    "@msi/typescript-config": "workspace:*",
     "@msi/eslint-config": "workspace:*"
   },
   "publishConfig": {

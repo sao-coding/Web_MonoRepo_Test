@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "@msi/eslint-config": "workspace:*",
-    "@msi/tsconfig": "workspace:*",
+    "@msi/typescript-config": "workspace:*",
     "@msi/utils": "workspace:*",
     "@tailwindcss/postcss": "^4.0.8",
     "@turbo/gen": "^2.4.2",

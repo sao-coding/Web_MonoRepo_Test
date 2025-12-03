@@ -9,7 +9,7 @@
     ]
   },
   "exclude": ["node_modules"],
-  "extends": "@msi/tsconfig/nextjs.json",
+  "extends": "@msi/typescript-config/nextjs.json",
   "include": [
     "**/*.ts",
     "**/*.tsx",

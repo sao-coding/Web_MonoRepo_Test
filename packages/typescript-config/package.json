@@ -1,17 +1,14 @@
 {
-  "name": "@msi/tsconfig",
+  "name": "@msi/typescript-config",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
   "type": "module",
   "files": [
-    "base.json",
-    "nextjs.json",
-    "react-library.json"
+    "./base.json",
+    "./nextjs.json",
+    "./react-library.json"
   ],
-  "devDependencies": {
-    "next": "^15.3.0"
-  },
   "publishConfig": {
     "@msi:registry": "https://gitlab.sao-x.com/api/v4/projects/3/packages/npm/"
   },

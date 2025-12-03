@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/config-inspector": "^1.4.2",
+    "@msi/typescript-config": "workspace:*",
     "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
     "eslint-plugin-format": "^1.0.2",
