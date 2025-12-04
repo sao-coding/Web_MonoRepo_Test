@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
+import { PageBreadcrumb } from '@msi/ui/components/layout/breadcrumb/page-breadcrumb'
+import { AppSidebar } from '@msi/ui/components/layout/sidebar/app-sidebar'
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from 'sonner'
 import Banner from '@/components/banner'
+import { BREADCRUMB_LABELS } from '../../config/breadcrumb'
+import { getSidebarItems } from '../../config/sidebar'
 import Providers from './providers'
 import './globals.css'
 
@@ -27,6 +31,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Since this is a server component, we can't use usePathname here.
+  // We will pass the sidebar items directly to the client component.
+  // For the purpose of this layout, we'll fetch the default sidebar items.
+  // A more advanced implementation might involve a context or a different layout structure
+  // if the sidebar needs to be dynamically updated based on client-side navigation
+  // without a full page reload.
+  const sidebarItems = getSidebarItems('/') // Default to root path for the main layout
+
   return (
     <html lang="zh-TW" suppressHydrationWarning>
       <body
@@ -41,8 +53,16 @@ export default function RootLayout({
         >
           <NuqsAdapter>
             <Providers>
-              <Banner />
-              {children}
+              <div className="flex">
+                <AppSidebar items={sidebarItems} />
+                <div className="flex-1 flex flex-col">
+                  <Banner />
+                  <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <PageBreadcrumb labels={BREADCRUMB_LABELS} />
+                    {children}
+                  </main>
+                </div>
+              </div>
               <Toaster richColors />
             </Providers>
           </NuqsAdapter>
