@@ -1,0 +1,39 @@
+{
+  "name": "@monorepo/hooks",
+  "version": "0.1.0",
+  "private": false,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build_darf": "tsup src/index.ts --format cjs,esm --dts",
+    "clean_darf": "rimraf dist",
+    "prepare_darf": "pnpm build",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "react": "^18.2.0",
+    "@types/react": "^18.2.21",
+    "@types/js-cookie": "^3.0.2",
+    "typescript": "^5.4.0",
+    "eslint": "^8.0.0"
+  },
+  "license": "MIT"
+}

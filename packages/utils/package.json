@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@msi/eslint-config": "workspace:*",
-    "@msi/tsconfig": "workspace:*",
+    "@msi/typescript-config": "workspace:*",
     "@types/node": "^22.13.5"
   },
   "publishConfig": {

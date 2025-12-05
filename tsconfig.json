@@ -1,5 +1,5 @@
 {
   "exclude": ["apps/**", "packages/**"],
-  "extends": "@msi/tsconfig/base.json",
-  "include": ["**/*.ts", "apps/storybook/src/stories/Button.stories.tsqweqwe"]
+  "extends": "@msi/typescript-config/base.json",
+  "include": ["**/*.ts", "apps/storybook/src/stories/Button.stories.ts"]
 }

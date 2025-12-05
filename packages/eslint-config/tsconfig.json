@@ -1,12 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
-  },
-  "exclude": ["node_modules"],
-  "extends": "@msi/tsconfig/base.json",
-  "include": ["**/*.ts", "eslint.config.ts"]
+  "extends": "@msi/typescript-config/base.json",
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*.ts", "eslint-inspector.config.ts"]
 }

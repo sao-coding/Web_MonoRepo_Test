@@ -1,69 +1,57 @@
 {
   "name": "@msi/eslint-config",
-  "version": "0.0.0",
-  "description": "The eslint config for msi projects",
+  "version": "1.0.0",
+  "description": "ESLint configuration for Next.js, React, TypeScript, and Tailwind CSS projects",
+  "keywords": ["eslint", "eslint-config", "nextjs", "react", "typescript", "tailwindcss", "import-sort"],
   "license": "MIT",
-  "author": "tszhong0411 <me@honghong.me> (https://github.com/tszhong0411/)",
-  "homepage": "https://github.com/tszhong0411/honghong.me#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tszhong0411/honghong.me.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tszhong0411/honghong.me/issues"
-  },
+  "author": "sao-coding",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "exports": {
+    "import": "./dist/index.mjs",
+    "types": "./dist/index.d.mts"
+  },
+  "files": ["dist"],
   "scripts": {
-    "build": "tsup",
-    "clean": "rm -rf .turbo dist",
-    "dev": "concurrently \"tsup --watch\" \"eslint-config-inspector\"",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "dev:inspector": "eslint-config-inspector --config eslint-inspector.config.ts",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit"
   },
-  "types": "./dist/index.d.ts",
   "dependencies": {
-    "@eslint-react/eslint-plugin": "^1.28.0",
-    "@eslint/js": "^9.21.0",
-    "@next/eslint-plugin-next": "^15.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.25.0",
-    "@typescript-eslint/parser": "^8.25.0",
-    "concurrently": "^9.1.2",
+    "@eslint-react/eslint-plugin": "^2.3.5",
+    "@eslint/js": "^9.39.1",
+    "@next/eslint-plugin-next": "^16.0.3",
+    "@prettier/plugin-xml": "^3.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "eslint-config-flat-gitignore": "^2.1.0",
-    "eslint-config-prettier": "^10.0.2",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-import": "^2.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-better-tailwindcss": "^3.7.10",
+    "eslint-plugin-import-lite": "^0.3.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-playwright": "^2.2.0",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-sonarjs": "^3.0.2",
-    "eslint-plugin-tailwindcss": "^3.18.0",
-    "eslint-plugin-testing-library": "^7.1.1",
-    "eslint-plugin-turbo": "^2.4.4",
-    "eslint-plugin-unicorn": "^57.0.0",
-    "eslint-plugin-unused-imports": "^4.1.4",
-    "globals": "^16.0.0",
-    "local-pkg": "^1.1.0"
-  },
-  "peerDependencies": {
-    "eslint": "^9.20.0"
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "globals": "^16.5.0",
+    "local-pkg": "^1.1.2",
+    "prettier-plugin-toml": "^2.0.1"
   },
   "devDependencies": {
-    "@eslint/config-inspector": "^1.0.1",
-    "@msi/tsconfig": "workspace:*",
-    "eslint": "^9.21.0"
+    "@eslint/config-inspector": "^1.4.2",
+    "@msi/typescript-config": "workspace:*",
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-format": "^1.0.2",
+    "tsdown": "^0.17.0-beta.4",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0"
   },
   "publishConfig": {
-    "@msi:registry": "https://gitlab.sao-x.com/api/v4/projects/3/packages/npm/"
-  },
-  "lint-staged": {
-    "*.{cjs,mjs,js,jsx,cts,mts,ts,tsx,json}": "eslint --fix"
+    "access": "public"
   }
 }

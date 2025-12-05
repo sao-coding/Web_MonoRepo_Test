@@ -1,0 +1,62 @@
+{
+  "name": "rd-ai-city",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "start:dev": "next start -H 10.16.20.11 -p 3006",
+    "start:stg": "next start -H 10.16.20.12 -p 3006",
+    "start:prod": "next start -H 10.16.20.36 -p 3006",
+    "start:pm2": "pm2 start pnpm --name 'rd-ai-city' -- start -H 10.16.20.11 -p 3006",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix .",
+    "cz": "cross-env NODE_OPTIONS=\"--experimental-transform-types --disable-warning=ExperimentalWarning\" czg",
+    "commit": "pnpm cz",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.83.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.525.0",
+    "motion": "^12.23.0",
+    "next": "15.3.5",
+    "next-themes": "^0.4.6",
+    "nuqs": "^2.4.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^3.1.2",
+    "sonner": "^2.0.6",
+    "tailwind-merge": "^3.3.1",
+    "tw-animate-css": "^1.3.5"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.2.1",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint-react/eslint-plugin": "^1.52.2",
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20.19.4",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "cross-env": "^7.0.3",
+    "cspell": "^8.19.4",
+    "czg": "^1.11.2",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "15.3.5",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "*.{cjs,mjs,js,jsx,cts,mts,ts,tsx,json}": "eslint --fix"
+  }
+}
