@@ -58,11 +58,10 @@ const UserMenu = () => {
                       type="button"
                       className="flex w-full items-center gap-2"
                       onClick={async () => {
-                        // console.log('logout')
                         const status = logout()
                         if (status) {
                           toast.success('登出成功')
-                          window.location.href = process.env.NEXT_PUBLIC_BASE_PATH_URL as string
+                          window.location.href = '/login'
                         }
                         else {
                           toast.error('登出失敗，請稍後再試')
