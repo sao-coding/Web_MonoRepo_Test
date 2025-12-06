@@ -1,3 +1,3 @@
-import msi from '@msi/prettier-config'
+// import msi from '@msi/prettier-config'
 
-export default msi()
+// export default msi()
