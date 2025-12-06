@@ -1,6 +1,7 @@
 'use client'
 
 import Cookies from 'js-cookie'
+import * as React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 /**
@@ -74,6 +75,10 @@ const getCookieDomain = () => {
 }
 
 export const useAuth = (): UseAuthReturn => {
+  // Log React version to debug "Invalid hook call"
+  // eslint-disable-next-line no-console
+  console.log('[@msi/hooks] React version:', React.version)
+
   const [user, setUser] = useState<User | null>(null)
   const [status, setStatus] = useState<AuthStatus>('initializing')
   const [error, setError] = useState<string | null>(null)

@@ -1,39 +1,40 @@
 {
-  "name": "@monorepo/hooks",
-  "version": "0.1.0",
-  "private": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "name": "@msi/hooks",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "clean": "rm -rf .turbo dist",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "js-cookie": "^3.0.5"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@msi/eslint-config": "workspace:*",
+    "@types/js-cookie": "^3.0.2",
+    "typescript": "^5.4.0",
+    "eslint": "^8.0.0"
+  },
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     }
   },
-  "scripts": {
-    "build_darf": "tsup src/index.ts --format cjs,esm --dts",
-    "clean_darf": "rimraf dist",
-    "prepare_darf": "pnpm build",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "typecheck": "tsc --noEmit"
-  },
-  "peerDependencies": {
-    "react": ">=18"
-  },
-  "dependencies": {
-    "js-cookie": "^3.0.5"
-  },
-  "devDependencies": {
-    "react": "^18.2.0",
-    "@types/react": "^18.2.21",
-    "@types/js-cookie": "^3.0.2",
-    "typescript": "^5.4.0",
-    "eslint": "^8.0.0"
-  },
+  "types": "./dist/index.d.ts",
   "license": "MIT"
 }
