@@ -31,7 +31,7 @@ export function PageBreadcrumb({ labels }: PageBreadcrumbProps) {
       <BreadcrumbList>
         {/* 首页链接 */}
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href={process.env.NEXT_PUBLIC_BASE_PATH_URL || '/pcb'}>
+          <BreadcrumbLink href={process.env.NEXT_PUBLIC_BASE_PATH_URL || '/'}>
             首頁
           </BreadcrumbLink>
         </BreadcrumbItem>
