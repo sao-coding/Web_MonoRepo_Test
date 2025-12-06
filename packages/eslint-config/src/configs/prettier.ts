@@ -11,6 +11,7 @@ import {
   GLOB_MARKDOWN,
   GLOB_POSTCSS,
   GLOB_SCSS,
+  GLOB_SRC,
   GLOB_SVG,
   GLOB_TOML,
   GLOB_XML,
@@ -66,6 +67,23 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     name: 'eslint-config/prettier/setup',
     plugins: {
       format: formatPlugin
+    }
+  },
+  {
+    name: 'eslint-config/prettier/source',
+    files: [GLOB_SRC],
+    languageOptions: {
+      parser: parserPlain
+    },
+    rules: {
+      'format/prettier': [
+        'error',
+        {
+          ...prettierBaseOptions,
+          parser: 'typescript'
+        }
+      ],
+      ...overrides
     }
   },
   {
