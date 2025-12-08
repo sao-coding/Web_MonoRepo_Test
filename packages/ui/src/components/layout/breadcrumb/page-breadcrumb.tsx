@@ -11,52 +11,86 @@ import {
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-interface PageBreadcrumbProps {
-  labels: Record<string, string>;
+export interface BreadcrumbConfig {
+  key: string
+  title: string
+  children: BreadcrumbConfig[]
 }
 
-export function PageBreadcrumb({ labels }: PageBreadcrumbProps) {
-  const pathname = usePathname()
-  // 移除 basePath (如 /pcb) 并分割路径
-  const pathWithoutBase = pathname.replace(/^\/pcb/, '') || '/'
-  const segments = pathWithoutBase.split('/').filter(Boolean)
+interface BreadcrumbSegment {
+  key: string
+  title: string
+  href: string
+  isLast: boolean
+}
 
-  // 如果没有 segments，不显示面包屑
-  if (segments.length === 0) {
-    return null
+export const PageBreadcrumb = ({ config }: { config: BreadcrumbConfig }) => {
+  const pathname = usePathname()
+
+  /**
+   * 構建標題映射表(扁平化結構,提升查找性能)
+   */
+  function buildTitleMap(config: BreadcrumbConfig): Map<string, string> {
+    const map = new Map<string, string>()
+
+    function traverse(node: BreadcrumbConfig) {
+      map.set(node.key, node.title)
+      node.children?.forEach(traverse)
+    }
+
+    traverse(config)
+    return map
   }
+
+  /**
+   * 生成麵包屑路徑段
+   */
+  function generateBreadcrumbSegments(
+    segments: string[],
+    titleMap: Map<string, string>
+  ): BreadcrumbSegment[] {
+    return segments.map((segment, index) => ({
+      key: segment,
+      title: titleMap.get(segment) || segment,
+      href: segments.slice(0, index + 1).join('/'),
+      isLast: index === segments.length - 1
+    }))
+  }
+
+  // React 19 編譯器會自動優化這些計算
+  const segments = pathname.split('/').filter(Boolean)
+  const titleMap = buildTitleMap(config)
+  const breadcrumbSegments = generateBreadcrumbSegments(segments, titleMap)
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {/* 首页链接 */}
+        {/* 首頁鏈接 */}
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href={process.env.NEXT_PUBLIC_BASE_PATH_URL || '/'}>
+          <BreadcrumbLink href={'/'}>
             首頁
           </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator className="hidden md:block" />
 
-        {/* 路径段 */}
-        {segments.map((segment, index) => {
-          // 构建正确的 href，包含 basePath
-          const href = '/pcb/' + segments.slice(0, index + 1).join('/')
-          const isLast = index === segments.length - 1
-          const label = labels[segment] || segment
+        {breadcrumbSegments.length > 0 && (
+          <BreadcrumbSeparator className="hidden md:block" />
+        )}
 
-          return (
-            <React.Fragment key={href}>
-              <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage>{label}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator />}
-            </React.Fragment>
-          )
-        })}
+        {/* 路徑段 */}
+        {breadcrumbSegments.map((segment, index) => (
+          <React.Fragment key={segment.href}>
+            <BreadcrumbItem>
+              {segment.isLast ? (
+                <BreadcrumbPage>{segment.title}</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink href={segment.href}>
+                  {segment.title}
+                </BreadcrumbLink>
+              )}
+            </BreadcrumbItem>
+            {!segment.isLast && <BreadcrumbSeparator />}
+          </React.Fragment>
+        ))}
       </BreadcrumbList>
     </Breadcrumb>
   )
