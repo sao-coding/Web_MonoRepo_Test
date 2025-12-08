@@ -10,15 +10,39 @@
  *
  * 若要新增路徑標籤，只需在此物件中加入 "路徑段: 顯示名稱" 即可。
  */
-export const BREADCRUMB_LABELS: { [key: string]: string } = {
-  admin: '後台',
-  posts: '文章列表',
-  categories: '分類',
-  dashboard: '儀表板',
-  editor: '編輯器',
-  exports: '匯出',
-  analysis: '系統數據分析',
-  usagerate: '使用率分析',
-  clickrate: '點擊率分析',
-  pcb: 'PCB',
+// export const BREADCRUMB_LABELS: { [key: string]: string } = {
+//   admin: '後台',
+//   posts: '文章列表',
+//   categories: '分類',
+//   dashboard: '儀表板',
+//   editor: '編輯器',
+//   exports: '匯出',
+//   analysis: '系統數據分析',
+//   usagerate: '使用率分析',
+//   clickrate: '點擊率分析',
+//   pcb: 'PCB',
+// }
+import {BreadcrumbConfig} from "@msi/ui/components/layout/breadcrumb/page-breadcrumb";
+
+export const BREADCRUMB_CONFIG: BreadcrumbConfig = {
+  key: 'analysis',
+  title: '系統數據分析',
+  children: [
+    {
+      key: 'usagerate',
+      title: '使用率分析',
+      children: [
+        {
+          key: 'detail',
+          title: '詳細資料',
+          children: []
+        }
+      ]
+    },
+    {
+      key: 'clickrate',
+      title: '點擊率分析',
+      children: []
+    }
+  ]
 }
