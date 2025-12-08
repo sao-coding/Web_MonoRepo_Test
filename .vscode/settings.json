@@ -7,7 +7,7 @@
     "source.organizeImports": "never"
   },
 
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
 
   "eslint.runtime": "node",
   "eslint.useFlatConfig": true,

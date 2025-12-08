@@ -2,7 +2,15 @@
   "name": "@msi/eslint-config",
   "version": "1.0.0",
   "description": "ESLint configuration for Next.js, React, TypeScript, and Tailwind CSS projects",
-  "keywords": ["eslint", "eslint-config", "nextjs", "react", "typescript", "tailwindcss", "import-sort"],
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "nextjs",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "import-sort"
+  ],
   "license": "MIT",
   "author": "sao-coding",
   "type": "module",
@@ -10,7 +18,9 @@
     "import": "./dist/index.mjs",
     "types": "./dist/index.d.mts"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -35,6 +45,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.3.0",
+    "eslint-plugin-format": "^1.0.2",
     "globals": "^16.5.0",
     "local-pkg": "^1.1.2",
     "prettier-plugin-toml": "^2.0.1"
@@ -44,7 +55,6 @@
     "@msi/typescript-config": "workspace:*",
     "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
-    "eslint-plugin-format": "^1.0.2",
     "tsdown": "^0.17.0-beta.4",
     "typescript": "^5.7.2"
   },
