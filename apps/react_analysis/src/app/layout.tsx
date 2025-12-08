@@ -15,7 +15,7 @@ import { ThemeProvider } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 
-import { BREADCRUMB_LABELS } from "../../config/breadcrumb";
+import { BREADCRUMB_CONFIG } from "../../config/breadcrumb";
 import { SIDEBAR_CONFIG } from "../../config/sidebar";
 
 import Providers from "./providers";
@@ -47,7 +47,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="leight"
+          defaultTheme="light"
           // enableSystem
           enableColorScheme
           disableTransitionOnChange
@@ -62,7 +62,7 @@ export default function RootLayout({
                       <SidebarTrigger className="-ml-1" />
                     </header>
                     <main className="container mx-auto flex-1 p-4 sm:px-6 lg:px-8">
-                      <PageBreadcrumb labels={BREADCRUMB_LABELS} />
+                      <PageBreadcrumb config={BREADCRUMB_CONFIG} />
                       {children}
                     </main>
                     <Footer />
