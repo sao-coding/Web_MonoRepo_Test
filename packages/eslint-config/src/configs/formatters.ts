@@ -11,38 +11,12 @@ import {
   GLOB_MARKDOWN,
   GLOB_POSTCSS,
   GLOB_SCSS,
-  GLOB_SRC,
   GLOB_SVG,
   GLOB_TOML,
   GLOB_XML,
   GLOB_YAML
 } from '../globs'
 import { formatPlugin } from '../plugins'
-
-/**
- * Plain text parser for non-JS/TS files
- * Treats file content as a single string, allowing Prettier to format it
- */
-const parserPlain = {
-  meta: {
-    name: 'parser-plain'
-  },
-  parseForESLint: (code: string) => ({
-    ast: {
-      type: 'Program',
-      loc: { start: 0, end: code.length },
-      range: [0, code.length],
-      body: [],
-      comments: [],
-      tokens: []
-    },
-    services: {},
-    scopeManager: null,
-    visitorKeys: {
-      Program: []
-    }
-  })
-}
 
 const prettierBaseOptions = {
   arrowParens: 'always',
@@ -62,35 +36,18 @@ const xmlOptions = {
   xmlWhitespaceSensitivity: 'ignore'
 }
 
-export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
+export const formatters = (overrides?: RuleOverrides): FlatConfig[] => [
   {
-    name: 'eslint-config/prettier/setup',
+    name: '@msi/prettier/setup',
     plugins: {
       format: formatPlugin
     }
   },
   {
-    name: 'eslint-config/prettier/source',
-    files: [GLOB_SRC],
-    languageOptions: {
-      parser: parserPlain
-    },
-    rules: {
-      'format/prettier': [
-        'error',
-        {
-          ...prettierBaseOptions,
-          parser: 'typescript'
-        }
-      ],
-      ...overrides
-    }
-  },
-  {
-    name: 'eslint-config/prettier/css',
+    name: '@msi/prettier/css',
     files: [GLOB_CSS, GLOB_POSTCSS],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -104,10 +61,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/scss',
+    name: '@msi/prettier/scss',
     files: [GLOB_SCSS],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -121,10 +78,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/less',
+    name: '@msi/prettier/less',
     files: [GLOB_LESS],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -138,10 +95,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/html',
+    name: '@msi/prettier/html',
     files: [GLOB_HTML],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -155,10 +112,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/json',
+    name: '@msi/prettier/json',
     files: [GLOB_JSON],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -172,10 +129,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/json5',
+    name: '@msi/prettier/json5',
     files: [GLOB_JSON5],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -190,10 +147,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/jsonc',
+    name: '@msi/prettier/jsonc',
     files: [GLOB_JSONC],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -208,10 +165,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/markdown',
+    name: '@msi/prettier/markdown',
     files: [GLOB_MARKDOWN],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -226,10 +183,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/yaml',
+    name: '@msi/prettier/yaml',
     files: [GLOB_YAML],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -243,10 +200,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/toml',
+    name: '@msi/prettier/toml',
     files: [GLOB_TOML],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -261,10 +218,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/xml',
+    name: '@msi/prettier/xml',
     files: [GLOB_XML],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -280,10 +237,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/svg',
+    name: '@msi/prettier/svg',
     files: [GLOB_SVG],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
@@ -299,10 +256,10 @@ export const prettier = (overrides?: RuleOverrides): FlatConfig[] => [
     }
   },
   {
-    name: 'eslint-config/prettier/graphql',
+    name: '@msi/prettier/graphql',
     files: [GLOB_GRAPHQL],
     languageOptions: {
-      parser: parserPlain
+      parser: formatPlugin.parserPlain
     },
     rules: {
       'format/prettier': [
