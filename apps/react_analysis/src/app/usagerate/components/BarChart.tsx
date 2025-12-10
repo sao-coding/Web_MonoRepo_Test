@@ -38,24 +38,24 @@ const COLORS = [
   '#F97316', // 深橙色
   '#84CC16', // 萊姆綠
   '#EC4899', // 粉紅色
-  '#6B7280', // 灰色
+  '#6B7280' // 灰色
 ]
 
 export default function BarChartComponent({ filters, chartData, loading, error }: BarChartComponentProps) {
   const [activeTab] = useState<'bar' | 'pie'>('bar') // tab 狀態，預設為長條圖
   // 自定義 Tooltip
   const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-semibold text-gray-800">{data.fullName}</p>
-          <p className="text-blue-600">
+        <div className='rounded-lg border border-gray-200 bg-white p-3 shadow-lg'>
+          <p className='font-semibold text-gray-800'>{data.fullName}</p>
+          <p className='text-blue-600'>
             數量:
             {' '}
             {data.value.toLocaleString()}
           </p>
-          <p className="text-green-600">
+          <p className='text-green-600'>
             比例:
             {' '}
             {data.percent}
@@ -78,14 +78,14 @@ export default function BarChartComponent({ filters, chartData, loading, error }
     })
 
     return (
-      <div className="grid grid-cols-4 gap-2 mt-4 text-sm">
+      <div className='mt-4 grid grid-cols-4 gap-2 text-sm'>
         {sortedPayload.map((entry: any, index: number) => (
-          <div key={`legend-${index}`} className="flex items-center space-x-2">
+          <div key={`legend-${index}`} className='flex items-center space-x-2'>
             <div
-              className="w-3 h-3 rounded-sm"
+              className='size-3 rounded-sm'
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-gray-700 truncate" title={entry.payload.fullName}>
+            <span className='truncate text-gray-700' title={entry.payload.fullName}>
               {entry.payload.name}
               {' '}
               (
@@ -100,9 +100,9 @@ export default function BarChartComponent({ filters, chartData, loading, error }
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className='rounded-lg bg-white p-6 shadow-sm'>
+        <div className='flex h-96 items-center justify-center'>
+          <div className='size-12 animate-spin rounded-full border-b-2 border-blue-500'></div>
         </div>
       </div>
     )
@@ -110,10 +110,10 @@ export default function BarChartComponent({ filters, chartData, loading, error }
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-center h-96">
-          <div className="text-red-500 text-center">
-            <p className="text-lg font-semibold mb-2">載入失敗</p>
+      <div className='rounded-lg bg-white p-6 shadow-sm'>
+        <div className='flex h-96 items-center justify-center'>
+          <div className='text-center text-red-500'>
+            <p className='mb-2 text-lg font-semibold'>載入失敗</p>
             <p>{error}</p>
           </div>
         </div>
@@ -122,15 +122,15 @@ export default function BarChartComponent({ filters, chartData, loading, error }
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-bold text-gray-800 flex items-center">
-          <span className="w-3 h-3 bg-black rounded-full mr-2"></span>
+    <div className='rounded-lg bg-white p-6 shadow-sm'>
+      <div className='mb-4'>
+        <h3 className='flex items-center text-lg font-bold text-gray-800'>
+          <span className='mr-2 size-3 rounded-full bg-black'></span>
           {filters.FunctionMode === 'SystemCentric'
             ? '系統使用率分布'
             : '部門使用率分布'}
         </h3>
-        <div className="text-sm text-gray-600 mt-1">
+        <div className='mt-1 text-sm text-gray-600'>
           分析模式：
           {filters.FunctionMode === 'SystemCentric'
             ? '以系統為中心，分析各系統的使用情況'
@@ -144,26 +144,26 @@ export default function BarChartComponent({ filters, chartData, loading, error }
               {activeTab === 'bar'
                 ? (
                     <div style={{ width: '100%', height: '600px' }}>
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width='100%' height='100%'>
                         <BarChart
                           data={chartData}
                           margin={{
                             top: 20,
                             right: 30,
                             left: 20,
-                            bottom: 100,
+                            bottom: 100
                           }}
                         >
                           <XAxis
-                            dataKey="name"
+                            dataKey='name'
                             angle={-45}
-                            textAnchor="end"
+                            textAnchor='end'
                             height={100}
                             fontSize={12}
                           />
                           <YAxis fontSize={12} />
                           <Tooltip content={<CustomTooltip />} />
-                          <Bar dataKey="value" name="數量">
+                          <Bar dataKey='value' name='數量'>
                             {chartData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
@@ -174,14 +174,14 @@ export default function BarChartComponent({ filters, chartData, loading, error }
                   )
                 : (
                     <div style={{ width: '100%', height: '800px' }}>
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width='100%' height='100%'>
                         <PieChart>
                           <Pie
                             data={chartData}
-                            cx="50%"
-                            cy="50%"
+                            cx='50%'
+                            cy='50%'
                             outerRadius={250}
-                            dataKey="value"
+                            dataKey='value'
                             labelLine={false}
                           >
                             {chartData.map((entry, index) => (
@@ -197,8 +197,8 @@ export default function BarChartComponent({ filters, chartData, loading, error }
             </div>
           )
         : (
-            <div className="flex items-center justify-center h-96">
-              <p className="text-gray-500">暫無數據</p>
+            <div className='flex h-96 items-center justify-center'>
+              <p className='text-gray-500'>暫無數據</p>
             </div>
           )}
     </div>

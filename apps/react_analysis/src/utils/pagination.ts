@@ -8,7 +8,7 @@
 export function getPaginationRange(
   totalPages: number,
   currentPage: number,
-  maxVisible: number = 5,
+  maxVisible = 5
 ): number[] {
   if (totalPages <= maxVisible) {
     return Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -36,7 +36,7 @@ export function getPaginationRange(
 export function shouldShowEllipsis(
   totalPages: number,
   currentPage: number,
-  maxVisible: number = 5,
+  maxVisible = 5
 ): { showStartEllipsis: boolean, showEndEllipsis: boolean } {
   if (totalPages <= maxVisible) {
     return { showStartEllipsis: false, showEndEllipsis: false }
@@ -54,6 +54,6 @@ export function shouldShowEllipsis(
   }
   return {
     showStartEllipsis: start > 1,
-    showEndEllipsis: end < totalPages,
+    showEndEllipsis: end < totalPages
   }
 }

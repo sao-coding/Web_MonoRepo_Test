@@ -11,7 +11,7 @@ export default defineConfig({
     '.git/objects',
     '.vscode',
     '.vscode-insiders',
-    'package.json',
+    'package.json'
   ],
-  useGitignore: true,
+  useGitignore: true
 })
