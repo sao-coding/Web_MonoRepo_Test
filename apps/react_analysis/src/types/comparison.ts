@@ -139,6 +139,4 @@ export interface GraphicsCardData {
   GraphicsFeatures?: GraphicsFeatures | null
 }
 
-export interface GPUComparison {
-  [key: string]: GraphicsCardData | null
-}
+export type GPUComparison = Record<string, GraphicsCardData | null>;

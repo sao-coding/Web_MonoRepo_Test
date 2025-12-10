@@ -19,6 +19,7 @@
   "dependencies": {
     "@msi/hooks": "workspace:*",
     "@msi/ui": "workspace:*",
+    "@msi/auth": "workspace:*",
     "@tanstack/react-query": "^5.83.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

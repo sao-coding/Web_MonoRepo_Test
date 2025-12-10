@@ -3,7 +3,7 @@ import { defineConfig } from 'czg'
 export default defineConfig({
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'scope-enum': [2, 'always', ['release']],
+    'scope-enum': [2, 'always', ['release']]
   },
   prompt: {
     alias: { fd: 'docs: 修正錯字' },
@@ -17,7 +17,7 @@ export default defineConfig({
       footerPrefixesSelect: '選擇關聯 issue 前綴（可選）:',
       customFooterPrefix: '輸入自訂 issue 前綴 :',
       footer: '列舉關聯 issue (可選)，例如: #31, #I3244 :\n',
-      confirmCommit: '是否提交或修改 commit ?',
+      confirmCommit: '是否提交或修改 commit ?'
     },
     types: [
       { value: 'feat', name: 'feat:     新增功能 | A new feature' },
@@ -25,30 +25,30 @@ export default defineConfig({
       { value: 'docs', name: 'docs:     文件更新 | Documentation only changes' },
       {
         value: 'style',
-        name: 'style:    代碼格式 | Changes that do not affect the meaning of the code',
+        name: 'style:    代碼格式 | Changes that do not affect the meaning of the code'
       },
       {
         value: 'refactor',
-        name: 'refactor: 代碼重構 | A code change that neither fixes a bug nor adds a feature',
+        name: 'refactor: 代碼重構 | A code change that neither fixes a bug nor adds a feature'
       },
       { value: 'perf', name: 'perf:     性能提升 | A code change that improves performance' },
       {
         value: 'test',
-        name: 'test:     測試相關 | Adding missing tests or correcting existing tests',
+        name: 'test:     測試相關 | Adding missing tests or correcting existing tests'
       },
       {
         value: 'build',
-        name: 'build:    構建相關 | Changes that affect the build system or external dependencies',
+        name: 'build:    構建相關 | Changes that affect the build system or external dependencies'
       },
       {
         value: 'ci',
-        name: 'ci:       持續集成 | Changes to our CI configuration files and scripts',
+        name: 'ci:       持續集成 | Changes to our CI configuration files and scripts'
       },
       { value: 'revert', name: 'revert:   回退代碼 | Revert to a commit' },
       {
         value: 'chore',
-        name: 'chore:    其他修改 | Other changes that do not modify src or test files',
-      },
+        name: 'chore:    其他修改 | Other changes that do not modify src or test files'
+      }
     ],
     useEmoji: false,
     emojiAlign: 'center',
@@ -73,7 +73,7 @@ export default defineConfig({
     skipQuestions: [],
     issuePrefixes: [
       { value: 'link', name: 'link:     連結 ISSUES 進行中' },
-      { value: 'closed', name: 'closed:   標記 ISSUES 已完成' },
+      { value: 'closed', name: 'closed:   標記 ISSUES 已完成' }
     ],
     customIssuePrefixAlign: 'top',
     emptyIssuePrefixAlias: 'skip',
@@ -85,6 +85,6 @@ export default defineConfig({
     defaultBody: '',
     defaultIssues: '',
     defaultScope: '',
-    defaultSubject: '',
-  },
+    defaultSubject: ''
+  }
 })

@@ -25,20 +25,20 @@ export function Loading({
   size = 'medium',
   fullPage = false,
   overlay = true,
-  transparent = false,
+  transparent = false
 }: LoadingProps) {
   // 根據尺寸設定圖標大小
   const iconSize = {
     small: 16,
     medium: 24,
-    large: 40,
+    large: 40
   }[size]
 
   // 根據尺寸設定文字大小
   const textSize = {
     small: 'text-xs',
     medium: 'text-sm',
-    large: 'text-base',
+    large: 'text-base'
   }[size]
 
   // 根據是否為全頁模式設置定位和尺寸
@@ -60,20 +60,20 @@ export function Loading({
   return (
     <AnimatePresence>
       <motion.div
-        className="flex items-center justify-center"
+        className='flex items-center justify-center'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
         <motion.div
-          className="flex flex-col items-center gap-2 rounded-lg p-4"
+          className='flex flex-col items-center gap-2 rounded-lg p-4'
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <Loader2 className="animate-spin" size={iconSize} />
+          <Loader2 className='animate-spin' size={iconSize} />
           {text && <p className={`${textSize} text-gray-600`}>{text}</p>}
         </motion.div>
       </motion.div>

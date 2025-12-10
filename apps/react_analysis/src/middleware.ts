@@ -1,4 +1,5 @@
 import type { NextRequest } from 'next/server'
+
 import { NextResponse } from 'next/server'
 
 export const middleware = async (request: NextRequest) => {
@@ -6,8 +7,8 @@ export const middleware = async (request: NextRequest) => {
   requestHeaders.set('x-url', request.url)
   const response = NextResponse.next({
     request: {
-      headers: requestHeaders,
-    },
+      headers: requestHeaders
+    }
   })
 
   // 取得請求的來源
@@ -25,7 +26,7 @@ export const middleware = async (request: NextRequest) => {
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
       status: 200,
-      headers: response.headers,
+      headers: response.headers
     })
   }
 
@@ -33,5 +34,5 @@ export const middleware = async (request: NextRequest) => {
 }
 
 export const config = {
-  matcher: ['/((?!_next).*)'], // 排除 _next 路徑
+  matcher: ['/((?!_next).*)'] // 排除 _next 路徑
 }

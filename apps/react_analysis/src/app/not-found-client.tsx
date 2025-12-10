@@ -6,7 +6,7 @@ export default function NotFoundClient() {
   return (
     <div style={{ textAlign: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '100px 50px', gridGap: '100px' }}>
-        <Image src={`${process.env.NEXT_PUBLIC_BASE_PATH_URL}/images/lucky_sorry.jpg`} width={280} height={280} alt="Sorry" />
+        <Image src={`${process.env.NEXT_PUBLIC_BASE_PATH_URL}/images/lucky_sorry.jpg`} width={280} height={280} alt='Sorry' />
         <div>
           <span style={{ marginBottom: '10px', display: 'block', color: '#FF0000', fontWeight: 'bolder', fontSize: '48px' }}>連線失敗!!</span>
           <span style={{ marginBottom: '10px', display: 'block', fontWeight: 'bolder', fontSize: '32px' }}>載入頁面時與伺服器連線失敗。</span>
@@ -17,7 +17,7 @@ export default function NotFoundClient() {
           <div style={{ display: 'flex', alignItems: 'center', gridGap: '5px', fontSize: '18px' }}>
             <span>若您有任何問題，請洽</span>
             <span>數位平台發展部</span>
-            <Link className="myfooter_link" href="mailto:DAD_Service@msi.com">DAD_Service@msi.com</Link>
+            <Link className='myfooter_link' href='mailto:DAD_Service@msi.com'>DAD_Service@msi.com</Link>
             。
           </div>
         </div>

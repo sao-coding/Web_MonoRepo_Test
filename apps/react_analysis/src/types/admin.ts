@@ -5,24 +5,16 @@ export enum MappingStage {
 }
 
 // 規格類別映射
-export interface CategoryMapping {
-  [msiCategory: string]: string // MSI類別 -> 品牌類別
-}
+export type CategoryMapping = Record<string, string>;
 
 // 具體規格映射
-export interface SpecificationMapping {
-  [categoryPair: string]: { // "msiCategory->brandCategory"
-    [msiSpec: string]: string[] // MSI具體規格 -> 品牌具體規格列表
-  }
-}
+export type SpecificationMapping = Record<string, Record<string, string[]>>;
 
 // 兩階段映射歷史
-export interface TwoStageMappingHistory {
-  [brandId: string]: {
+export type TwoStageMappingHistory = Record<string, {
     categoryMappings: CategoryMapping
     specificationMappings: SpecificationMapping
-  }
-}
+  }>;
 
 // 當前映射狀態
 export interface MappingState {
@@ -62,13 +54,9 @@ export interface BrandSpecification {
 }
 
 // 映射相關類型
-export interface MappedItems {
-  [msiSpec: string]: string[]
-}
+export type MappedItems = Record<string, string[]>;
 
-export interface BrandMappingHistory {
-  [brandId: string]: MappedItems
-}
+export type BrandMappingHistory = Record<string, MappedItems>;
 
 // 拖拉相關類型
 export interface DragItem {

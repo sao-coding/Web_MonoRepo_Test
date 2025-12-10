@@ -35,7 +35,7 @@ const COLORS = [
   '#F97316', // 深橙色
   '#84CC16', // 萊姆綠
   '#EC4899', // 粉紅色
-  '#6B7280', // 灰色
+  '#6B7280' // 灰色
 ]
 
 export default function PieChartComponent({ chartData, filters }: PieChartComponentProps) {
@@ -46,7 +46,7 @@ export default function PieChartComponent({ chartData, filters }: PieChartCompon
     Month: new Date().getMonth() + 1,
     LevelMode: 'ALL',
     FilterUnits: 'ALL',
-    FilterSystems: ['ALL'],
+    FilterSystems: ['ALL']
   }
 
   // 動態計算容器高度的函數
@@ -72,17 +72,17 @@ export default function PieChartComponent({ chartData, filters }: PieChartCompon
   }
   // 自定義 Tooltip
   const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-semibold text-gray-800">{data.fullName}</p>
-          <p className="text-blue-600">
+        <div className='rounded-lg border border-gray-200 bg-white p-3 shadow-lg'>
+          <p className='font-semibold text-gray-800'>{data.fullName}</p>
+          <p className='text-blue-600'>
             數量:
             {' '}
             {data.value.toLocaleString()}
           </p>
-          <p className="text-green-600">
+          <p className='text-green-600'>
             比例:
             {' '}
             {data.percent}
@@ -115,15 +115,15 @@ export default function PieChartComponent({ chartData, filters }: PieChartCompon
     }
 
     return (
-      <div className={`grid ${getGridCols(sortedPayload.length)} gap-2 mt-4 text-sm px-4`}>
+      <div className={`grid ${getGridCols(sortedPayload.length)} mt-4 gap-2 px-4 text-sm`}>
         {sortedPayload.map((entry: any, _index: number) => (
-          <div key={`legend-${entry.payload.name}`} className="flex items-center space-x-2 min-h-[24px]">
+          <div key={`legend-${entry.payload.name}`} className='flex min-h-[24px] items-center space-x-2'>
             <div
-              className="w-3 h-3 rounded-sm flex-shrink-0"
+              className='size-3 shrink-0 rounded-sm'
               style={{ backgroundColor: entry.color }}
             />
             <span
-              className="text-gray-700 truncate text-xs"
+              className='truncate text-xs text-gray-700'
               title={entry.payload.fullName}
               style={{ fontSize: '11px', lineHeight: '1.2' }}
             >
@@ -139,15 +139,15 @@ export default function PieChartComponent({ chartData, filters }: PieChartCompon
     )
   }
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-bold text-gray-800 flex items-center">
-          <span className="w-3 h-3 bg-black rounded-full mr-2"></span>
+    <div className='rounded-lg bg-white p-6 shadow-sm'>
+      <div className='mb-4'>
+        <h3 className='flex items-center text-lg font-bold text-gray-800'>
+          <span className='mr-2 size-3 rounded-full bg-black'></span>
           {safeFilters.FunctionMode === 'SystemCentric'
             ? '系統點擊率分布'
             : '部門點擊率分布'}
         </h3>
-        <div className="text-sm text-gray-600 mt-1">
+        <div className='mt-1 text-sm text-gray-600'>
           分析模式：
           {safeFilters.FunctionMode === 'SystemCentric'
             ? '以系統為中心，分析各系統的點擊情況'
@@ -157,17 +157,17 @@ export default function PieChartComponent({ chartData, filters }: PieChartCompon
 
       <div style={{ width: '100%', height: `${calculateContainerHeight(chartData.length)}px` }}>
 
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width='100%' height='100%'>
           <PieChart>
             <Pie
               data={chartData}
-              cx="50%"
-              cy="50%"
+              cx='50%'
+              cy='50%'
               labelLine={false}
               // label={({ name, percent }) => `${name} ${percent}`}
               outerRadius={250}
-              fill="#8884d8"
-              dataKey="value"
+              fill='#8884d8'
+              dataKey='value'
 
             >
               {chartData.map((entry, index) => (

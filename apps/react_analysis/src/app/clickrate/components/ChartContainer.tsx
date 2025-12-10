@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import BarChartComponent from './BarChart'
 import PieChartComponent from './PieChart'
 
@@ -34,9 +35,9 @@ export default function ChartContainer({ filters, chartData, loading, error }: C
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="animate-pulse">
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <div className='rounded-lg bg-white p-6 shadow-sm'>
+        <div className='animate-pulse'>
+          <div className='h-64 rounded-sm bg-gray-200'></div>
         </div>
       </div>
     )
@@ -44,8 +45,8 @@ export default function ChartContainer({ filters, chartData, loading, error }: C
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="text-center text-red-500">
+      <div className='rounded-lg bg-white p-6 shadow-sm'>
+        <div className='text-center text-red-500'>
           <p>
             錯誤:
             {error}
@@ -56,13 +57,13 @@ export default function ChartContainer({ filters, chartData, loading, error }: C
   }
 
   return (
-    <div className="bg-white rounded-lg shadow relative">
+    <div className='relative rounded-lg bg-white shadow-sm'>
       {/* 切換按鈕 - 位於右上角 */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className="flex bg-gray-100 rounded-lg p-1">
+      <div className='absolute top-4 right-4 z-10'>
+        <div className='flex rounded-lg bg-gray-100 p-1'>
           <button
-            onClick={() => setChartType('bar')}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            onClick={() => { setChartType('bar') }}
+            className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               chartType === 'bar'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -73,8 +74,8 @@ export default function ChartContainer({ filters, chartData, loading, error }: C
             <span>長條圖</span>
           </button>
           <button
-            onClick={() => setChartType('pie')}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            onClick={() => { setChartType('pie') }}
+            className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               chartType === 'pie'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -88,7 +89,7 @@ export default function ChartContainer({ filters, chartData, loading, error }: C
       </div>
 
       {/* 圖表內容 */}
-      <div className="pt-6">
+      <div className='pt-6'>
         {chartType === 'bar'
           ? (
               <BarChartComponent

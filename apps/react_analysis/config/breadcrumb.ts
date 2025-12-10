@@ -22,7 +22,7 @@
 //   clickrate: '點擊率分析',
 //   pcb: 'PCB',
 // }
-import {BreadcrumbConfig} from "@msi/ui/components/layout/breadcrumb/page-breadcrumb";
+import type { BreadcrumbConfig } from '@msi/ui/components/layout/breadcrumb/page-breadcrumb'
 
 export const BREADCRUMB_CONFIG: BreadcrumbConfig = {
   key: 'analysis',
