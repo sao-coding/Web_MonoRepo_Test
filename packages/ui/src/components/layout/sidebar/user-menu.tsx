@@ -1,18 +1,17 @@
 'use client'
 
-import { LogOutIcon, UserIcon } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
-import { toast } from 'sonner'
-
+import { useAuth } from '@msi/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@msi/ui/components/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@msi/ui/components/dropdown-menu'
-import { useAuth } from '@msi/hooks'
+import { LogOutIcon, UserIcon } from 'lucide-react'
+import Link from 'next/link'
+import * as React from 'react'
+import { toast } from 'sonner'
 
 const UserMenu = () => {
   const { user, logout, status } = useAuth()
@@ -31,55 +30,55 @@ const UserMenu = () => {
   }
 
   // 在初始載入時顯示佔位符
-  if (status === 'initializing' || status === 'loading') {
-    return <div className="h-10 w-10 animate-pulse rounded-full bg-gray-200" />
+  if (['initializing', 'loading'].includes(status)) {
+    return <div className='size-10 animate-pulse rounded-full bg-gray-200' />
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className='flex items-center gap-2'>
       {user
         ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex w-full items-center gap-2 rounded-md p-2 hover:bg-accent">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={`https://www.gravatar.com/avatar/${md5(user.email ?? '')}?d=identicon`}
-                    />
-                    <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start text-sm">
-                    <span className="font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">{user.userId}</span>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem>
-                    <button
-                      type="button"
-                      className="flex w-full items-center gap-2"
-                      onClick={async () => {
-                        const status = logout()
-                        if (status) {
-                          toast.success('登出成功')
-                          window.location.href = '/login'
-                        }
-                        else {
-                          toast.error('登出失敗，請稍後再試')
-                        }
-                      }}
-                    >
-                      <LogOutIcon className="h-4 w-4" />
-                      <span>登出</span>
-                    </button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger className='flex w-full items-center gap-2 rounded-md p-2 hover:bg-accent'>
+              <Avatar className='size-8'>
+                <AvatarImage
+                  src={`https://www.gravatar.com/avatar/${md5(user.email)}?d=identicon`}
+                />
+                <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className='flex flex-col items-start text-sm'>
+                <span className='font-medium'>{user.name}</span>
+                <span className='text-xs text-muted-foreground'>{user.userId}</span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-48'>
+              <DropdownMenuItem>
+                <button
+                  type='button'
+                  className='flex w-full items-center gap-2'
+                  onClick={() => {
+                    const currentLogoutStatus = logout()
+                    if (currentLogoutStatus) {
+                      toast.success('登出成功')
+                      window.location.href = '/login'
+                    }
+                    else {
+                      toast.error('登出失敗，請稍後再試')
+                    }
+                  }}
+                >
+                  <LogOutIcon className='size-4' />
+                  <span>登出</span>
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           )
         : (
-            <Link href="/login" className="flex h-10 items-center gap-2">
-              <UserIcon />
-              <span>登入</span>
-            </Link>
+          <Link href='/login' className='flex h-10 items-center gap-2'>
+            <UserIcon />
+            <span>登入</span>
+          </Link>
           )}
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/hooks'
+import { useAuth } from '@msi/auth'
 import { Button } from '@msi/ui/components/button'
 import {
   Card,
@@ -30,7 +30,7 @@ const LoginPage = () => {
     if (result.success) {
       window.location.href = '/'
     } else {
-      toast.error(result.error || '登入失敗')
+      toast.error(result.error ?? '登入失敗')
     }
   }
 

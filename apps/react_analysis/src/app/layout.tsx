@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import './globals.css'
+import '@/styles/globals.css'
 
 import { PageBreadcrumb } from '@msi/ui/components/layout/breadcrumb/page-breadcrumb'
 import Footer from '@msi/ui/components/layout/footer'
