@@ -1,14 +1,12 @@
-import * as formatPlugin from "eslint-plugin-format";
-
-export { default as reactPlugin } from "@eslint-react/eslint-plugin";
-export { default as nextPlugin } from "@next/eslint-plugin-next";
-export { default as typescriptPlugin } from "@typescript-eslint/eslint-plugin";
-export { default as tailwindcssPlugin } from "eslint-plugin-better-tailwindcss";
-export { formatPlugin };
-export { default as importLitePlugin } from "eslint-plugin-import-lite";
-export { default as jsxA11yPlugin } from "eslint-plugin-jsx-a11y";
-export { default as prettierPlugin } from "eslint-plugin-prettier";
-export { default as prettierPluginRecommended } from "eslint-plugin-prettier/recommended";
-export { default as reactHooksPlugin } from "eslint-plugin-react-hooks";
-export { default as importSortPlugin } from "eslint-plugin-simple-import-sort";
-export { default as unusedImportsPlugin } from "eslint-plugin-unused-imports";
+export { default as reactPlugin } from '@eslint-react/eslint-plugin'
+export { default as nextPlugin } from '@next/eslint-plugin-next'
+export { default as typescriptPlugin } from '@typescript-eslint/eslint-plugin'
+export { default as tailwindcssPlugin } from 'eslint-plugin-better-tailwindcss'
+export { default as formatPlugin } from 'eslint-plugin-format'
+export { default as importLitePlugin } from 'eslint-plugin-import-lite'
+export { default as jsxA11yPlugin } from 'eslint-plugin-jsx-a11y'
+export { default as prettierPlugin } from 'eslint-plugin-prettier'
+export { default as prettierPluginRecommended } from 'eslint-plugin-prettier/recommended'
+export { default as reactHooksPlugin } from 'eslint-plugin-react-hooks'
+export { default as importSortPlugin } from 'eslint-plugin-simple-import-sort'
+export { default as unusedImportsPlugin } from 'eslint-plugin-unused-imports'
