@@ -48,6 +48,7 @@
       "@prisma/client",
       "@prisma/engines",
       "@tailwindcss/oxide",
+      "core-js",
       "core-js-pure",
       "esbuild",
       "prisma",
@@ -55,6 +56,9 @@
       "sharp",
       "ttf2woff2",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@tailwindcss/oxide"
     ]
   },
   "dependencies": {
