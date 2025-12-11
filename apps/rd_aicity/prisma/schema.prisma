@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model AI_App_Action_Log {
+  F_SeqNo      Int         @id(map: "PK__AI_App_A__B8E02AA7CB7764A1") @default(autoincrement())
+  F_CreateTime DateTime    @default(now(), map: "DF__AI_App_Ac__F_Cre__571DF1D5") @db.DateTime
+  F_UpdateTime DateTime    @default(now(), map: "DF__AI_App_Ac__F_Upd__5812160E") @db.DateTime
+  F_Stat       String      @db.NChar(1)
+  app_id       Int
+  action       Int
+  user_id      String?     @db.NVarChar(20)
+  ip_address   String?     @db.NVarChar(15)
+  AI_App_List  AI_App_List @relation(fields: [app_id], references: [F_SeqNo], onUpdate: NoAction, map: "FK__AI_App_Ac__app_i__59063A47")
+}
+
+model AI_App_List {
+  F_SeqNo            Int                 @id(map: "PK__AI_App_L__B8E02AA78BE06FDB") @default(autoincrement())
+  F_CreateTime       DateTime            @default(now(), map: "DF__AI_App_Li__F_Cre__2645B050") @db.DateTime
+  F_UpdateTime       DateTime            @default(now(), map: "DF__AI_App_Li__F_Upd__2739D489") @db.DateTime
+  F_Stat             String              @db.NChar(1)
+  app_id             String?             @db.NVarChar(100)
+  name               String              @db.NVarChar(30)
+  app_folder         String              @db.NVarChar(30)
+  description        String?             @db.NVarChar(Max)
+  version            String              @db.NVarChar(10)
+  logo               String?             @db.NVarChar(200)
+  link               String?             @db.NVarChar(200)
+  releases           Boolean
+  update_required    Boolean
+  update_description String?             @db.NVarChar(500)
+  app_type           Int?
+  F_IsPermissions    String?             @db.NChar(1)
+  AI_App_Action_Log  AI_App_Action_Log[]
+  AI_App_Login_Log   AI_App_Login_Log[]
+}
+
+model AI_App_Login_Log {
+  F_SeqNo       Int          @id(map: "PK__AI_App_L__B8E02AA7FF28DE5B") @default(autoincrement())
+  F_CreateTime  DateTime     @default(now(), map: "DF__AI_App_Lo__F_Cre__52593CB8") @db.DateTime
+  F_UpdateTime  DateTime     @default(now(), map: "DF__AI_App_Lo__F_Upd__534D60F1") @db.DateTime
+  F_Stat        String       @db.NChar(1)
+  app_id        Int?
+  username      String       @db.NVarChar(20)
+  password      String       @db.NVarChar(20)
+  login_time    DateTime     @db.DateTime
+  ip_address    String?      @db.NVarChar(20)
+  login_status  Int
+  error_message String?      @db.NVarChar(Max)
+  token         String?      @db.NVarChar(Max)
+  token_type    String?      @db.NVarChar(10)
+  expires_at    String?      @db.NVarChar(20)
+  AI_App_List   AI_App_List? @relation(fields: [app_id], references: [F_SeqNo], onDelete: NoAction, onUpdate: NoAction, map: "FK__AI_App_Lo__app_i__5441852A")
+}
+
+model AIMIG {
+  F_SeqNo      Int       @id(map: "PK_AIMIG") @default(autoincrement())
+  F_CreateDate DateTime? @db.SmallDateTime
+  F_UpdateTime DateTime? @db.SmallDateTime
+  F_Stat       String?   @db.NChar(1)
+  F_Keyin      String?   @db.NVarChar(20)
+  F_Security   String?   @db.NChar(1)
+  F_Owner      String?   @db.NVarChar(20)
+  F_Type       String?   @db.NVarChar(100)
+  F_Combo      String?   @db.NChar(10)
+  F_ID         String?   @db.NVarChar(100)
+  F_Name       String?   @db.NVarChar(100)
+  F_Use        String?   @db.NChar(10)
+}
+
+model AIModel {
+  F_SeqNo        Int       @id(map: "PK_AIModel") @default(autoincrement())
+  F_CreateDate   DateTime? @db.SmallDateTime
+  F_UpdateTime   DateTime? @db.SmallDateTime
+  F_Stat         String?   @db.NChar(1)
+  F_Keyin        String?   @db.NVarChar(20)
+  F_Security     String?   @db.NChar(1)
+  F_Type         String?   @db.NVarChar(100)
+  F_Name         String?   @db.NVarChar(100)
+  F_Master_Table String?   @db.NVarChar(Max)
+  F_Master_ID    String?   @db.NVarChar(Max)
+}
+
+model AIScore {
+  F_SeqNo        Int       @id(map: "PK_AIScore") @default(autoincrement())
+  F_CreateDate   DateTime? @db.SmallDateTime
+  F_UpdateTime   DateTime? @db.SmallDateTime
+  F_Stat         String?   @db.NChar(1)
+  F_Keyin        String?   @db.NVarChar(20)
+  F_Security     String?   @db.NChar(1)
+  F_Type         String?   @db.NVarChar(100)
+  F_Score        String?   @db.NVarChar(100)
+  F_Desc         String?   @db.NVarChar(Max)
+  F_Master_Table String?   @db.NVarChar(Max)
+  F_Master_ID    String?   @db.NVarChar(Max)
+  F_IP           String?   @db.NVarChar(Max)
+  F_UserName     String?   @db.NVarChar(Max)
+  F_PassWord     String?   @db.NVarChar(Max)
+  F_Token        String?   @db.NVarChar(Max)
+  F_SDate        DateTime? @db.SmallDateTime
+  F_EDate        DateTime? @db.SmallDateTime
+  F_URL          String?   @db.NVarChar(Max)
+  F_isMail       String?   @db.Char(1)
+}
+
+model API {
+  F_SeqNo       Int       @id(map: "PK_API") @default(autoincrement())
+  F_CreateDate  DateTime? @db.SmallDateTime
+  F_UpdateTime  DateTime? @db.SmallDateTime
+  F_Stat        String?   @db.NChar(1)
+  F_Keyin       String?   @db.NVarChar(20)
+  F_Security    String?   @db.NChar(1)
+  F_Subject     String?   @db.NVarChar(Max)
+  F_Desc        String?   @db.NVarChar(Max)
+  F_Label       String?   @db.NVarChar(Max)
+  F_URL         String?   @db.VarChar(Max)
+  F_Parameter   String?   @db.NVarChar(Max)
+  F_Description String?   @db.NVarChar(Max)
+  F_Img         String?   @db.NVarChar(200)
+}
+
+model ComputingApply {
+  F_SeqNo           Int       @id(map: "PK_Computing_power") @default(autoincrement())
+  F_CreateDate      DateTime? @db.SmallDateTime
+  F_UpdateTime      DateTime? @db.SmallDateTime
+  F_Stat            String?   @db.NChar(1)
+  F_Keyin           String?   @db.NVarChar(20)
+  F_Owner           String?   @db.NVarChar(20)
+  F_DeptID          String?   @db.NVarChar(Max)
+  F_API_ID          String?   @db.NVarChar(Max)
+  F_Subject         String?   @db.NVarChar(Max)
+  F_Feild           String?   @db.NVarChar(Max)
+  F_Source          String?   @db.NVarChar(Max)
+  F_Importance      String?   @db.NVarChar(Max)
+  F_Opportunities   String?   @db.NVarChar(Max)
+  F_Train           String?   @db.NVarChar(Max)
+  F_output_Model    String?   @db.NVarChar(Max)
+  F_output_Code     String?   @db.NVarChar(Max)
+  F_Code_Available  String?   @db.NChar(1)
+  F_output_Train    String?   @db.NVarChar(Max)
+  F_Train_Available String?   @db.NChar(1)
+  F_Benefit         String?   @db.NVarChar(Max)
+  F_Other           String?   @db.NVarChar(Max)
+  F_Date            DateTime? @db.SmallDateTime
+  F_Type            String?   @db.NVarChar(Max)
+  F_Status          Int?
+  F_Order           Int?
+  F_Gpu             String?   @db.NVarChar(Max)
+}
+
+model LoadingData {
+  F_SeqNo         Int       @id(map: "PK__LoadingD__B8E02AA7D8BA84FD") @default(autoincrement())
+  F_CreateDate    DateTime? @db.SmallDateTime
+  F_UpdateDate    DateTime? @db.SmallDateTime
+  F_Stat          String?   @db.NChar(1)
+  F_Keyin         String?   @db.NVarChar(20)
+  F_Security      String?   @db.NChar(1)
+  F_ResponseDate  DateTime? @db.SmallDateTime
+  F_Duration      Float?
+  F_API_Host      String?   @db.NVarChar(Max)
+  F_API_Name      String?   @db.NVarChar(Max)
+  F_CurrentUser   Int?
+  F_TransferData  Float?
+  F_HeaderSize    Float?
+  F_RequestSize   Float?
+  F_User_IP       String?   @db.NVarChar(Max)
+  F_Status_Code   String?   @db.NVarChar(10)
+  F_Master_Table  String?   @db.NVarChar(Max)
+  F_Master_ID     String?   @db.NVarChar(Max)
+  F_Error_Message String?   @db.NVarChar(Max)
+}
+
+model S_Flag {
+  F_SeqNo      Int       @id(map: "PK_S_Flag") @default(autoincrement())
+  F_CreateDate DateTime? @db.SmallDateTime
+  F_UpdateTime DateTime? @db.SmallDateTime
+  F_Stat       String?   @db.NChar(1)
+  F_Keyin      String?   @db.NVarChar(20)
+  F_Security   String?   @db.NChar(1)
+  F_Owner      String?   @db.NVarChar(20)
+  F_Type       String?   @db.NVarChar(100)
+  F_ID         String?   @db.NVarChar(100)
+  F_Name       String?   @db.NVarChar(100)
+}
+
+model VMData {
+  F_SeqNo      Int       @id(map: "PK__VMData__B8E02AA77967ED30") @default(autoincrement())
+  F_CreateTime DateTime? @db.SmallDateTime
+  F_UpdateTime DateTime? @db.SmallDateTime
+  F_Stat       String?   @db.NChar(10)
+  F_Master     String?   @db.NVarChar(50)
+  F_IP         String?   @db.NVarChar(15)
+  F_GPU        String?   @db.NVarChar(100)
+  F_Usage      Float?
+  F_Temp       Float?
+  F_Computing  Float?
+  F_Energy     Float?
+}
+
+model VGA_Record {
+  F_SeqNo      Int      @id @default(autoincrement())
+  F_CreateDate DateTime @default(now()) @db.SmallDateTime
+  F_UpdateTime DateTime @default(now()) @db.SmallDateTime
+  F_Stat       String   @db.NChar(1)
+  F_Keyin      String?  @db.NVarChar(20)
+  F_Title      String?  @db.NVarChar(Max)
+}
+
+model VGA_Record_Detail {
+  F_SeqNo        Int      @id @default(autoincrement())
+  F_CreateDate   DateTime @default(now(), map: "VGA_Record_Detail_F_CreateTime_df") @db.SmallDateTime
+  F_UpdateTime   DateTime @default(now()) @db.SmallDateTime
+  F_Stat         String   @db.NChar(1)
+  F_Keyin        String   @db.NVarChar(20)
+  F_Question     String   @db.NVarChar(Max)
+  F_Answer       String   @db.NVarChar(Max)
+  F_Master_ID    String?  @db.NVarChar(Max)
+  F_Master_Table String?  @db.NVarChar(Max)
+}
+
+model C_User_Authority {
+  F_SeqNo      Int       @id(map: "PK_C_User_Authority") @default(autoincrement())
+  F_CreateDate DateTime? @default(now(), map: "DF_C_User_Authority_F_CreateDate") @db.SmallDateTime
+  F_UpdateTime DateTime? @default(now(), map: "DF_C_User_Authority_F_UpdateTime") @db.SmallDateTime
+  F_Stat       String?   @default("1", map: "DF_C_User_Authority_F_Stat") @db.NChar(1)
+  F_Type       String?   @db.NVarChar(20)
+  F_Keyin      String?   @db.NVarChar(20)
+  F_Owner      String?   @db.NVarChar(20)
+  F_SYSID      String?   @db.NVarChar(Max)
+  F_SYSName    String?   @db.NVarChar(30)
+  F_IsAllow    String?   @db.Char(1)
+}
