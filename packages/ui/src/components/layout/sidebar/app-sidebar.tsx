@@ -1,20 +1,22 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 'use client'
 
+import type { LucideIcon } from 'lucide-react'
+
+import { IconMsi } from '@msi/ui/components/icons/msi'
+import UserMenu from '@msi/ui/components/layout/sidebar/user-menu'
 import {
   Sidebar,
-  SidebarHeader,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from "@msi/ui/components/sidebar"
-import UserMenu from "@msi/ui/components/layout/sidebar/user-menu"
-import { IconMsi } from '@msi/ui/components/layout/icons/msi'
-import { LucideIcon } from 'lucide-react'
-import Link from "next/link"
+  SidebarMenuItem
+} from '@msi/ui/components/sidebar'
+import Link from 'next/link'
 
 export type SidebarItem = {
   title: string;
@@ -30,17 +32,17 @@ interface AppSidebarProps {
 export function AppSidebar({ items }: AppSidebarProps) {
 
   return (
-     <Sidebar  className="z-20">
+     <Sidebar  className='z-20'>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="#">
-                <div className=" size-12 items-center justify-center rounded-lg">
-                  <IconMsi className="size-12" />
+            <SidebarMenuButton size='lg' asChild>
+              <Link href='#'>
+                <div className='size-12 items-center justify-center rounded-lg'>
+                  <IconMsi className='size-12' />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-bold italic text-xl">研發</span>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate text-xl font-bold italic'>研發</span>
                 </div>
               </Link>
             </SidebarMenuButton>
