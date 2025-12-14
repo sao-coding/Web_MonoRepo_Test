@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
-import BarChartComponent from './BarChart'
+import BarChartComponent from './bar-chart'
 
 interface ChartData {
   name: string
@@ -43,14 +43,11 @@ const COLORS = [
   '#6B7280' // 灰色
 ]
 
-export default function PieChartComponent({ filters, chartData, loading, error }: PieChartComponentProps) {
-  const [activeTab] = useState<'pie' | 'bar'>('pie') // tab 狀態
-
-  // 自定義 Tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload?.length) {
-      const data = payload[0].payload
-      return (
+// 自定義 Tooltip
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload?.length) {
+    const data = payload[0].payload
+    return (
         <div className='rounded-lg border border-gray-200 bg-white p-3 shadow-lg'>
           <p className='font-semibold text-gray-800'>{data.fullName}</p>
           <p className='text-blue-600'>
@@ -62,10 +59,13 @@ export default function PieChartComponent({ filters, chartData, loading, error }
             {data.percent}
           </p>
         </div>
-      )
-    }
-    return null
+    )
   }
+  return null
+}
+
+export default function PieChartComponent({ filters, chartData, loading, error }: PieChartComponentProps) {
+  const [activeTab] = useState<'pie' | 'bar'>('pie') // tab 狀態
 
   // 自定義 Legend
   const renderCustomLegend = (props: any) => {
