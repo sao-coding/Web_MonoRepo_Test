@@ -20,7 +20,7 @@
     "next": "^15"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.2.1",
     "@msi/eslint-config": "workspace:*",
     "@types/js-cookie": "^3.0.2",
     "typescript": "^5.4.0",

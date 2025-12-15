@@ -1,7 +1,6 @@
-
-
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { IconMsi } from '@msi/ui/components/icons/msi'
 import Link from 'next/link'
-import { IconMsi } from '@msi/ui/components/layout/icons/msi'
 
 interface MenuItem {
   title: string
@@ -32,8 +31,8 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
         { title: '能效實驗室認證系統', href: '/DQA/Code/EEL/FileCenter.aspx' },
         { title: '週報系統', href: 'https://dqa.msi.com.tw/Code/Report_welcome_noimages.aspx' },
         { title: '會議記錄系統', href: 'https://dqa.msi.com.tw/Code/Meeting/C_Meeting_Welcome.aspx' },
-        { title: '實驗室中心', href: '/DQA/Code/NewLabCenter/NewLab_HomePage.aspx' },
-      ],
+        { title: '實驗室中心', href: '/DQA/Code/NewLabCenter/NewLab_HomePage.aspx' }
+      ]
     },
     {
       title: '服務',
@@ -44,8 +43,8 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
         { title: 'Helpdesk', href: '#' },
         { title: '線上投稿', href: '#' },
         { title: '訪客預約系統', href: 'http://172.16.0.174/lbm/login.aspx' },
-        { title: '每週菜單', href: 'http://eip/EIP/template_sample/list_detail?key=VElUTEVfTkxTPW1zaS5tZW51LlUwMDAwMTMmQ0FURUdPUllfSUQ9MjcyOSZBQ1RfUFJPR19DT0RFPVUwMDAwMTMmUEFSRU5UX1RBR19BRERSPWh0dHAlM0ElMkYlMkZlaXAlMkZFSVAlMkZ0ZW1wbGF0ZV9zYW1wbGUlMkZkZXB0X3N0eWxlXzElM0ZrZXklM0RWRWxVVEVWZlRreFRQVzF6YVM1dFpXNTFMbFV3TURBd01UTW1UMUpIWDBsRVBUTTBNemt5Sm5CeWIyZGZZMjlrWlQxVk1EQXdNREV6SmtGRFZGOVFVazlIWDBOUFJFVTlWVEF3TURBeE15Wm1iM0ozWVhKa1BXSnNZVzVyTG1wemNDVXpSbXRsZVNVelJDWnRaVzUxWDJ4dlkyRnNaV3RsZVQxdGMya3ViV1Z1ZFM1VU1Ea3dNREFtYldsa1BTWnRaVzUxYkhOcGRGOXJaWGs5TURBd01EQXdNREF5TUZVd01EQXdNVE0lM0Q=' },
-      ],
+        { title: '每週菜單', href: 'http://eip/EIP/template_sample/list_detail?key=VElUTEVfTkxTPW1zaS5tZW51LlUwMDAwMTMmQ0FURUdPUllfSUQ9MjcyOSZBQ1RfUFJPR19DT0RFPVUwMDAwMTMmUEFSRU5UX1RBR19BRERSPWh0dHAlM0ElMkYlMkZlaXAlMkZFSVAlMkZ0ZW1wbGF0ZV9zYW1wbGUlMkZkZXB0X3N0eWxlXzElM0ZrZXklM0RWRWxVVEVWZlRreFRQVzF6YVM1dFpXNTFMbFV3TURBd01UTW1UMUpIWDBsRVBUTTBNemt5Sm5CeWIyZGZZMjlrWlQxVk1EQXdNREV6SmtGRFZGOVFVazlIWDBOUFJFVTlWVEF3TURBeE15Wm1iM0ozWVhKa1BXSnNZVzVyTG1wemNDVXpSbXRsZVNVelJDWnRaVzUxWDJ4dlkyRnNaV3RsZVQxdGMya3ViV1Z1ZFM1VU1Ea3dNREFtYldsa1BTWnRaVzUxYkhOcGRGOXJaWGs5TURBd01EQXdNREF5TUZVd01EQXdNVE0lM0Q=' }
+      ]
     },
     {
       title: '研發',
@@ -59,8 +58,8 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
         { title: '工作報告系統', href: 'https://dqa.msi.com.tw/Code/RSS/RSS_welcome.aspx' },
         { title: '工單系統', href: 'https://dqa.msi.com.tw/Code/TCS/C_Request_Welcome.aspx' },
         { title: '產品認證', href: '/DQA/Code/Certification_Center/Progress_Query.aspx' },
-        { title: '需求單系統', href: 'https://dqa.msi.com.tw/Code/TCS/C_RequestForm_List.aspx?Mode=My' },
-      ],
+        { title: '需求單系統', href: 'https://dqa.msi.com.tw/Code/TCS/C_RequestForm_List.aspx?Mode=My' }
+      ]
     },
     {
       title: '管理',
@@ -73,8 +72,8 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
         { title: '軟體品質管理(SQC)', href: '/DQA/Code/SQC/SQC_Status.aspx' },
         { title: '部門管理系統', href: 'https://dqa.msi.com.tw/Code/ORG/Dept_Welcome.aspx' },
         { title: '報表分析', href: '/DQA/Code/Report_Analysis/test_BU.aspx' },
-        { title: '資產管理系統', href: '/DQA/Code/MMC/Welcome.aspx' },
-      ],
+        { title: '資產管理系統', href: '/DQA/Code/MMC/Welcome.aspx' }
+      ]
     },
     {
       title: '資源',
@@ -88,45 +87,45 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
         { title: '微星大學', href: 'https://msiu.msi.com/dist/#/index' },
         { title: '績效考核', href: 'http://pms.msi.com/msi_dist/#/index' },
         { title: '薪資查詢系統', href: 'https://sal.msi.com/' },
-        { title: '攤位訊息', href: 'https://eip.msi.com/EIP/calendar/calendar_week' },
-      ],
-    },
+        { title: '攤位訊息', href: 'https://eip.msi.com/EIP/calendar/calendar_week' }
+      ]
+    }
   ]
 
   return (
-    <footer className="bg-background">
+    <footer className='bg-background'>
       {/* System Menu Section */}
       {showSystemMenu && (
-        <div className="relative w-full">
+        <div className='relative w-full'>
           {/* 背景圖層 */}
           <div
-            className="absolute inset-0 z-0"
+            className='absolute inset-0 z-0'
             style={{
               backgroundImage: 'url(https://dqa.msi.com.tw/Code/New_ORG/img/SystemBG.png)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
+              backgroundRepeat: 'no-repeat'
             }}
           />
 
           {/* 液態玻璃層 */}
-          <div className="relative py-6 px-8">
-            <div className="container mx-auto">
-              <div className="relative p-4 rounded-2xl overflow-hidden bg-white/20 backdrop-blur-2xl border border-white/30">
-                <div className="absolute inset-0 bg-gradient-to-tr from-pink-500/20 via-transparent to-blue-500/20 blur-3xl animate-[spin_15s_linear_infinite]"></div>
-                <div className="relative grid grid-cols-5 gap-8">
+          <div className='relative px-8 py-6'>
+            <div className='container mx-auto'>
+              <div className='relative overflow-hidden rounded-2xl border border-white/30 bg-white/20 p-4 backdrop-blur-2xl'>
+                <div className='absolute inset-0 animate-[spin_15s_linear_infinite] bg-gradient-to-tr from-pink-500/20 via-transparent to-blue-500/20 blur-3xl'></div>
+                <div className='relative grid grid-cols-5 gap-8'>
                   {menuSections.map((section, index) => (
-                    <div key={index} className="flex flex-col">
-                      <h3 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-red-600 pb-2">
+                    <div key={index} className='flex flex-col'>
+                      <h3 className='mb-4 border-b-2 border-red-600 pb-2 text-xl font-bold text-gray-800'>
                         {section.title}
                       </h3>
-                      <div className="flex flex-col space-y-2">
+                      <div className='flex flex-col space-y-2'>
                         {section.items.map((item, itemIndex) => (
                           <Link
                             key={itemIndex}
                             href={item.href}
-                            target="_blank"
-                            className="text-gray-700 hover:text-red-600 transition-colors duration-200 text-sm"
+                            target='_blank'
+                            className='text-sm text-gray-700 transition-colors duration-200 hover:text-red-600'
                           >
                             {item.title}
                           </Link>
@@ -136,22 +135,22 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
                   ))}
                 </div>
                 {/* Copyright Section inside System Menu */}
-                <div className="mt-6 container mx-auto flex pt-6 pb-2 items-center justify-between px-4 text-sm text-muted-foreground border-t">
-                  <div className="flex items-center gap-2">
-                    <IconMsi className="h-4 w-auto opacity-70" />
+                <div className='container mx-auto mt-6 flex items-center justify-between border-t px-4 pt-6 pb-2 text-sm text-muted-foreground'>
+                  <div className='flex items-center gap-2'>
+                    <IconMsi className='h-4 w-auto opacity-70' />
                     <span>{currentYear} 版權為微星科技所有</span>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className='flex items-center gap-4'>
                     <span>#01-1.0-R_EN</span>
                     <span>Taiwan / 繁體中文</span>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       系統團隊
                     </a>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       流量查詢
                     </a>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       聯絡數位平台發展部
                     </a>
                     <span>Powered by 數位平台發展部</span>
@@ -165,41 +164,41 @@ export default function Footer({ showSystemMenu = true }: FooterProps) {
 
       {/* Copyright Section - 當沒有 SystemMenu 時單獨顯示，但保留背景圖 */}
       {!showSystemMenu && (
-        <div className="relative w-full">
+        <div className='relative w-full'>
           {/* 背景圖層 */}
           <div
-            className="absolute inset-0 z-0"
+            className='absolute inset-0 z-0'
             style={{
               backgroundImage: 'url(https://dqa.msi.com.tw/Code/New_ORG/img/SystemBG.png)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
+              backgroundRepeat: 'no-repeat'
             }}
           />
 
           {/* 版權資訊 */}
-          <div className="relative py-2 px-8">
-            <div className="container mx-auto">
-              <div className="relative px-4 rounded-2xl overflow-hidden bg-white/20 backdrop-blur-2xl border border-white/30">
-                <div className="absolute inset-0 bg-gradient-to-tr from-pink-500/20 via-transparent to-blue-500/20 blur-3xl animate-[spin_15s_linear_infinite]"></div>
-               
+          <div className='relative px-8 py-2'>
+            <div className='container mx-auto'>
+              <div className='relative overflow-hidden rounded-2xl border border-white/30 bg-white/20 px-4 backdrop-blur-2xl'>
+                <div className='absolute inset-0 animate-[spin_15s_linear_infinite] bg-linear-to-tr from-pink-500/20 via-transparent to-blue-500/20 blur-3xl'></div>
+
                 {/* Copyright Section inside System Menu */}
-                <div className="container mx-auto flex pt-4 pb-2 items-center justify-between px-4 text-sm text-muted-foreground border-t">
-                  <div className="flex items-center gap-2">
-                    <IconMsi className="h-4 w-auto opacity-70" />
+                <div className='container mx-auto flex items-center justify-between border-t px-4 pt-4 pb-2 text-sm text-muted-foreground'>
+                  <div className='flex items-center gap-2'>
+                    <IconMsi className='h-4 w-auto opacity-70' />
                     <span>{currentYear} 版權為微星科技所有</span>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className='flex items-center gap-4'>
                     <span>#01-1.0-R_EN</span>
                     <span>Taiwan / 繁體中文</span>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       系統團隊
                     </a>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       流量查詢
                     </a>
-                    <a href="#" className="hover:text-foreground transition-colors">
+                    <a href='#' className='transition-colors hover:text-foreground'>
                       聯絡數位平台發展部
                     </a>
                     <span>Powered by 數位平台發展部</span>

@@ -42,17 +42,17 @@ interface AnalysisFilterProps {
   onFilterChange?: (filters: any) => void
 }
 
-const AnalysisFilter: React.FC<AnalysisFilterProps> = ({
+const AnalysisFilter = ({
   filters = {
     AnalysisType: 'clickrate',
     FunctionMode: 'UnitCentric',
-    Year: 2025,
-    Month: 8, // 預設選擇8月
+    Year: new Date().getFullYear(),
+    Month: new Date().getMonth() + 1, // 預設選擇當前月份
     LevelMode: 'DIV',
     FilterUnits: 'all',
     FilterSystems: ['all'] // 預設選擇全部
   }, onFilterChange
-}) => {
+}: AnalysisFilterProps) => {
   const router = useRouter()
 
   // 確保 FilterSystems 是陣列格式
