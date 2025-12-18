@@ -67,7 +67,7 @@ const NoteComponent: React.FC<NoteProps> = ({ userId }) => {
               <div className="flex-1 w-full h-full p-4 sm:p-6 overflow-y-auto">
                 {notes.length === 0
                   ? (
-                      <div className="text-center text-gray-500 col-span-full">
+                      <div className="text-center text-gray-500 dark:text-gray-400 col-span-full">
                         尚無記事
                       </div>
                     )

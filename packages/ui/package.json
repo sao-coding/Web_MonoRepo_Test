@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "tsup",
+    "build": "tsup src/index.ts --dts --format esm,cjs",
     "clean": "rm -rf .turbo dist",
-    "dev": "tsup --watch",
+    "dev": "tsup src/index.ts --watch",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit"

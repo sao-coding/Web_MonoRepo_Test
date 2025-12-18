@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@msi/ui/components/button'
+import { Card, CardContent } from '@msi/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -138,11 +139,11 @@ const References = () => {
   }
 
   return (
-    <div className="bg-blue-50">
-      <div className="max-w-[1300px] bg-white w-full mx-auto relative overflow-y-auto" style={{ height: 'calc(100vh - 64px)' }}>
+    <div className="bg-blue-50 dark:bg-zinc-900">
+      <div className="max-w-[1300px] bg-white dark:bg-zinc-950 w-full mx-auto relative overflow-y-auto" style={{ height: 'calc(100vh - 64px)' }}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="sticky top-[10px] left-[10px] z-50 text-left border-gray-200 w-[100px]">
+            <Button variant="outline" className="sticky top-[10px] left-[10px] z-50 text-left border-gray-200 dark:border-zinc-700 w-[100px]">
               {selectedLan}
             </Button>
           </DropdownMenuTrigger>
@@ -181,21 +182,22 @@ const References = () => {
             : ref.length > 0
               ? (
                   ref.map(ref => (
-                    <div
+                    <Card
                       key={ref.id}
                       onClick={handleLinkClick}
-                      className="px-16 py-6 shadow-lg p-4 rounded-xl border border-gray-300 bg-white w-full flex flex-col gap-6"
+                      className="shadow-lg p-0 rounded-xl border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
                     >
-                      <div
-                        className="text-lg font-bold block"
-                        dangerouslySetInnerHTML={{ __html: ref.qaText }}
-                      >
-                      </div>
-                    </div>
+                      <CardContent className="px-16 py-6 flex flex-col gap-6">
+                        <div
+                          className="text-lg font-bold block"
+                          dangerouslySetInnerHTML={{ __html: ref.qaText }}
+                        />
+                      </CardContent>
+                    </Card>
                   ))
                 )
               : (
-                  <div className="text-center text-gray-400 col-span-full text-lg">
+                  <div className="text-center text-gray-400 dark:text-gray-500 col-span-full text-lg">
                     No data
                   </div>
                 )}
@@ -232,7 +234,7 @@ const References = () => {
                       </ul>
                     )
                   : (
-                      <div className="text-center mt-4 text-gray-400">No Data</div>
+                      <div className="text-center mt-4 text-gray-400 dark:text-gray-500">No Data</div>
                     )}
               </div>
             </DialogContent>

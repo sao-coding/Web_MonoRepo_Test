@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@msi/ui/components/button'
+import { Card, CardContent } from '@msi/ui/components/card'
 import {
   Dialog,
   DialogContent,
@@ -215,12 +216,7 @@ const NoteRecord: React.FC<NoteViewProps> = ({
                                 },
                                 position: 'top-center',
                                 duration: 10000,
-                                style: {
-                                  background: 'white',
-                                  border: '1px solid #e5e7eb',
-                                  borderRadius: '8px',
-                                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                                },
+                                className: 'bg-white dark:bg-zinc-800 border dark:border-zinc-700',
                               },
                             )
                           }}
@@ -252,10 +248,10 @@ const NoteRecord: React.FC<NoteViewProps> = ({
                     </div>
                   ),
                   th: ({ node, ...props }) => (
-                    <th className="border bg-gray-100 p-2 text-left font-bold whitespace-nowrap" {...props} style={{ minWidth: '80px', verticalAlign: 'middle' }} />
+                    <th className="border dark:border-zinc-700 bg-gray-100 dark:bg-zinc-800 p-2 text-left font-bold whitespace-nowrap" {...props} style={{ minWidth: '80px', verticalAlign: 'middle' }} />
                   ),
                   td: ({ node, ...props }) => (
-                    <td className="border p-2" {...props} style={{ minWidth: '60px', maxWidth: '200px', wordWrap: 'break-word', overflow: 'hidden', textOverflow: 'ellipsis' }} />
+                    <td className="border dark:border-zinc-700 p-2" {...props} style={{ minWidth: '60px', maxWidth: '200px', wordWrap: 'break-word', overflow: 'hidden', textOverflow: 'ellipsis' }} />
                   ),
                   p: ({ node, ...props }) => (
                     <p className="mb-2 last:mb-0" {...props} />
@@ -288,10 +284,10 @@ const NoteRecord: React.FC<NoteViewProps> = ({
                     <em className="italic" {...props} />
                   ),
                   code: ({ node, ...props }) => (
-                    <code className="bg-gray-100 px-1 py-0.5 rounded text-sm" {...props} />
+                    <code className="bg-gray-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-sm" {...props} />
                   ),
                   blockquote: ({ node, ...props }) => (
-                    <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2" {...props} />
+                    <blockquote className="border-l-4 border-gray-300 dark:border-zinc-600 pl-4 italic my-2" {...props} />
                   ),
                 }}
               >
@@ -321,31 +317,32 @@ const NoteRecord: React.FC<NoteViewProps> = ({
                               {notes.length > 0
                                 ? (
                                     note.referenceData.map((ref, index) => (
-                                      <div
+                                      <Card
                                         key={ref.id ? ref.id : `ref-${index}`}
-                                        className="px-4 py-6 shadow-lg p-4 rounded-xl border border-gray-300 bg-white w-full flex flex-col gap-4"
+                                        className="shadow-lg p-0 rounded-xl border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
                                       >
-                                        <div className="flex gap-2">
-                                          <span className="font-bold text-blue-400">Title: </span>
-                                          <span className="text-red-600 font-bold">{ref.title}</span>
-                                        </div>
-                                        <div className="flex gap-2">
-                                          <span className="font-bold text-blue-400">Link: </span>
-                                          <a
-                                            href={ref.path}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ textDecoration: 'underline' }}
-                                            className="text-green-500 hover:underline break-all"
-                                          >
-                                            {ref.path}
-                                          </a>
-                                        </div>
-                                      </div>
+                                        <CardContent className="px-4 py-6 flex flex-col gap-4">
+                                          <div className="flex gap-2">
+                                            <span className="font-bold text-blue-400">Title: </span>
+                                            <span className="text-red-600 font-bold">{ref.title}</span>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <span className="font-bold text-blue-400">Link: </span>
+                                            <a
+                                              href={ref.path}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-green-500 hover:underline break-all underline"
+                                            >
+                                              {ref.path}
+                                            </a>
+                                          </div>
+                                        </CardContent>
+                                      </Card>
                                     ))
                                   )
                                 : (
-                                    <div className="text-center mt-4 text-gray-400">No Data</div>
+                                    <div className="text-center mt-4 text-gray-400 dark:text-gray-500">No Data</div>
                                   )}
                             </div>
                           </DialogContent>

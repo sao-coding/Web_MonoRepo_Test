@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@msi/auth'
 import { Button } from '@msi/ui/components/button'
 import {
   DropdownMenu,
@@ -8,32 +9,24 @@ import {
   DropdownMenuTrigger,
 } from '@msi/ui/components/dropdown-menu'
 import {
-  SidebarInset,
-  SidebarProvider,
-} from '@msi/ui/components/sidebar'
-import { Textarea } from '@msi/ui/components/textarea'
-import {
   ChevronDown,
-  CopyIcon,
-  GlobeIcon,
-  Pin,
-  SendHorizontalIcon,
   Star,
-  ThumbsDown,
-  ThumbsUp,
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
 
-import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
-// 注意：移除了 Banner 元件的引入，改為直接在 Header 實作，以避免樣式衝突
-// import Banner from '@/components/banner-b'
+import {
+  ChatHeader,
+  ChatInputArea,
+  ChatLayout,
+  ChatMessage,
+  FeedbackPanel,
+  MessageActions,
+  ParameterSidebar,
+} from '@/components/chat-layout'
+import { ChatSidebar } from '@/components/chat-layout/ChatSidebar'
 import DefaltInfo from '@/components/chat-robot/defalt-info'
-import { useAuth } from '@/hooks/use-auth'
-import AppSidebar from './_components/AppSidebar'
-import ParameterSettings from './_components/ParameterSettings'
+import { titleConfig } from '@/config/title'
 import NoteComponent from './Note'
 
 // ... (保留原本的 Interface 定義，無須變動) ...
@@ -74,7 +67,6 @@ interface ReferenceItem {
 }
 
 const HomePage = () => {
-  const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const chatContainerRef = React.useRef<HTMLDivElement>(null)
 
   const [conversations, setConversations] = useState<Array<{
@@ -175,10 +167,6 @@ const HomePage = () => {
     setPromptInput('')
     setSelectedModelId(models.find(model => model.isDefault === '1')?.id || null)
     setIsShowingNote(false)
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setUserInput(e.target.value)
   }
 
   const getRecordDetail = async (seqNo: number) => {
@@ -371,17 +359,15 @@ const HomePage = () => {
 
   // ... (保留 handleSendMessage 邏輯) ...
   const handleSendMessage = async () => {
-    const input = inputRef.current?.value
     const selectedModel = models.find(model => model.id === selectedModelId)
 
-    if (!input?.trim()) {
+    if (!userInput?.trim()) {
       toast.error('請輸入訊息')
       return
     }
 
-    const currentQuestion = input
+    const currentQuestion = userInput
     setCurrentUserQuestion(currentQuestion)
-    inputRef.current!.value = ''
     setUserInput('')
     setIsLoading(true)
     setMessage('')
@@ -666,221 +652,193 @@ const HomePage = () => {
     setNewfeedBack(prev => ({ ...prev, [recordDetailId]: true }))
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
-  }
+  // 從 titleConfig 取得當前頁面的設定
+  const config = titleConfig.find(item => '/ProductSpec'.startsWith(item.pathname))
+  const title = config?.title || 'SpecCore'
+  const logoUrl = config?.logoUrl
 
-  // ... (保留 renderInputArea) ...
-  const renderInputArea = (className: string) => (
-    <div className={`w-full flex-shrink-0 px-2.5 mx-auto ${className}`}>
-      <div className="mx-auto flex flex-col gap-2">
-        <div className="flex-1 flex flex-col relative w-full shadow-lg rounded-3xl border border-gray-200 hover:border-gray-300 transition px-1 bg-white dark:bg-gray-800 px-3 py-2">
-          <Textarea
-            id="input"
-            ref={inputRef}
-            onKeyDown={handleKeyDown}
-            onChange={handleInputChange}
-            rows={3}
-            value={userInput}
-            className="scrollbar-hidden rtl:text-right ltr:text-left bg-transparent outline-none w-full pt-2.5 pb-[5px] px-1 resize-none h-fit max-h-80 overflow-auto border-0 focus:ring-0 shadow-none focus-visible:ring-0"
-            placeholder="今天我能為您做些什麼？"
-          />
-          <div className="flex justify-between items-center gap-2">
-            <div className="flex items-end gap-2">
-              <Button
-                onClick={() => setIsWebSearchEnabled(prev => !prev)}
-                variant="ghost"
-                className={`flex items-center gap-2 cursor-pointer font-bold h-8 text-xs ${isWebSearchEnabled ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-500'}`}
-                style={{ borderRadius: '25px' }}
-              >
-                <GlobeIcon className="size-4" />
-                網頁搜尋
-              </Button>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={handleSendMessage}
-                disabled={isLoading && userInput !== ''}
-                size="icon"
-                className="h-8 w-8 rounded-full cursor-pointer bg-black text-white hover:bg-gray-800"
-              >
-                {isLoading ? <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-white rounded-full"></div> : <SendHorizontalIcon className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  // 模型選擇下拉選單內容
+  const modelSelectorContent = isShowingNote
+    ? <span className="font-medium">筆記</span>
+    : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="gap-1">
+              {selectedModel ? `(${selectedModel.modelType === '1' ? 'Global' : '雲端'}) ${selectedModel.aliases}` : '選擇模型'}
+              <ChevronDown className="size-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72">
+            {models.map(model => (
+              <DropdownMenuItem key={model.id} onSelect={() => setSelectedModelId(model.id)} className="flex-col items-start gap-1">
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-medium">
+                    (
+                    {model.modelType === '1' ? 'Global' : '雲端'}
+                    )
+                    {' '}
+                    {model.aliases}
+                  </span>
+                  {model.recommend === '1' && (
+                    <span className="text-red-500 font-bold flex items-center gap-1 text-xs">
+                      <Star className="size-3" fill="red" stroke="none" />
+                      推薦
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs text-muted-foreground">{model.description}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
 
   return (
-    // 使用標準 SidebarProvider 佈局系統
-    <SidebarProvider defaultOpen={true} className="h-screen w-full" style={{ '--sidebar-width': '16rem' } as React.CSSProperties}>
-      {/* 左側 Sidebar - 使用標準 Sidebar 元件 */}
-      <AppSidebar
-        activeRecordId={activeRecordId}
-        onSelectRecord={selectRecord}
-        onStartNewConversation={startNewConversation}
-        userId={user?.userId}
-        isLoadingRecord={isLoadingRecord}
-        records={records}
-        setIsShowingNote={setIsShowingNote}
-        onRecordsChange={fetchRecords}
-      />
+    <ChatLayout
+      leftSidebar={(
+        <ChatSidebar
+          activeRecordId={activeRecordId}
+          onSelectRecord={selectRecord}
+          onStartNewConversation={startNewConversation}
+          userId={user?.userId}
+          isLoadingRecord={isLoadingRecord}
+          records={records}
+          setIsShowingNote={setIsShowingNote}
+          onRecordsChange={fetchRecords}
+          title={title}
+          logoUrl={logoUrl}
+          homeUrl={process.env.NEXT_PUBLIC_RD_SITE_URL ?? '/'}
+        />
+      )}
+      header={(
+        <ChatHeader
+          userName={user?.name}
+          userId={user?.userId}
+          leftContent={modelSelectorContent}
+          onLogout={() => toast.info('登出功能')}
+        />
+      )}
+      rightSidebar={(
+        <ParameterSidebar
+          creativity={creativity}
+          valueDegree={valueDegree}
+          promptInput={promptInput}
+          onCreativityChange={setCreativity}
+          onValueDegreeChange={setValueDegree}
+          onPromptInputChange={setPromptInput}
+        />
+      )}
+    >
+      {isShowingNote
+        ? (
+            <NoteComponent userId={user?.userId ? Number(user.userId) : undefined} />
+          )
+        : (
+            <div className="flex flex-col h-full overflow-hidden">
+              {/* 對話內容（可滾動） */}
+              <div
+                ref={chatContainerRef}
+                className={`flex-1 overflow-y-auto p-4 sm:p-6 ${!conversations.length && !currentUserQuestion ? 'flex flex-col items-center justify-center' : ''}`}
+              >
+                {!conversations.length && !isLoading && !currentUserQuestion
+                  ? (
+                      <div className="flex flex-col items-center justify-center w-full max-w-3xl gap-8 mt-[-10vh]">
+                        <DefaltInfo title="競品資訊查詢與分析">
+                        </DefaltInfo>
+                        <ChatInputArea
+                          value={userInput}
+                          onChange={setUserInput}
+                          onSubmit={handleSendMessage}
+                          isLoading={isLoading}
+                          isWebSearchEnabled={isWebSearchEnabled}
+                          onToggleWebSearch={() => setIsWebSearchEnabled(prev => !prev)}
+                          maxWidthClass="max-w-3xl"
+                        />
+                      </div>
+                    )
+                  : (
+                      <div className="max-w-4xl mx-auto w-full flex flex-col gap-4 pb-4">
+                        {conversations.map(conv => (
+                          <React.Fragment key={conv.recordDetailId}>
+                            {/* 使用者訊息 */}
+                            <ChatMessage type="user" content={conv.question} />
 
-      {/* 中間主內容區 - 使用標準 SidebarInset，自動處理寬度縮放 */}
-      <SidebarInset className="flex flex-col overflow-hidden md:ml-[calc(var(--sidebar-width)+1rem)] md:peer-data-[state=collapsed]:ml-[calc(var(--sidebar-width-icon)+1rem+0.5rem)]">
-        {/* 頂部固定欄位：智能指令選擇器 */}
-        <header className="sticky top-0 z-20 flex h-20 shrink-0 items-center gap-2 bg-background px-4">
-          {/* 智能指令區塊 */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-left hover:bg-gray-100 h-8 px-2 text-sm font-normal">
-                {selectedModel ? `(${selectedModel.modelType === '1' ? 'Global' : '雲端'}) ${selectedModel.aliases}` : '選擇模型'}
-                <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-              {models.map(model => (
-                <DropdownMenuItem key={model.id} onSelect={() => setSelectedModelId(model.id)}>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{model.aliases}</span>
-                    <span className="text-xs text-gray-400">{model.description}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-
-        {isShowingNote
-          ? (
-              <NoteComponent userId={user?.userId ? Number(user.userId) : undefined} />
-            )
-          : (
-              // 對話內容區域
-              <div className="flex flex-col flex-1 overflow-hidden relative">
-                <div
-                  ref={chatContainerRef}
-                  className={`flex-1 overflow-y-auto p-4 sm:p-6 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${!conversations.length && !currentUserQuestion ? 'flex flex-col items-center justify-center' : ''}`}
-                >
-                  {!conversations.length && !isLoading && !currentUserQuestion
-                    ? (
-                        <div className="flex flex-col items-center justify-center w-full max-w-3xl gap-8 mt-[-10vh]">
-                          <DefaltInfo title="競品資訊查詢與分析">
-                            請在下方輸入您的問題，我將為您提供專業的產品規格資訊查詢服務。
-                          </DefaltInfo>
-                          {renderInputArea('max-w-3xl')}
-                        </div>
-                      )
-                    : (
-                        <div className="max-w-4xl mx-auto w-full flex flex-col gap-4 pb-4">
-                          {conversations.map((conv, index) => (
-                            <React.Fragment key={index}>
-                              <div className="flex justify-end w-full">
-                                <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-5 py-3 max-w-[85%] text-gray-800 dark:text-gray-100">
-                                  {conv.question}
-                                </div>
-                              </div>
-                              <div className="flex gap-4 w-full">
-                                <div className="shrink-0 mt-1">
-                                  <img className="size-8 rounded-full object-cover border border-gray-200" src="https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/dragon.png" alt="AI" />
-                                </div>
-                                <div className="flex-1 min-w-0 space-y-2">
-                                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                                      {conv.answer}
-                                    </ReactMarkdown>
-                                  </div>
-                                  <div className="flex items-center gap-2 pt-1">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-6 px-2 text-xs text-gray-500"
-                                      onClick={() => {
-                                        navigator.clipboard.writeText(conv.answer)
-                                        toast.success('已複製')
-                                      }}
-                                    >
-                                      <CopyIcon className="h-3 w-3 mr-1" />
-                                      複製
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-gray-500" onClick={() => handleReferencesClick(conv.recordDetailId)}>
-                                      <Star className="h-3 w-3 mr-1" />
-                                      參考資料
-                                    </Button>
-                                    {noteEnabled[conv.recordDetailId] && (
-                                      <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-gray-500" onClick={() => handleInsertNote(conv.recordDetailId)}>
-                                        <Pin className="h-3 w-3 mr-1" />
-                                        記事
-                                      </Button>
-                                    )}
-                                    {isGood[conv.recordDetailId] && (
-                                      <Button variant="ghost" size="sm" className={`h-6 px-2 text-xs ${feedbackStates[conv.recordDetailId]?.isGoodEnabled ? 'text-blue-600' : 'text-gray-500'}`} onClick={() => toggleIsGoodEnabled(conv.recordDetailId)}>
-                                        <ThumbsUp className="h-3 w-3" />
-                                      </Button>
-                                    )}
-                                    {unGood[conv.recordDetailId] && (
-                                      <Button variant="ghost" size="sm" className={`h-6 px-2 text-xs ${feedbackStates[conv.recordDetailId]?.feedBackEnabled ? 'text-red-600' : 'text-gray-500'}`} onClick={() => toggleFeedBackEnabled(conv.recordDetailId)}>
-                                        <ThumbsDown className="h-3 w-3" />
-                                      </Button>
-                                    )}
-                                  </div>
+                            {/* AI 回覆 */}
+                            <ChatMessage
+                              type="assistant"
+                              content={conv.answer}
+                              actions={(
+                                <MessageActions
+                                  onCopy={() => {
+                                    navigator.clipboard.writeText(conv.answer)
+                                    toast.success('已複製')
+                                  }}
+                                  onReference={() => handleReferencesClick(conv.recordDetailId)}
+                                  onNote={noteEnabled[conv.recordDetailId] ? () => handleInsertNote(conv.recordDetailId) : undefined}
+                                  onThumbsUp={isGood[conv.recordDetailId] ? () => toggleIsGoodEnabled(conv.recordDetailId) : undefined}
+                                  onThumbsDown={unGood[conv.recordDetailId] ? () => toggleFeedBackEnabled(conv.recordDetailId) : undefined}
+                                  isLiked={feedbackStates[conv.recordDetailId]?.isGoodEnabled}
+                                  isDisliked={feedbackStates[conv.recordDetailId]?.feedBackEnabled}
+                                  showNote={noteEnabled[conv.recordDetailId]}
+                                  showThumbsUp={isGood[conv.recordDetailId]}
+                                  showThumbsDown={unGood[conv.recordDetailId]}
+                                />
+                              )}
+                              extraContent={(
+                                <>
                                   {feedbackStates[conv.recordDetailId]?.feedBackEnabled && (
-                                    <div className="mt-2 flex gap-2">
-                                      <Textarea placeholder="請提供您的反饋..." className="flex-1 min-h-[60px] text-sm" value={activeFeedback[conv.recordDetailId] || ''} onChange={e => setActiveFeedback(prev => ({ ...prev, [conv.recordDetailId]: e.target.value }))} />
-                                      <Button size="sm" onClick={() => handleSubmitFeedback(conv.recordDetailId, activeFeedback[conv.recordDetailId] || '')}>送出</Button>
+                                    <FeedbackPanel
+                                      defaultValue={activeFeedback[conv.recordDetailId] || ''}
+                                      onSubmit={feedback => handleSubmitFeedback(conv.recordDetailId, feedback)}
+                                      onCancel={() => toggleFeedBackEnabled(conv.recordDetailId)}
+                                    />
+                                  )}
+                                  {newfeedBack[conv.recordDetailId] && (
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                      感謝您的反饋！
                                     </div>
                                   )}
-                                  {newfeedBack[conv.recordDetailId] && (<div className="text-xs text-gray-500 mt-1">感謝您的反饋！</div>)}
-                                </div>
-                              </div>
-                            </React.Fragment>
-                          ))}
-                          {currentUserQuestion && isLoading && (
-                            <div className="flex justify-end w-full">
-                              <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-5 py-3 max-w-[85%]">{currentUserQuestion}</div>
-                            </div>
-                          )}
-                          {isLoading && message === '' && (
-                            <div className="flex gap-4 w-full">
-                              <div className="shrink-0 mt-1"><img className="size-8 rounded-full border border-gray-200" src="https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/dragon.png" alt="AI" /></div>
-                              <div className="bg-gray-200 p-2 rounded-full w-2 h-2 animate-bounce"></div>
-                            </div>
-                          )}
-                          {message && isLoading && (
-                            <div className="flex gap-4 w-full">
-                              <div className="shrink-0 mt-1"><img className="size-8 rounded-full border border-gray-200" src="https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/dragon.png" alt="AI" /></div>
-                              <div className="flex-1 min-w-0 prose prose-sm max-w-none"><ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{message}</ReactMarkdown></div>
-                            </div>
-                          )}
-                          <div className="h-4 w-full"></div>
-                        </div>
-                      )}
-                </div>
+                                </>
+                              )}
+                            />
+                          </React.Fragment>
+                        ))}
 
-                {(conversations.length > 0 || isLoading || currentUserQuestion) && (
-                  <div className="w-full bg-white dark:bg-gray-950 p-4 z-10">
-                    {renderInputArea('max-w-4xl')}
-                  </div>
-                )}
+                        {/* 載入中的使用者訊息 */}
+                        {currentUserQuestion && isLoading && (
+                          <ChatMessage type="user" content={currentUserQuestion} />
+                        )}
+
+                        {/* AI 正在思考 */}
+                        {isLoading && message === '' && (
+                          <ChatMessage type="assistant" content="" isLoading />
+                        )}
+
+                        {/* AI 串流回覆中 */}
+                        {message && isLoading && (
+                          <ChatMessage type="assistant" content={message} isLoading />
+                        )}
+                      </div>
+                    )}
               </div>
-            )}
-      </SidebarInset>
 
-      {/* 右側參數設定 */}
-      <ParameterSettings
-        creativity={creativity}
-        valueDegree={valueDegree}
-        promptInput={promptInput}
-        onCreativityChange={setCreativity}
-        onValueDegreeChange={setValueDegree}
-        onPromptInputChange={setPromptInput}
-      />
-    </SidebarProvider>
+              {/* 底部輸入框（固定） */}
+              {(conversations.length > 0 || isLoading || currentUserQuestion) && (
+                <div className="shrink-0 bg-white dark:bg-gray-950 p-4 ">
+                  <ChatInputArea
+                    value={userInput}
+                    onChange={setUserInput}
+                    onSubmit={handleSendMessage}
+                    isLoading={isLoading}
+                    isWebSearchEnabled={isWebSearchEnabled}
+                    onToggleWebSearch={() => setIsWebSearchEnabled(prev => !prev)}
+                    maxWidthClass="max-w-4xl"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+    </ChatLayout>
   )
 }
 
