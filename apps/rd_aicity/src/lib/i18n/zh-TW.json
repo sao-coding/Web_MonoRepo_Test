@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "微星 AI 資源整合平台",
+    "selectRegion": "選擇您的區域",
+    "username": "帳號",
+    "usernamePlaceholder": "帳號",
+    "password": "密碼",
+    "passwordPlaceholder": "密碼",
+    "captcha": "驗證碼",
+    "captchaPlaceholder": "驗證碼",
+    "rememberMe": "記住我的帳號",
+    "submit": "登 入",
+    "submitting": "登入中...",
+    "loginFailed": "登入失敗",
+    "captchaError": "驗證碼錯誤",
+    "capsLockOn": "大寫鎖定已開啟",
+    "regions": {
+      "MSIHQ": "MSIHQ",
+      "MSIK": "MSIK",
+      "MSIS": "MSIS",
+      "MSIPRC": "MSIPRC",
+      "MSIAM": "MSIAM",
+      "MSIEMEA": "MSIEMEA"
+    }
+  },
+  "language": {
+    "zhTW": "繁體中文",
+    "en": "English"
+  }
+}

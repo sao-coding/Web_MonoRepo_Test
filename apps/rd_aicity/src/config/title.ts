@@ -3,7 +3,7 @@ export const titleConfig = [
     title: 'AI City',
     logoUrl: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png',
     pathname: '/login',
-    banner: true,
+    banner: false,
   },
   {
     title: '圖意探險家',

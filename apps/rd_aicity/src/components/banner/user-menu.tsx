@@ -1,9 +1,10 @@
 'use client'
 
 import { useAuth } from '@msi/auth/src/provider'
+import { getAppConfig } from '@msi/config/env'
 import { LogOutIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -18,6 +19,7 @@ import {
 
 const UserMenu = () => {
   const { user, logout, status } = useAuth()
+  const config = useMemo(() => getAppConfig(), [])
 
   // 使用瀏覽器相容的 MD5 實現
   // const md5 = (str: string): string => {
@@ -77,7 +79,7 @@ const UserMenu = () => {
                       const status = logout()
                       if (status) {
                         toast.success('登出成功')
-                        window.location.href = process.env.NEXT_PUBLIC_BASE_PATH_URL as string
+                        window.location.href = config.NEXT_PUBLIC_BASE_PATH_URL || '/'
                       }
                       else {
                         toast.error('登出失敗，請稍後再試')

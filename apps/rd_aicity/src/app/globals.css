@@ -179,3 +179,9 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgb(75 85 99);
 }
+
+/* 隱藏瀏覽器內建的密碼顯示按鈕 */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

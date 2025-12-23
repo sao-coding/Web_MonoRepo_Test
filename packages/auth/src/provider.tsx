@@ -23,13 +23,14 @@ const AuthContext = createContext<UseAuthReturn | null>(null);
 export interface AuthProviderProps {
   children: ReactNode;
   logConfig?: LogConfig;
+  loginApiUrl?: string;
 }
 
 /**
  * AuthProvider - 提供認證上下文
  */
-export function AuthProvider({ children, logConfig }: AuthProviderProps) {
-  const auth = useAuthSource();
+export function AuthProvider({ children, logConfig, loginApiUrl }: AuthProviderProps) {
+  const auth = useAuthSource({ loginApiUrl });
 
   // 路由守衛
   useAuthAdapter(auth);

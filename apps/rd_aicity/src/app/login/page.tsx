@@ -1,84 +1,77 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
-import { Loader2Icon } from 'lucide-react'
+import { getAppConfig } from '@msi/config/env'
+import Image from 'next/image'
+import { useEffect, useMemo, useState } from 'react'
 
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useI18n } from '@/lib/i18n'
+import { LanguageSwitcher, LoginForm } from './_components'
 
+/**
+ * 登入頁面
+ * 全螢幕背景圖 + 玻璃擬態登入卡片
+ */
 const LoginPage = () => {
-  const { login, status } = useAuth()
+  const config = useMemo(() => getAppConfig(), [])
+  const { t } = useI18n()
+  const [isClient, setIsClient] = useState(false)
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
-    const formData = new FormData(event.currentTarget)
-    const credentials = {
-      userName: formData.get('userName') as string,
-      password: formData.get('password') as string,
-    }
-
-    const result = await login(credentials)
-    if (result.success) {
-      window.location.href = process.env.NEXT_PUBLIC_BASE_PATH_URL as string
-    }
-    else {
-      toast.error(result.error || '登入失敗')
-    }
-  }
-
-  // 按鈕載入狀態只顯示在實際登入操作中，不含初始檢查
-  const isLoading = status === 'loading'
+  if (!isClient)
+    return null
 
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <Card className="w-11/12 max-w-sm md:w-full">
-        <CardHeader>
-          <CardTitle>登入</CardTitle>
-          <CardDescription>請輸入您的帳號和密碼以登入系統。</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div className="grid gap-3">
-              <Label htmlFor="userName">帳號</Label>
-              <Input
-                id="userName"
-                name="userName"
-                type="text"
-                required
-                disabled={status === 'loading'}
-              />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="password">密碼</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                disabled={status === 'loading'}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading
-                  ? (
-                      <>
-                        <Loader2Icon className="animate-spin" />
-                        登入中...
-                      </>
-                    )
-                  : (
-                      '登入'
-                    )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div
+      className="fixed inset-0 flex items-center justify-center min-h-screen overflow-hidden"
+      style={{
+        backgroundImage: `url(${config.NEXT_PUBLIC_BASE_PATH_URL}/images/AIforce_v10_full.jpg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* 語系切換 */}
+      <LanguageSwitcher />
+
+      {/* 登入卡片 - 玻璃擬態、支援深色模式 */}
+      <div
+        className="w-full max-w-[720px] mx-4 px-16 py-12 rounded-[2.5rem] relative border border-border/50 backdrop-blur-xl overflow-hidden bg-card/60 dark:bg-card/80"
+        style={{
+          boxShadow: `
+            0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+            0 0 80px 0px rgba(255, 255, 255, 0.4),
+            0 0 120px 30px rgba(255, 255, 255, 0.15),
+            0 25px 60px -15px rgba(0, 0, 0, 0.2)
+          `,
+        }}
+      >
+        {/* Light mode background - 更透明 */}
+        <div
+          className="absolute inset-0 -z-10 dark:hidden"
+          style={{ background: 'radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.55) 100%)' }}
+        />
+        {/* Logo 區塊 */}
+        <div className="flex flex-col items-center mb-10">
+          <Image
+            src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce.png`}
+            alt="MSI AIforce"
+            width={320}
+            height={70}
+            className="object-contain dark:invert"
+            priority
+          />
+          {/* 標題 - 放大加粗 */}
+          <p className="text-muted-foreground text-base font-semibold tracking-[0.2em] mt-4">
+            {t('login.title')}
+          </p>
+        </div>
+
+        {/* 登入表單 */}
+        <LoginForm config={config} />
+      </div>
     </div>
   )
 }
