@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import { useQuery } from '@tanstack/react-query'
 import { FilterIcon, SearchIcon, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -8,7 +9,6 @@ import { toast } from 'sonner'
 import Banner from '@/components/banner-b'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/hooks/use-auth'
 import { createSearchContainer, fetchPatentFilters } from '@/lib/api/patents'
 
 interface FilterItem {

@@ -4,7 +4,7 @@ import '@/styles/globals.css'
 
 import { PageBreadcrumb } from '@msi/ui/components/layout/breadcrumb/page-breadcrumb'
 import Footer from '@msi/ui/components/layout/footer'
-import { AppSidebar } from '@msi/ui/components/layout/sidebar/app-sidebar'
+import { AppSidebar } from '@/components/layout/app-sidebar'
 import {
   SidebarInset,
   SidebarProvider,

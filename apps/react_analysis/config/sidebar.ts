@@ -1,4 +1,4 @@
-import type { SidebarItem } from '@msi/ui/components/layout/sidebar/app-sidebar'
+import type { SidebarItem } from '@/components/layout/app-sidebar'
 
 // 根据路径前缀匹配不同的 sidebar 配置
 export const SIDEBAR_CONFIG: Record<string, SidebarItem[]> = {

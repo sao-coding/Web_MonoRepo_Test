@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@handsontable/react": "^16.1.1",
+    "@msi/auth": "workspace:*",
+    "@msi/config": "workspace:*",
     "@msi/ui": "workspace:*",
     "@prisma/client": "^6.11.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",

@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import {
   CheckIcon,
   CopyIcon,
@@ -24,7 +25,6 @@ import {
 import { Input } from '@/components/ui/input'
 import LeftSidebar from '@/components/ui/left-sidebar'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/use-auth'
 
 interface RecordItem {
   F_SeqNo: number
