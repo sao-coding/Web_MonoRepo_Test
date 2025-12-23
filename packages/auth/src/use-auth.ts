@@ -74,7 +74,11 @@ const getCookieDomain = () => {
   return d && d.length > 0 ? d : undefined
 }
 
-export const useAuth = (): UseAuthReturn => {
+export interface AuthConfig {
+  loginApiUrl?: string
+}
+
+export const useAuth = (config?: AuthConfig): UseAuthReturn => {
   // Log React version to debug "Invalid hook call"
   // eslint-disable-next-line no-console
   console.log('[@msi/auth] React version:', React.version)
@@ -124,7 +128,7 @@ export const useAuth = (): UseAuthReturn => {
         setStatus('loading')
         setError(null)
 
-        const apiBase = process.env.NEXT_PUBLIC_LOGIN_API_URL
+        const apiBase = config?.loginApiUrl || process.env.NEXT_PUBLIC_LOGIN_API_URL
         if (!apiBase) {
           const msg = '未設定 NEXT_PUBLIC_LOGIN_API_URL'
           setError(msg)

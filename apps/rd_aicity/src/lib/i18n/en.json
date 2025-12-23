@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "MSI AI Resource Integration Platform",
+    "selectRegion": "Select Your Region",
+    "username": "Username",
+    "usernamePlaceholder": "Username",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "captcha": "Captcha",
+    "captchaPlaceholder": "captcha",
+    "rememberMe": "Remember my account",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "loginFailed": "Login failed",
+    "captchaError": "Incorrect captcha",
+    "capsLockOn": "Caps Lock is on",
+    "regions": {
+      "MSIHQ": "MSIHQ",
+      "MSIK": "MSIK",
+      "MSIS": "MSIS",
+      "MSIPRC": "MSIPRC",
+      "MSIAM": "MSIAM",
+      "MSIEMEA": "MSIEMEA"
+    }
+  },
+  "language": {
+    "zhTW": "繁體中文",
+    "en": "English"
+  }
+}
