@@ -1,8 +1,8 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import { FileSpreadsheet } from 'lucide-react'
 import React, { useCallback, useState } from 'react'
-import { useAuth } from '@/hooks/use-auth'
 import DragDropUploader from './_components/dropzone'
 
 const PatentsPage = () => {

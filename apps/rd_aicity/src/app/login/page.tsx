@@ -1,13 +1,13 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import { Loader2Icon } from 'lucide-react'
-import { toast } from 'sonner'
 
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useAuth } from '@/hooks/use-auth'
 
 const LoginPage = () => {
   const { login, status } = useAuth()

@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import { CheckIcon, EditIcon, FileTextIcon, TrashIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -8,7 +9,6 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Loading } from '@/components/ui/loading'
-import { useAuth } from '@/hooks/use-auth'
 
 export interface RecordItem {
   jobId: number

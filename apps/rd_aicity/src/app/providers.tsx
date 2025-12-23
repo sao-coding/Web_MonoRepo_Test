@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthProvider } from '@msi/auth'
+import { AuthProvider } from '@msi/auth/src/provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as React from 'react'
 
@@ -9,7 +9,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider logConfig={{ webSystem: 'rdraid5', subSystem: 'AI_City' }}>
+      <AuthProvider logConfig={{ webSystem: 'rdraid5', subSystem: 'AI_City', title: 'AI City' }}>
         {children}
       </AuthProvider>
     </QueryClientProvider>

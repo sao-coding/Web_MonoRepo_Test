@@ -1,10 +1,11 @@
 'use client'
 
+import { useAuth } from '@msi/auth/src/provider'
 import { LogOutIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
-import { toast } from 'sonner'
 
+import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -14,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useAuth } from '@/hooks/use-auth'
 
 const UserMenu = () => {
   const { user, logout, status } = useAuth()
