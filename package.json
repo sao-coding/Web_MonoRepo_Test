@@ -18,7 +18,11 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint",
     "prepare-fixme": "husky && pnpm build:packages",
-    "knip": "knip"
+    "knip": "knip",
+    "pm2:aicity": "turbo run start --filter rd-aicity",
+    "pm2:product": "turbo run start --filter product-spec",
+    "pm2:dev:aicity": "turbo run dev --filter rd-ai-city -- --port 3001",
+    "pm2:dev:product": "turbo run dev --filter product-spec"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -48,6 +52,7 @@
       "@prisma/client",
       "@prisma/engines",
       "@tailwindcss/oxide",
+      "core-js",
       "core-js-pure",
       "esbuild",
       "prisma",
@@ -55,6 +60,9 @@
       "sharp",
       "ttf2woff2",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@tailwindcss/oxide"
     ]
   },
   "dependencies": {

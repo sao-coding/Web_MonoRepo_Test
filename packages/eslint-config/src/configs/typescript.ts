@@ -64,7 +64,12 @@ export const typescript = (
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/consistent-type-definitions': 'off',
-
+      '@typescript-eslint/prefer-nullish-coalescing': ['error', {
+        'ignoreConditionalTests': true,  // 忽略條件測試中的情況
+        'ignorePrimitives': {
+          'boolean': true  // 忽略 boolean 類型
+        }
+      }],
       ...overrides
     }
   }

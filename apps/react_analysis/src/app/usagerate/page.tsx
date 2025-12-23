@@ -5,8 +5,8 @@ import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import AnalysisFilter from './components/AnalysisFilter'
-import ChartContainer from './components/ChartContainer'
+import AnalysisFilter from './_components/analysis-filter'
+import ChartContainer from './_components/chart-container'
 
 interface FilterState {
   AnalysisType: 'clickrate' | 'usage';
