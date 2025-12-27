@@ -7,11 +7,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["./src/*"],
-      "@msi/config": ["../../packages/config/src/index.ts"],
-      "@msi/config/*": ["../../packages/config/src/*"],
-      "@msi/auth": ["../../packages/auth/dist/index.d.ts"],
-      "@msi/ui": ["../../packages/ui/dist/index.d.ts"]
+      "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "allowJs": true,
