@@ -41,7 +41,7 @@ export interface UseProductSpecParametersOptions {
 export function useProductSpecParameters({
   userId,
   models,
-  setSelectedModelId,
+  setSelectedModelId
 }: UseProductSpecParametersOptions): UseProductSpecParametersReturn {
   const [creativity, setCreativityState] = useState(0.1)
   const [valueDegree, setValueDegreeState] = useState(1)
@@ -70,7 +70,7 @@ export function useProductSpecParameters({
       setPromptInputState(data.userPrompt || '')
 
       // 根據模型 ID 設定選中的模型
-      const matchedModel = models.find(model => model.modelId === data.model)
+      const matchedModel = models.find((model) => model.modelId === data.model)
       if (matchedModel) {
         setSelectedModelId(matchedModel.id)
       }
@@ -86,7 +86,7 @@ export function useProductSpecParameters({
     setPromptInputState('')
 
     // 選擇預設模型
-    const defaultModel = models.find(model => model.isDefault === '1')
+    const defaultModel = models.find((model) => model.isDefault === '1')
     if (defaultModel) {
       setSelectedModelId(defaultModel.id)
     }
@@ -100,7 +100,7 @@ export function useProductSpecParameters({
     promptInput,
     setPromptInput,
     fetchParameters: fetchParametersFromServer,
-    resetParameters,
+    resetParameters
   }
 }
 

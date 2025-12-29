@@ -38,7 +38,7 @@ const LoginPage = () => {
 
       {/* 登入卡片 - 玻璃擬態、支援深色模式 */}
       <div
-        className="w-full max-w-[720px] mx-4 px-16 py-12 rounded-[2.5rem] relative border border-border/50 backdrop-blur-xl overflow-hidden bg-card/60 dark:bg-card/80"
+        className="w-[800px] max-w-full h-[623px] mx-4 px-10 py-8 rounded-4xl relative border border-border/50 backdrop-blur-xl overflow-hidden bg-card/60 dark:bg-card/80"
         style={{
           boxShadow: `
             0 0 0 1px rgba(255, 255, 255, 0.3) inset,
@@ -48,23 +48,30 @@ const LoginPage = () => {
           `,
         }}
       >
-        {/* Light mode background - 更透明 */}
+        {/* Light mode background - 中間白色往外漸層透明 */}
         <div
           className="absolute inset-0 -z-10 dark:hidden"
-          style={{ background: 'radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.55) 100%)' }}
+          style={{ background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 40%, rgba(255, 255, 255, 0.3) 100%)' }}
         />
-        {/* Logo 區塊 */}
-        <div className="flex flex-col items-center mb-10">
+        {/* Logo 區塊 - 放大圖片並增加間距 */}
+        <div className="flex flex-col items-center mb-10 mt-4">
           <Image
             src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce.png`}
             alt="MSI AIforce"
-            width={320}
-            height={70}
+            width={340}
+            height={40}
             className="object-contain dark:invert"
             priority
           />
-          {/* 標題 - 放大加粗 */}
-          <p className="text-muted-foreground text-base font-semibold tracking-[0.2em] mt-4">
+          {/* 標題 - 18px，淺色深黑/深色純白 */}
+          <p
+            className="text-gray-900 dark:text-white font-semibold mt-5"
+            style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", "Meiryo UI", Helvetica, Arial, sans-serif',
+              letterSpacing: '10px',
+              fontSize: '18px',
+            }}
+          >
             {t('login.title')}
           </p>
         </div>

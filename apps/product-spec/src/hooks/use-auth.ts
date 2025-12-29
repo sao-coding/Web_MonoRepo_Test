@@ -44,8 +44,8 @@ const decodeJWT = (token: string): User | null => {
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map(c => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
-        .join(''),
+        .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
+        .join('')
     )
     return JSON.parse(jsonPayload) as User
   }
@@ -95,7 +95,7 @@ export const useAuth = (): UseAuthReturn => {
 
   // 登入函數 - 保留延遲，使用 useCallback 優化
   const login = useCallback(async (
-    credentials: LoginCredentials,
+    credentials: LoginCredentials
   ): Promise<{ success: boolean, error?: string }> => {
     try {
       setStatus('loading')
@@ -104,9 +104,9 @@ export const useAuth = (): UseAuthReturn => {
       const res = await fetch(`${getAppConfig().NEXT_PUBLIC_LOGIN_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify(credentials)
       })
 
       if (res.ok) {
@@ -115,7 +115,7 @@ export const useAuth = (): UseAuthReturn => {
         // 儲存 token - 移除額外屬性
         Cookies.set('accessToken', data.accessToken, {
           expires: 100 * 365 * 24 * 60 * 60, // 100年
-          domain: getAppConfig().NEXT_PUBLIC_COOKIE_DOMAIN,
+          domain: getAppConfig().NEXT_PUBLIC_COOKIE_DOMAIN
         })
 
         // 解析並設定用戶資訊
@@ -192,6 +192,6 @@ export const useAuth = (): UseAuthReturn => {
     isAuthenticated,
     login,
     logout,
-    refreshUser,
+    refreshUser
   }
 }

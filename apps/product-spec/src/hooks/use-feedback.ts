@@ -66,9 +66,9 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
   const sendFeedback = useCallback(async (
     recordDetailId: number,
     isGoodValue: boolean | null,
-    feedback: string | null = null,
+    feedback: string | null = null
   ) => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+    const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
     if (!baseUrl) {
       return
     }
@@ -81,11 +81,11 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
           recordDetailId,
           isGood: isGoodValue,
           comment: feedback,
-          userId,
-        }),
+          userId
+        })
       })
       if (feedback) {
-        setActiveFeedback(prev => ({ ...prev, [recordDetailId]: feedback }))
+        setActiveFeedback((prev) => ({ ...prev, [recordDetailId]: feedback }))
       }
     }
     catch (err) {
@@ -95,7 +95,7 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
 
   const toggleIsGood = useCallback((recordDetailId: number) => {
     setFeedbackStates((prev) => {
-      const current = prev[recordDetailId] || { isGoodEnabled: false, feedBackEnabled: false }
+      const current = prev[recordDetailId] ?? { isGoodEnabled: false, feedBackEnabled: false }
       const newIsGoodEnabled = !current.isGoodEnabled
 
       // 發送反饋
@@ -110,35 +110,38 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
         ...prev,
         [recordDetailId]: {
           isGoodEnabled: newIsGoodEnabled,
-          feedBackEnabled: false,
-        },
+          feedBackEnabled: false
+        }
       }
     })
   }, [sendFeedback])
 
   const toggleFeedback = useCallback((recordDetailId: number) => {
-    setFeedbackStates(prev => ({
-      ...prev,
-      [recordDetailId]: {
-        isGoodEnabled: false,
-        feedBackEnabled: !prev[recordDetailId]?.feedBackEnabled,
-      },
-    }))
+    setFeedbackStates((prev) => {
+      const currentState = prev[recordDetailId]?.feedBackEnabled ?? false
+      return {
+        ...prev,
+        [recordDetailId]: {
+          isGoodEnabled: false,
+          feedBackEnabled: !currentState
+        }
+      }
+    })
   }, [])
 
   const submitFeedback = useCallback((recordDetailId: number, feedback: string) => {
     sendFeedback(recordDetailId, false, feedback)
-    setFeedbackStates(prev => ({
+    setFeedbackStates((prev) => ({
       ...prev,
-      [recordDetailId]: { isGoodEnabled: false, feedBackEnabled: false },
+      [recordDetailId]: { isGoodEnabled: false, feedBackEnabled: false }
     }))
-    setIsGood(prev => ({ ...prev, [recordDetailId]: false }))
-    setUnGood(prev => ({ ...prev, [recordDetailId]: false }))
-    setNewFeedback(prev => ({ ...prev, [recordDetailId]: true }))
+    setIsGood((prev) => ({ ...prev, [recordDetailId]: false }))
+    setUnGood((prev) => ({ ...prev, [recordDetailId]: false }))
+    setNewFeedback((prev) => ({ ...prev, [recordDetailId]: true }))
   }, [sendFeedback])
 
   const insertNote = useCallback(async (recordDetailId: number) => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+    const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
     if (!baseUrl) {
       return
     }
@@ -149,30 +152,33 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           recordDetailId,
-          userId,
-        }),
+          userId
+        })
       })
     }
     catch (err) {
       console.error('儲存記事API：', err)
     }
     finally {
-      setNoteEnabled(prev => ({ ...prev, [recordDetailId]: false }))
+      setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: false }))
     }
   }, [apiBaseUrl, userId])
 
   const setButtonVisibility = useCallback((
     recordDetailId: number,
-    options: { isGood?: boolean, unGood?: boolean, note?: boolean },
+    options: { isGood?: boolean, unGood?: boolean, note?: boolean }
   ) => {
     if (options.isGood !== undefined) {
-      setIsGood(prev => ({ ...prev, [recordDetailId]: options.isGood! }))
+      const value = options.isGood
+      setIsGood((prev) => ({ ...prev, [recordDetailId]: value }))
     }
     if (options.unGood !== undefined) {
-      setUnGood(prev => ({ ...prev, [recordDetailId]: options.unGood! }))
+      const value = options.unGood
+      setUnGood((prev) => ({ ...prev, [recordDetailId]: value }))
     }
     if (options.note !== undefined) {
-      setNoteEnabled(prev => ({ ...prev, [recordDetailId]: options.note! }))
+      const value = options.note
+      setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: value }))
     }
   }, [])
 
@@ -188,7 +194,7 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
     submitFeedback,
     sendFeedback,
     insertNote,
-    setButtonVisibility,
+    setButtonVisibility
   }
 }
 

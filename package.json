@@ -19,7 +19,7 @@
     "lint": "turbo lint",
     "prepare-fixme": "husky && pnpm build:packages",
     "knip": "knip",
-    "pm2:aicity": "turbo run start --filter rd-aicity",
+    "pm2:aicity": "turbo run start --filter rd-ai-city",
     "pm2:product": "turbo run start --filter product-spec",
     "pm2:dev:aicity": "turbo run dev --filter rd-ai-city -- --port 3001",
     "pm2:dev:product": "turbo run dev --filter product-spec"
@@ -61,9 +61,7 @@
       "ttf2woff2",
       "unrs-resolver"
     ],
-    "ignoredBuiltDependencies": [
-      "@tailwindcss/oxide"
-    ]
+    "ignoredBuiltDependencies": ["@tailwindcss/oxide"]
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11"

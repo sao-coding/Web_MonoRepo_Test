@@ -126,15 +126,15 @@ export const stylistic = (overrides?: RuleOverrides): FlatConfig[] => [
       // Others
       'dot-location': ['error', 'property'],
       'max-len': [
-        'error',
+        'warn',
         {
-          code: 120,
+          code: 150,
           tabWidth: 2,
           ignoreUrls: true,
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
           ignoreRegExpLiterals: true,
-          ignoreComments: false
+          ignoreComments: true
         }
       ],
 

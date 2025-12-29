@@ -8,10 +8,16 @@ export const AppConfig = {
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:8000/api'
       : 'http://10.16.20.156:7474/api',
-  serviceApiUrl: config.NEXT_PUBLIC_NIM_SERVICE_API_URL || 'https://api.msi.com.tw',
+  serviceApiUrl: config.NEXT_PUBLIC_NIM_SERVICE_API_URL || 'https://api.msi.com.tw'
 }
 
-// 支援的語系：英語(en)、捷克語(cs)、丹麥語(da)、德語(de)、希臘語(el)、西班牙語(es)、芬蘭語(fi)、法語(fr)、匈牙利語(hu) 、義大利語(it)、立陶宛語(lt)、拉脫維亞語(lv)、荷蘭語(nl)、挪威語(no)、波蘭語(pl)、葡萄牙語(pt)、羅馬尼亞語(ro)、俄語(ru)、斯洛伐克語(sk)、瑞典語(sv)、簡體中文(zh)、日語(ja)、印地語(hi)、韓語(ko)、愛沙尼亞語(et)、斯洛維尼亞語(sl)、保加利亞語(bg)、烏克蘭語(uk)、克羅埃西亞語(hr)、阿拉伯語(ar)、越南語(vi)、土耳其語(tr)、印尼語(id)
+// 支援的語系：英語(en)、捷克語(cs)、丹麥語(da)、德語(de)、希臘語(el)、
+// 西班牙語(es)、芬蘭語(fi)、法語(fr)、匈牙利語(hu)、義大利語(it)、
+// 立陶宛語(lt)、拉脫維亞語(lv)、荷蘭語(nl)、挪威語(no)、波蘭語(pl)、
+// 葡萄牙語(pt)、羅馬尼亞語(ro)、俄語(ru)、斯洛伐克語(sk)、瑞典語(sv)、
+// 簡體中文(zh)、日語(ja)、印地語(hi)、韓語(ko)、愛沙尼亞語(et)、
+// 斯洛維尼亞語(sl)、保加利亞語(bg)、烏克蘭語(uk)、克羅埃西亞語(hr)、
+// 阿拉伯語(ar)、越南語(vi)、土耳其語(tr)、印尼語(id)
 export const translateConfig = {
   languages: [
     { label: '英語', code: 'en' },
@@ -46,8 +52,8 @@ export const translateConfig = {
     { label: '阿拉伯語', code: 'ar' },
     { label: '越南語', code: 'vi' },
     { label: '土耳其語', code: 'tr' },
-    { label: '印尼語', code: 'id' },
+    { label: '印尼語', code: 'id' }
   ],
   default_source_language: { label: '英語', code: 'en' },
-  default_target_language: { label: '簡體中文', code: 'zh' },
+  default_target_language: { label: '簡體中文', code: 'zh' }
 }

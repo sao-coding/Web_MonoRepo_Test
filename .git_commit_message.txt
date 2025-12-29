@@ -1,0 +1,29 @@
+feat(login): 更新登入頁面樣式並提升無障礙體驗
+調整了登入卡片的尺寸與內距（padding），以優化佈局。
+
+強化了淺色模式的背景，加入放射狀漸層（radial gradient）以提升視覺美感。
+
+加大 Logo 尺寸並調整間距，提高辨識度。
+
+更新標題的字體大小與顏色，確保在淺色及深色模式下皆具備良好的易讀性。
+
+fix(sidebar): 修正圖示（icon）引用路徑
+將 MSI 圖示的引用路徑修正至正確位置。
+
+fix(conversation hook): 優化錯誤處理機制與程式碼可讀性
+在條件判斷式中加入大括號（braces），使邏輯更清晰。
+
+優化錯誤處理的結構，提升程式碼的閱讀體驗。
+
+chore(package): 更新 package.json 以保持一致性
+修正了 package.json 中 aicity 腳本的過濾器（filter）名稱。
+
+style(eslint-config): 統一引用語法並優化規則配置
+標準化多個 ESLint 設定檔中的引用（import）語句。
+
+調整了樣式規範（stylistic）與 Tailwind CSS 的相關規則，以提供更佳的程式碼檢查體驗。
+
+chore(deps): 更新 pnpm-lock.yaml 中的依賴項目
+新增 js-cookie 及其型別定義（types），以優化 Cookie 處理。
+
+將 tsup 更新至最新版本，以提升構建（build）效能。

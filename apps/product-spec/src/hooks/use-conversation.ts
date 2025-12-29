@@ -58,6 +58,17 @@ export interface UseConversationReturn {
   updateLastAnswer: (answer: string) => void
 }
 
+interface RecordDetailResponse {
+  qaPairs?: Array<{
+    question: string
+    answer: string
+    isGood: boolean | null
+    comment: string | null
+    recordDetailId: number
+    isWeb: boolean
+  }>
+}
+
 /**
  * useConversation Hook
  *
@@ -85,38 +96,45 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
   const [message, setMessage] = useState('')
 
   const fetchRecords = useCallback(async () => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
-    if (!baseUrl || !userId) return
+    const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+    if (!baseUrl || !userId) {
+      return
+    }
 
     setIsLoadingRecord(true)
     try {
       const res = await fetch(
         `${baseUrl}/api/aicity/productspec/history?userId=${userId}`,
-        { method: 'GET' },
+        { method: 'GET' }
       )
       if (res.ok) {
-        const data = await res.json()
+        const data = (await res.json()) as RecordItem[]
         setRecords(data)
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.error('獲取紀錄失敗:', err)
       toast.error('獲取紀錄失敗')
-    } finally {
+    }
+    finally {
       setIsLoadingRecord(false)
     }
   }, [apiBaseUrl, userId])
 
-  const getRecordDetail = useCallback(async (seqNo: number) => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
-    if (!baseUrl) return null
+  const getRecordDetail = useCallback(async (seqNo: number): Promise<RecordDetailResponse | null> => {
+    const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+    if (!baseUrl) {
+      return null
+    }
 
     try {
       const res = await fetch(
         `${baseUrl}/api/aicity/productspec/history/${seqNo}`,
-        { method: 'GET' },
+        { method: 'GET' }
       )
-      return await res.json()
-    } catch (err) {
+      return (await res.json()) as RecordDetailResponse
+    }
+    catch (err) {
       console.error('API 錯誤:', err)
       return null
     }
@@ -125,21 +143,14 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
   const loadRecordDetails = useCallback(async (recordId: number) => {
     try {
       const details = await getRecordDetail(recordId)
-      if (details?.qaPairs?.length > 0) {
-        const loadedConversations = details.qaPairs.map((detail: {
-          question: string
-          answer: string
-          isGood: boolean | null
-          comment: string | null
-          recordDetailId: number
-          isWeb: boolean
-        }) => ({
+      if (details?.qaPairs && details.qaPairs.length > 0) {
+        const loadedConversations: ConversationItem[] = details.qaPairs.map((detail) => ({
           question: detail.question,
           answer: detail.answer,
           isGood: detail.isGood,
           comment: detail.comment,
           recordDetailId: detail.recordDetailId,
-          isWeb: detail.isWeb,
+          isWeb: detail.isWeb
         }))
 
         setConversations(loadedConversations)
@@ -148,14 +159,17 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
           setMessage(lastAnswer)
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       console.error('載入對話詳情失敗:', err)
       toast.error('載入對話詳情失敗')
     }
   }, [getRecordDetail])
 
   const selectRecord = useCallback((recordId: number | null) => {
-    if (activeRecordId === recordId) return
+    if (activeRecordId === recordId) {
+      return
+    }
     setActiveRecordId(recordId)
   }, [activeRecordId])
 
@@ -166,16 +180,16 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
   }, [])
 
   const addConversation = useCallback((conversation: ConversationItem) => {
-    setConversations(prev => [...prev, conversation])
+    setConversations((prev) => [...prev, conversation])
   }, [])
 
   const updateLastAnswer = useCallback((answer: string) => {
-    setConversations(prev => {
+    setConversations((prev) => {
       if (prev.length === 0) return prev
       const updated = [...prev]
       updated[updated.length - 1] = {
         ...updated[updated.length - 1],
-        answer,
+        answer
       }
       return updated
     })
@@ -197,7 +211,7 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
     selectRecord,
     startNewConversation,
     addConversation,
-    updateLastAnswer,
+    updateLastAnswer
   }
 }
 

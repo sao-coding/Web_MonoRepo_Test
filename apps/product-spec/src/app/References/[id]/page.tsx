@@ -1,23 +1,24 @@
 'use client'
 
+import { getAppConfig } from '@msi/config/env'
 import { Button } from '@msi/ui/components/button'
 import { Card, CardContent } from '@msi/ui/components/card'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '@msi/ui/components/dialog'
-import { getAppConfig } from '@msi/config/env'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@msi/ui/components/dropdown-menu'
 import { Loading } from '@msi/ui/components/loading'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 interface RefItem {
@@ -60,13 +61,13 @@ const References = () => {
     productTitle: '',
     productModelName: '',
     productLine: '',
-    productPicture: null,
+    productPicture: null
   })
 
   const fetchReferences = async (recordDetailId: number) => {
     try {
       const res = await fetch(`${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference-data/${recordDetailId}`, {
-        method: 'GET',
+        method: 'GET'
       })
       if (res.ok) {
         const data = await res.json()
@@ -93,11 +94,11 @@ const References = () => {
       productTitle: '',
       productModelName: '',
       productLine: '',
-      productPicture: null,
+      productPicture: null
     })
     try {
       const res = await fetch(`${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference/${mktName}/specifications?language=${language}`, {
-        method: 'GET',
+        method: 'GET'
       })
       if (res.ok) {
         const data = await res.json()
@@ -124,7 +125,7 @@ const References = () => {
     }
   }, [recordDetailId])
 
-  const handleLinkClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const targetLink = (event.target as HTMLElement).closest('a.product-link')
 
     if (targetLink) {
@@ -140,15 +141,15 @@ const References = () => {
   }
 
   return (
-    <div className="bg-blue-50 dark:bg-zinc-900">
-      <div className="max-w-[1300px] bg-white dark:bg-zinc-950 w-full mx-auto relative overflow-y-auto" style={{ height: 'calc(100vh - 64px)' }}>
+    <div className='bg-blue-50 dark:bg-zinc-900'>
+      <div className='relative mx-auto w-full max-w-[1300px] overflow-y-auto bg-white dark:bg-zinc-950' style={{ height: 'calc(100vh - 64px)' }}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="sticky top-[10px] left-[10px] z-50 text-left border-gray-200 dark:border-zinc-700 w-[100px]">
+            <Button variant='outline' className='sticky top-[10px] left-[10px] z-50 w-[100px] border-gray-200 text-left dark:border-zinc-700'>
               {selectedLan}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-full">
+          <DropdownMenuContent className='w-full'>
             <DropdownMenuItem
               onSelect={() => {
                 setSelectedLan('繁體中文')
@@ -175,22 +176,22 @@ const References = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="max-w-6xl mx-auto flex flex-col gap-4 py-16 px-4">
+        <div className='mx-auto flex max-w-6xl flex-col gap-4 px-4 py-16'>
           {isLoading
             ? (
-                <Loading text="Loading..." size="large" />
+                <Loading text='Loading...' size='large' />
               )
             : ref.length > 0
               ? (
-                  ref.map(ref => (
+                  ref.map((ref) => (
                     <Card
                       key={ref.id}
                       onClick={handleLinkClick}
-                      className="shadow-lg p-0 rounded-xl border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                      className='rounded-xl border-gray-300 bg-white p-0 shadow-lg dark:border-zinc-700 dark:bg-zinc-800'
                     >
-                      <CardContent className="px-16 py-6 flex flex-col gap-6">
+                      <CardContent className='flex flex-col gap-6 px-16 py-6'>
                         <div
-                          className="text-lg font-bold block"
+                          className='block text-lg font-bold'
                           dangerouslySetInnerHTML={{ __html: ref.qaText }}
                         />
                       </CardContent>
@@ -198,36 +199,36 @@ const References = () => {
                   ))
                 )
               : (
-                  <div className="text-center text-gray-400 dark:text-gray-500 col-span-full text-lg">
+                  <div className='col-span-full text-center text-lg text-gray-400 dark:text-gray-500'>
                     No data
                   </div>
                 )}
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent aria-describedby={undefined} className="p-0 gap-0">
-              <DialogHeader className="px-6 py-4 border-b">
+            <DialogContent aria-describedby={undefined} className='gap-0 p-0'>
+              <DialogHeader className='border-b px-6 py-4'>
                 <DialogTitle>{modalTitle}</DialogTitle>
               </DialogHeader>
-              <div className="max-h-[80vh] overflow-y-auto py-4 px-6">
-                <div className="flex justify-center mb-6">
+              <div className='max-h-[80vh] overflow-y-auto px-6 py-4'>
+                <div className='mb-6 flex justify-center'>
                   {productInfo.productPicture && (
                     <img
                       src={productInfo.productPicture}
-                      className="w-1/2"
-                      alt=""
+                      className='w-1/2'
+                      alt=''
                     />
                   )}
                 </div>
                 {spec.length > 0
                   ? (
-                      <ul className="flex flex-col gap-2">
+                      <ul className='flex flex-col gap-2'>
                         {spec.map((spec, index) => (
                           <li key={index}>
-                            <div className="inline-flex gap-2">
+                            <div className='inline-flex gap-2'>
                               ◆
                               <div>
-                                <div className="font-bold whitespace-nowrap inline-block" style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: (`${spec?.specName}：`) || '' }}></div>
-                                <div className="inline-block" dangerouslySetInnerHTML={{ __html: spec?.specValue || '' }}></div>
+                              <div className='inline-block font-bold whitespace-nowrap' style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: `${spec.specName ?? ''}：` }}></div>
+                                <div className='inline-block' dangerouslySetInnerHTML={{ __html: spec.specValue ?? '' }}></div>
                               </div>
                             </div>
                           </li>
@@ -235,7 +236,7 @@ const References = () => {
                       </ul>
                     )
                   : (
-                      <div className="text-center mt-4 text-gray-400 dark:text-gray-500">No Data</div>
+                      <div className='mt-4 text-center text-gray-400 dark:text-gray-500'>No Data</div>
                     )}
               </div>
             </DialogContent>

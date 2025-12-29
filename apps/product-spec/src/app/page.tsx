@@ -19,7 +19,8 @@ import {
   MessageActions,
   ParameterSidebar
 } from '@msi/ui/components/chat-layout'
-import React, { useEffect, useState } from 'react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import DefaltInfo from '@/components/chat-robot/defalt-info'
@@ -44,7 +45,6 @@ const HomePage = () => {
   // Models hook
   const {
     models,
-    selectedModelId: _selectedModelId,
     setSelectedModelId,
     selectedModel
   } = useModels({
@@ -56,7 +56,6 @@ const HomePage = () => {
     conversations,
     setConversations,
     records,
-    setRecords: _setRecords,
     activeRecordId,
     setActiveRecordId,
     isLoadingRecord,
@@ -136,6 +135,7 @@ const HomePage = () => {
   // Scroll to bottom on new messages
   useEffect(() => {
     const scrollableDiv = chatContainerRef.current
+
     if (scrollableDiv) {
       scrollableDiv.scrollTop = scrollableDiv.scrollHeight
     }
@@ -143,6 +143,7 @@ const HomePage = () => {
 
   // Fetch records when user is available
   useEffect(() => {
+
     if (user) {
       fetchRecords()
     }
@@ -194,9 +195,6 @@ const HomePage = () => {
   const title = config?.title || 'SpecCore'
   const logoUrl = config?.logoUrl
 
-  // Combine streaming message with saved message (kept for future use)
-  const _displayMessage = currentStreamMessage || message
-
   return (
     <ChatLayout
       leftSidebar={(
@@ -204,14 +202,13 @@ const HomePage = () => {
           activeRecordId={activeRecordId}
           onSelectRecord={selectRecord}
           onStartNewConversation={handleStartNewConversation}
-          userId={user?.userId}
           isLoadingRecord={isLoadingRecord}
           records={records}
           setIsShowingNote={setIsShowingNote}
           onRecordsChange={fetchRecords}
           title={title}
           logoUrl={logoUrl}
-          homeUrl={getAppConfig().NEXT_PUBLIC_RD_SITE_URL ?? '/'}
+          homeUrl={getAppConfig().NEXT_PUBLIC_RD_SITE_URL || '/'}
         />
       )}
       header={(
@@ -286,9 +283,15 @@ const HomePage = () => {
                                     toast.success('已複製')
                                   }}
                                   onReference={() => { handleReferencesClick(conv.recordDetailId) }}
-                                  onNote={noteEnabled[conv.recordDetailId] ? () => handleInsertNote(conv.recordDetailId) : undefined}
-                                  onThumbsUp={isGood[conv.recordDetailId] ? () => toggleIsGood(conv.recordDetailId) : undefined}
-                                  onThumbsDown={unGood[conv.recordDetailId] ? () => toggleFeedback(conv.recordDetailId) : undefined}
+                                  onNote={noteEnabled[conv.recordDetailId]
+                                    ? () => handleInsertNote(conv.recordDetailId)
+                                    : undefined}
+                                  onThumbsUp={isGood[conv.recordDetailId]
+                                    ? () => { toggleIsGood(conv.recordDetailId) }
+                                    : undefined}
+                                  onThumbsDown={unGood[conv.recordDetailId]
+                                    ? () => { toggleFeedback(conv.recordDetailId) }
+                                    : undefined}
                                   isLiked={feedbackStates[conv.recordDetailId]?.isGoodEnabled}
                                   isDisliked={feedbackStates[conv.recordDetailId]?.feedBackEnabled}
                                   showNote={noteEnabled[conv.recordDetailId]}
@@ -301,8 +304,8 @@ const HomePage = () => {
                                   {feedbackStates[conv.recordDetailId]?.feedBackEnabled && (
                                     <FeedbackPanel
                                       defaultValue={activeFeedback[conv.recordDetailId] || ''}
-                                      onSubmit={(feedback) => submitFeedback(conv.recordDetailId, feedback)}
-                                      onCancel={() => toggleFeedback(conv.recordDetailId)}
+                                      onSubmit={(feedback) => { submitFeedback(conv.recordDetailId, feedback) }}
+                                      onCancel={() => { toggleFeedback(conv.recordDetailId) }}
                                     />
                                   )}
                                   {newFeedback[conv.recordDetailId] && (

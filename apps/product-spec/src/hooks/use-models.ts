@@ -58,6 +58,7 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchModels = useCallback(async () => {
+
     const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
     if (!baseUrl) {
       return
@@ -66,13 +67,14 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
     setIsLoading(true)
     try {
       const response = await fetch(`${baseUrl}/api/aicity/productspec/models`, {
-        method: 'GET',
+        method: 'GET'
       })
       const data: Model[] = await response.json()
       setModels(data)
 
       // 自動選擇預設模型
-      const defaultModel = data.find(model => model.isDefault === '1')
+      const defaultModel = data.find((model) => model.isDefault === '1')
+
       if (defaultModel) {
         setSelectedModelId(defaultModel.id)
       }
@@ -89,7 +91,8 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
   }, [apiBaseUrl])
 
   const selectDefaultModel = useCallback(() => {
-    const defaultModel = models.find(model => model.isDefault === '1')
+    const defaultModel = models.find((model) => model.isDefault === '1')
+
     if (defaultModel) {
       setSelectedModelId(defaultModel.id)
     }
@@ -98,7 +101,7 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
     }
   }, [models])
 
-  const selectedModel = models.find(model => model.id === selectedModelId)
+  const selectedModel = models.find((model) => model.id === selectedModelId)
 
   useEffect(() => {
     if (autoLoad) {
@@ -113,7 +116,7 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
     selectedModel,
     isLoading,
     fetchModels,
-    selectDefaultModel,
+    selectDefaultModel
   }
 }
 

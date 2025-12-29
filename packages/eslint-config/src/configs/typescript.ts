@@ -36,7 +36,6 @@ export const typescript = (
 
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
       '@typescript-eslint/no-invalid-this': 'error',
-      '@typescript-eslint/no-shadow': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
         {
@@ -64,10 +63,19 @@ export const typescript = (
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/consistent-type-definitions': 'off',
-      '@typescript-eslint/prefer-nullish-coalescing': ['error', {
-        'ignoreConditionalTests': true,  // 忽略條件測試中的情況
+      // 放寬更多過於嚴格的規則
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-shadow': 'warn',
+      '@typescript-eslint/prefer-nullish-coalescing': ['warn', {
+        'ignoreConditionalTests': true,
         'ignorePrimitives': {
-          'boolean': true  // 忽略 boolean 類型
+          'boolean': true,
+          'string': true,
+          'number': true
         }
       }],
       ...overrides

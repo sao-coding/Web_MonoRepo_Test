@@ -225,13 +225,13 @@ const SearchResults = ({
       <div className={`p-2 overflow-y-auto flex ${pk
         ? ''
         : 'flex-col'
-        }`}
+      }`}
       >
         <div
           className={`flex-1 ${pk
             ? 'flex gap-4'
             : 'grid gap-4'
-            }`}
+          }`}
         >
           {patentsData.map((item, index) => (
             <PatentsCard
@@ -252,7 +252,7 @@ const SearchResults = ({
         className={`p-2 ${pk
           ? ''
           : 'border-t'
-          }`}
+        }`}
       >
         <Pagination
           currentPage={currentPage}

@@ -1,13 +1,13 @@
 'use client'
 
-import { getAppConfig } from '@msi/config/env'
 import type {
   ConversationItem,
   CreateChatResponse,
   ReferenceItem,
-  UseProductSpecChatReturn,
+  UseProductSpecChatReturn
 } from '../types'
 
+import { getAppConfig } from '@msi/config/env'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -15,7 +15,7 @@ import {
   createNewChat,
   enrichReferenceItems,
   insertRecordDetail,
-  insertReference,
+  insertReference
 } from '../services/productSpecService'
 
 export interface UseProductSpecChatOptions {
@@ -67,7 +67,7 @@ export function useProductSpecChat({
   fetchRecords,
   modelId,
   parameters,
-  setButtonVisibility,
+  setButtonVisibility
 }: UseProductSpecChatOptions): UseProductSpecChatReturn {
   const [isLoading, setIsLoading] = useState(false)
   const [currentStreamMessage, setCurrentStreamMessage] = useState('')
@@ -75,7 +75,7 @@ export function useProductSpecChat({
   const [isWebSearchEnabled, setIsWebSearchEnabled] = useState(false)
 
   const toggleWebSearch = useCallback(() => {
-    setIsWebSearchEnabled(prev => !prev)
+    setIsWebSearchEnabled((prev) => !prev)
   }, [])
 
   const sendMessage = useCallback(async (userInput: string) => {
@@ -97,16 +97,16 @@ export function useProductSpecChat({
         const response = await createNewChat({
           userId,
           title: currentQuestion,
-          firstQuestion: currentQuestion,
+          firstQuestion: currentQuestion
         })
 
         const data = (response.data || response) as CreateChatResponse
 
-        if ((data.success || (response as CreateChatResponse).status === 'success') && data.chatId) {
+        if ((data.success || (response).status === 'success') && data.chatId) {
           currentRecordId = data.chatId
           setActiveRecordId(data.chatId)
           fetchRecords()
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise((resolve) => setTimeout(resolve, 100))
         }
         else {
           throw new Error(data.message || '創建新聊天會話失敗')
@@ -139,13 +139,13 @@ export function useProductSpecChat({
         threshold: parameters.valueDegree,
         user_prompt: parameters.promptInput,
         search_web: isWebSearchEnabled,
-        model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ',
+        model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ'
       }
 
       const res = await fetch(`${aiApiUrl}/spec`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody)
       })
 
       if (!res.ok) {
@@ -181,7 +181,7 @@ export function useProductSpecChat({
               }
               if (json.output !== undefined) {
                 output += json.output
-                setCurrentStreamMessage(prev => prev + json.output)
+                setCurrentStreamMessage((prev) => prev + json.output)
               }
             }
             catch (parseError) {
@@ -205,7 +205,7 @@ export function useProductSpecChat({
             }
             else if (json.output !== undefined) {
               output += json.output
-              setCurrentStreamMessage(prev => prev + json.output)
+              setCurrentStreamMessage((prev) => prev + json.output)
             }
           }
           catch (e) {
@@ -228,7 +228,7 @@ export function useProductSpecChat({
             threshold: parameters.valueDegree,
             userPrompt: parameters.promptInput,
             model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ',
-            isWeb: isWebSearchEnabled,
+            isWeb: isWebSearchEnabled
           })
 
           if (result) {
@@ -247,7 +247,7 @@ export function useProductSpecChat({
               recordDetailId,
               isGood: null,
               comment: null,
-              isWeb: isWebSearchEnabled,
+              isWeb: isWebSearchEnabled
             })
 
             fetchRecords()
@@ -288,7 +288,7 @@ export function useProductSpecChat({
     modelId,
     parameters,
     isWebSearchEnabled,
-    setButtonVisibility,
+    setButtonVisibility
   ])
 
   return {
@@ -297,7 +297,7 @@ export function useProductSpecChat({
     currentStreamMessage,
     currentUserQuestion,
     isWebSearchEnabled,
-    toggleWebSearch,
+    toggleWebSearch
   }
 }
 
