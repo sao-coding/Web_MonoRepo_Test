@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import { CheckIcon, EditIcon, FileTextIcon, TrashIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'

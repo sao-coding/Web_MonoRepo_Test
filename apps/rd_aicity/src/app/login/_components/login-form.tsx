@@ -1,7 +1,7 @@
 'use client'
 
 import type { AppConfig } from '@msi/config/env'
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import { Button } from '@msi/ui/components/button'
 import { Checkbox } from '@msi/ui/components/checkbox'
 import { Input } from '@msi/ui/components/input'
