@@ -117,16 +117,13 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
   }, [sendFeedback])
 
   const toggleFeedback = useCallback((recordDetailId: number) => {
-    setFeedbackStates((prev) => {
-      const currentState = prev[recordDetailId]?.feedBackEnabled ?? false
-      return {
-        ...prev,
-        [recordDetailId]: {
-          isGoodEnabled: false,
-          feedBackEnabled: !currentState
-        }
+    setFeedbackStates((prev) => ({
+      ...prev,
+      [recordDetailId]: {
+        isGoodEnabled: false,
+        feedBackEnabled: !prev[recordDetailId]?.feedBackEnabled
       }
-    })
+    }))
   }, [])
 
   const submitFeedback = useCallback((recordDetailId: number, feedback: string) => {
@@ -169,16 +166,13 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
     options: { isGood?: boolean, unGood?: boolean, note?: boolean }
   ) => {
     if (options.isGood !== undefined) {
-      const value = options.isGood
-      setIsGood((prev) => ({ ...prev, [recordDetailId]: value }))
+      setIsGood((prev) => ({ ...prev, [recordDetailId]: options.isGood as boolean }))
     }
     if (options.unGood !== undefined) {
-      const value = options.unGood
-      setUnGood((prev) => ({ ...prev, [recordDetailId]: value }))
+      setUnGood((prev) => ({ ...prev, [recordDetailId]: options.unGood as boolean }))
     }
     if (options.note !== undefined) {
-      const value = options.note
-      setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: value }))
+      setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: options.note as boolean }))
     }
   }, [])
 

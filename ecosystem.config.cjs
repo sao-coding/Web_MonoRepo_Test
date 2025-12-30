@@ -8,20 +8,42 @@ module.exports = {
       args: '/c pnpm run pm2:aicity',
       // 3. 關鍵：告訴 PM2 不要用 Node 去解析這個 script
       interpreter: 'none',
-      env: {
+      env_production: {
         NODE_ENV: 'production',
+        APP_ENV: 'production',
         PORT: 3001
       },
+      env_staging: {
+        NODE_ENV: 'production',
+        APP_ENV: 'staging',
+        PORT: 3001
+      },
+      env_development: {
+        NODE_ENV: 'development',
+        APP_ENV: 'development',
+        PORT: 3001
+      }
     },
     {
       name: 'product-spec',
       script: 'C:\\Windows\\System32\\cmd.exe',
       args: '/c pnpm run pm2:product',
       interpreter: 'none',
-      env: {
+      env_production: {
         NODE_ENV: 'production',
+        APP_ENV: 'production',
         PORT: 3002
       },
-    },
-  ],
+      env_staging: {
+        NODE_ENV: 'production',
+        APP_ENV: 'staging',
+        PORT: 3002
+      },
+      env_development: {
+        NODE_ENV: 'development',
+        APP_ENV: 'development',
+        PORT: 3002
+      }
+    }
+  ]
 }

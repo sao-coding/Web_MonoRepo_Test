@@ -4,6 +4,10 @@
 #   - build-docker
 #   - deploy-docker
 
+# variables:
+#   # This variable should be set in GitLab CI/CD Settings > Variables
+#   # ENV_MASTER_KEY: "your_secret_key"
+
 # check-affected:
 #   stage: check
 #   image: node:lts-alpine3.20
@@ -68,6 +72,8 @@
 #         echo "AFFECTED_APPS 為空，跳過構建步驟"
 #         exit 0
 #       fi
+#     # Inject ENV_MASTER_KEY for build process if needed (e.g. for decrypting secrets during build)
+#     - export ENV_MASTER_KEY=$ENV_MASTER_KEY
 #   script:
 #     - echo "Docker 登入"
 #     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -75,7 +81,8 @@
 #       for app in $AFFECTED_APPS; do
 #         echo "構建 Docker 映像檔: $app"
 #         echo "使用的參數: APP_NAME=$app, TURBO_TEAM=$TURBO_TEAM, TURBO_TOKEN=$TURBO_TOKEN"
-#         docker build -f ./apps/$app/Dockerfile -t $CI_REGISTRY_IMAGE/$app:latest . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --no-cache
+#         # Pass ENV_MASTER_KEY as build arg if your Dockerfile needs it
+#         docker build -f ./apps/$app/Dockerfile -t $CI_REGISTRY_IMAGE/$app:latest . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --build-arg ENV_MASTER_KEY=$ENV_MASTER_KEY --no-cache
 #         docker push $CI_REGISTRY_IMAGE/$app:latest
 #       done
 #   needs:
@@ -107,7 +114,8 @@
 #         ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $CI_REGISTRY_IMAGE/$app:latest"
 #       done
 #     - echo "🧹 停止並移除現有服務 (保持不停機)"
-#     - ssh ${SSH_USER}@${SSH_SERVER_IP} "cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
+#     # Pass ENV_MASTER_KEY to the deployment command if needed
+#     - ssh ${SSH_USER}@${SSH_SERVER_IP} "export ENV_MASTER_KEY=$ENV_MASTER_KEY && cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
 #     - echo "✅ 部署完成，查看運行中的容器"
 #     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
 #   needs:

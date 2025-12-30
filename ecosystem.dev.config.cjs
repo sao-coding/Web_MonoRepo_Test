@@ -8,7 +8,7 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         PORT: 3001 // 指定開發環境的 Port，避免與預設 3000 衝突
-      },
+      }
     },
     {
       name: 'product-spec-dev',
@@ -18,7 +18,7 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         PORT: 3002
-      },
-    },
-  ],
+      }
+    }
+  ]
 }
