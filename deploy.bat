@@ -1,9 +1,13 @@
 @echo off
 setlocal
 
+:: Change to the script's directory
+cd /d "%~dp0"
+
 echo ==========================================
 echo      Monorepo Deployment Script
 echo ==========================================
+echo Working Directory: %cd%
 echo.
 
 :: Get current git branch
