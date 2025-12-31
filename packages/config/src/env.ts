@@ -7,6 +7,8 @@ export interface AppConfig {
   NEXT_PUBLIC_PATENT_SERVICE_API_URL: string
   NEXT_PUBLIC_AI_API_URL: string
   NEXT_PUBLIC_VGA_AI_API_URL: string
+  NEXT_PUBLIC_POSTHOG_KEY: string
+  NEXT_PUBLIC_POSTHOG_HOST: string
   // 其他所有您需要的變數
 }
 
@@ -23,6 +25,8 @@ export function getAppConfig(): AppConfig {
     NEXT_PUBLIC_NIM_SERVICE_API_URL: process.env.NEXT_PUBLIC_NIM_SERVICE_API_URL || '',
     NEXT_PUBLIC_PATENT_SERVICE_API_URL: process.env.NEXT_PUBLIC_PATENT_SERVICE_API_URL || '',
     NEXT_PUBLIC_AI_API_URL: process.env.NEXT_PUBLIC_AI_API_URL || '',
-    NEXT_PUBLIC_VGA_AI_API_URL: process.env.NEXT_PUBLIC_VGA_AI_API_URL || ''
+    NEXT_PUBLIC_VGA_AI_API_URL: process.env.NEXT_PUBLIC_VGA_AI_API_URL || '',
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST || ''
   }
 }

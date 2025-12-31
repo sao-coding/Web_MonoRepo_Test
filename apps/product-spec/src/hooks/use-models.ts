@@ -58,7 +58,6 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchModels = useCallback(async () => {
-
     const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
     if (!baseUrl) {
       return
@@ -77,15 +76,12 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
 
       if (defaultModel) {
         setSelectedModelId(defaultModel.id)
-      }
-      else if (data.length > 0) {
+      } else if (data.length > 0) {
         setSelectedModelId(data[0].id)
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching models:', error)
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }, [apiBaseUrl])
@@ -95,8 +91,7 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
 
     if (defaultModel) {
       setSelectedModelId(defaultModel.id)
-    }
-    else if (models.length > 0) {
+    } else if (models.length > 0) {
       setSelectedModelId(models[0].id)
     }
   }, [models])

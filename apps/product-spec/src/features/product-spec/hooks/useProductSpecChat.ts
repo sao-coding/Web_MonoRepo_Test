@@ -38,7 +38,10 @@ export interface UseProductSpecChatOptions {
     promptInput: string
   }
   /** 設定反饋按鈕可見性 */
-  setButtonVisibility?: (recordDetailId: number, options: { isGood?: boolean, unGood?: boolean, note?: boolean }) => void
+  setButtonVisibility?: (
+    recordDetailId: number,
+    options: { isGood?: boolean; unGood?: boolean; note?: boolean }
+  ) => void
 }
 
 /**
@@ -78,218 +81,210 @@ export function useProductSpecChat({
     setIsWebSearchEnabled((prev) => !prev)
   }, [])
 
-  const sendMessage = useCallback(async (userInput: string) => {
-    if (!userInput?.trim()) {
-      toast.error('請輸入訊息')
-      return
-    }
-
-    const currentQuestion = userInput
-    setCurrentUserQuestion(currentQuestion)
-    setIsLoading(true)
-    setCurrentStreamMessage('')
-
-    let currentRecordId = activeRecordId
-
-    // 如果沒有 activeRecordId，建立新的聊天會話
-    if (!currentRecordId) {
-      try {
-        const response = await createNewChat({
-          userId,
-          title: currentQuestion,
-          firstQuestion: currentQuestion
-        })
-
-        const data = (response.data || response) as CreateChatResponse
-
-        if ((data.success || (response).status === 'success') && data.chatId) {
-          currentRecordId = data.chatId
-          setActiveRecordId(data.chatId)
-          fetchRecords()
-          await new Promise((resolve) => setTimeout(resolve, 100))
-        }
-        else {
-          throw new Error(data.message || '創建新聊天會話失敗')
-        }
-      }
-      catch (error) {
-        console.error('創建新聊天會話錯誤:', error)
-        toast.error('創建新聊天會話失敗')
-        setIsLoading(false)
-        setCurrentUserQuestion('')
+  const sendMessage = useCallback(
+    async (userInput: string) => {
+      if (!userInput?.trim()) {
+        toast.error('請輸入訊息')
         return
       }
-    }
 
-    let referenceData: ReferenceItem[] | null = null
-    let output = ''
-    let shouldSave = false
+      const currentQuestion = userInput
+      setCurrentUserQuestion(currentQuestion)
+      setIsLoading(true)
+      setCurrentStreamMessage('')
 
-    try {
-      const aiApiUrl = getAppConfig().NEXT_PUBLIC_AI_API_URL
-      if (!aiApiUrl) {
-        throw new Error('API URL is not configured')
+      let currentRecordId = activeRecordId
+
+      // 如果沒有 activeRecordId，建立新的聊天會話
+      if (!currentRecordId) {
+        try {
+          const response = await createNewChat({
+            userId,
+            title: currentQuestion,
+            firstQuestion: currentQuestion
+          })
+
+          const data = (response.data || response) as CreateChatResponse
+
+          if ((data.success || response.status === 'success') && data.chatId) {
+            currentRecordId = data.chatId
+            setActiveRecordId(data.chatId)
+            fetchRecords()
+            await new Promise((resolve) => setTimeout(resolve, 100))
+          } else {
+            throw new Error(data.message || '創建新聊天會話失敗')
+          }
+        } catch (error) {
+          console.error('創建新聊天會話錯誤:', error)
+          toast.error('創建新聊天會話失敗')
+          setIsLoading(false)
+          setCurrentUserQuestion('')
+          return
+        }
       }
 
-      const requestBody = {
-        user_id: userId,
-        chat_id: currentRecordId ? currentRecordId.toString() : '',
-        query: currentQuestion,
-        temperature: parameters.creativity,
-        threshold: parameters.valueDegree,
-        user_prompt: parameters.promptInput,
-        search_web: isWebSearchEnabled,
-        model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ'
-      }
+      let referenceData: ReferenceItem[] | null = null
+      let output = ''
+      let shouldSave = false
 
-      const res = await fetch(`${aiApiUrl}/spec`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      })
+      try {
+        const aiApiUrl = getAppConfig().NEXT_PUBLIC_AI_API_URL
+        if (!aiApiUrl) {
+          throw new Error('API URL is not configured')
+        }
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! Status: ${res.status}`)
-      }
+        const requestBody = {
+          user_id: userId,
+          chat_id: currentRecordId ? currentRecordId.toString() : '',
+          query: currentQuestion,
+          temperature: parameters.creativity,
+          threshold: parameters.valueDegree,
+          user_prompt: parameters.promptInput,
+          search_web: isWebSearchEnabled,
+          model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ'
+        }
 
-      const reader = res.body?.getReader()
-      const decoder = new TextDecoder()
-      let done = false
-      let buffer = ''
+        const res = await fetch(`${aiApiUrl}/spec`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        })
 
-      while (!done) {
-        if (reader) {
-          const { value, done: doneReading } = await reader.read()
-          done = doneReading
-          buffer += decoder.decode(value || new Uint8Array(), { stream: true })
-          const lines = buffer.split('\n')
-          buffer = lines.pop() || ''
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`)
+        }
 
-          for (const line of lines) {
-            const cleaned = line.trim().replace(/^data:\s*/, '')
-            if (!cleaned)
-              continue
+        const reader = res.body?.getReader()
+        const decoder = new TextDecoder()
+        let done = false
+        let buffer = ''
+
+        while (!done) {
+          if (reader) {
+            const { value, done: doneReading } = await reader.read()
+            done = doneReading
+            buffer += decoder.decode(value || new Uint8Array(), { stream: true })
+            const lines = buffer.split('\n')
+            buffer = lines.pop() || ''
+
+            for (const line of lines) {
+              const cleaned = line.trim().replace(/^data:\s*/, '')
+              if (!cleaned) continue
+              try {
+                const json = JSON.parse(cleaned)
+                if (json.data && Array.isArray(json.data)) {
+                  referenceData = json.data as ReferenceItem[]
+                  continue
+                }
+                if (json.output === '__END__') {
+                  shouldSave = true
+                  continue
+                }
+                if (json.output !== undefined) {
+                  output += json.output
+                  setCurrentStreamMessage((prev) => prev + json.output)
+                }
+              } catch (parseError) {
+                console.warn('無法解析的 JSON:', cleaned, parseError)
+              }
+            }
+          }
+        }
+
+        // 處理剩餘的 buffer
+        if (buffer.length > 0) {
+          const cleaned = buffer.trim().replace(/^data:\s*/, '')
+          if (cleaned) {
             try {
               const json = JSON.parse(cleaned)
               if (json.data && Array.isArray(json.data)) {
                 referenceData = json.data as ReferenceItem[]
-                continue
-              }
-              if (json.output === '__END__') {
+              } else if (json.output === '__END__') {
                 shouldSave = true
-                continue
-              }
-              if (json.output !== undefined) {
+              } else if (json.output !== undefined) {
                 output += json.output
                 setCurrentStreamMessage((prev) => prev + json.output)
               }
-            }
-            catch (parseError) {
-              console.warn('無法解析的 JSON:', cleaned, parseError)
+            } catch (e) {
+              console.warn('無法解析的 JSON (結尾):', cleaned, e)
             }
           }
         }
-      }
 
-      // 處理剩餘的 buffer
-      if (buffer.length > 0) {
-        const cleaned = buffer.trim().replace(/^data:\s*/, '')
-        if (cleaned) {
+        // 保存對話
+        if (shouldSave) {
+          let finalRecordDetailId: number | null = null
           try {
-            const json = JSON.parse(cleaned)
-            if (json.data && Array.isArray(json.data)) {
-              referenceData = json.data as ReferenceItem[]
-            }
-            else if (json.output === '__END__') {
-              shouldSave = true
-            }
-            else if (json.output !== undefined) {
-              output += json.output
-              setCurrentStreamMessage((prev) => prev + json.output)
-            }
-          }
-          catch (e) {
-            console.warn('無法解析的 JSON (結尾):', cleaned, e)
-          }
-        }
-      }
-
-      // 保存對話
-      if (shouldSave) {
-        let finalRecordDetailId: number | null = null
-        try {
-          const result = await insertRecordDetail({
-            userId,
-            question: currentQuestion,
-            title: currentQuestion,
-            answer: output,
-            chatId: currentRecordId ? currentRecordId.toString() : null,
-            temperature: parameters.creativity,
-            threshold: parameters.valueDegree,
-            userPrompt: parameters.promptInput,
-            model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ',
-            isWeb: isWebSearchEnabled
-          })
-
-          if (result) {
-            const { recordDetailId } = result
-            finalRecordDetailId = recordDetailId
-
-            // 設定按鈕可見性
-            if (setButtonVisibility) {
-              setButtonVisibility(recordDetailId, { isGood: true, unGood: true, note: true })
-            }
-
-            // 新增對話到列表
-            addConversation({
+            const result = await insertRecordDetail({
+              userId,
               question: currentQuestion,
+              title: currentQuestion,
               answer: output,
-              recordDetailId,
-              isGood: null,
-              comment: null,
+              chatId: currentRecordId ? currentRecordId.toString() : null,
+              temperature: parameters.creativity,
+              threshold: parameters.valueDegree,
+              userPrompt: parameters.promptInput,
+              model: modelId || 'Qwen/Qwen2.5-VL-72B-Instruct-AWQ',
               isWeb: isWebSearchEnabled
             })
 
-            fetchRecords()
-          }
-        }
-        catch (insertError) {
-          console.error('保存對話失敗:', insertError)
-          toast.error('保存對話失敗')
-        }
+            if (result) {
+              const { recordDetailId } = result
+              finalRecordDetailId = recordDetailId
 
-        // 保存參考資料
-        if (finalRecordDetailId && referenceData && referenceData.length > 0) {
-          try {
-            const enrichedItems = await enrichReferenceItems(referenceData)
-            await insertReference(finalRecordDetailId, enrichedItems, userId)
+              // 設定按鈕可見性
+              if (setButtonVisibility) {
+                setButtonVisibility(recordDetailId, { isGood: true, unGood: true, note: true })
+              }
+
+              // 新增對話到列表
+              addConversation({
+                question: currentQuestion,
+                answer: output,
+                recordDetailId,
+                isGood: null,
+                comment: null,
+                isWeb: isWebSearchEnabled
+              })
+
+              fetchRecords()
+            }
+          } catch (insertError) {
+            console.error('保存對話失敗:', insertError)
+            toast.error('保存對話失敗')
           }
-          catch (refError) {
-            console.error('保存參考資料失敗:', refError)
+
+          // 保存參考資料
+          if (finalRecordDetailId && referenceData && referenceData.length > 0) {
+            try {
+              const enrichedItems = await enrichReferenceItems(referenceData)
+              await insertReference(finalRecordDetailId, enrichedItems, userId)
+            } catch (refError) {
+              console.error('保存參考資料失敗:', refError)
+            }
           }
         }
+      } catch (error) {
+        console.error('API 調用錯誤:', error)
+        toast.error('發生錯誤，請稍後重試')
+      } finally {
+        setCurrentUserQuestion('')
+        setIsLoading(false)
+        setIsWebSearchEnabled(false)
       }
-    }
-    catch (error) {
-      console.error('API 調用錯誤:', error)
-      toast.error('發生錯誤，請稍後重試')
-    }
-    finally {
-      setCurrentUserQuestion('')
-      setIsLoading(false)
-      setIsWebSearchEnabled(false)
-    }
-  }, [
-    userId,
-    activeRecordId,
-    setActiveRecordId,
-    addConversation,
-    fetchRecords,
-    modelId,
-    parameters,
-    isWebSearchEnabled,
-    setButtonVisibility
-  ])
+    },
+    [
+      userId,
+      activeRecordId,
+      setActiveRecordId,
+      addConversation,
+      fetchRecords,
+      modelId,
+      parameters,
+      isWebSearchEnabled,
+      setButtonVisibility
+    ]
+  )
 
   return {
     sendMessage,

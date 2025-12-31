@@ -59,26 +59,27 @@ export function useProductSpecParameters({
     setPromptInputState(value)
   }, [])
 
-  const fetchParametersFromServer = useCallback(async (recordId: number) => {
-    if (!userId)
-      return
+  const fetchParametersFromServer = useCallback(
+    async (recordId: number) => {
+      if (!userId) return
 
-    try {
-      const data = await getParameters(userId, recordId)
-      setCreativityState(data.temperature || 0.1)
-      setValueDegreeState(data.threshold || 1)
-      setPromptInputState(data.userPrompt || '')
+      try {
+        const data = await getParameters(userId, recordId)
+        setCreativityState(data.temperature || 0.1)
+        setValueDegreeState(data.threshold || 1)
+        setPromptInputState(data.userPrompt || '')
 
-      // 根據模型 ID 設定選中的模型
-      const matchedModel = models.find((model) => model.modelId === data.model)
-      if (matchedModel) {
-        setSelectedModelId(matchedModel.id)
+        // 根據模型 ID 設定選中的模型
+        const matchedModel = models.find((model) => model.modelId === data.model)
+        if (matchedModel) {
+          setSelectedModelId(matchedModel.id)
+        }
+      } catch (err) {
+        console.error('使用者最後使用的參數設定--獲取失敗:', err)
       }
-    }
-    catch (err) {
-      console.error('使用者最後使用的參數設定--獲取失敗:', err)
-    }
-  }, [userId, models, setSelectedModelId])
+    },
+    [userId, models, setSelectedModelId]
+  )
 
   const resetParameters = useCallback(() => {
     setCreativityState(0.1)

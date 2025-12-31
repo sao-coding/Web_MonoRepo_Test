@@ -76,14 +76,14 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
         {models.map((model) => (
           <DropdownMenuItem
             key={model.id}
-            onSelect={() => { onSelect(model.id) }}
+            onSelect={() => {
+              onSelect(model.id)
+            }}
             className='flex-col items-start gap-1'
           >
             <div className='flex w-full items-center justify-between'>
               <span className='font-medium'>
-                ({model.modelType === '1' ? 'Global' : '雲端'})
-                {' '}
-                {model.aliases}
+                ({model.modelType === '1' ? 'Global' : '雲端'}) {model.aliases}
               </span>
               {model.recommend === '1' && (
                 <span className='flex items-center gap-1 text-xs font-bold text-red-500'>

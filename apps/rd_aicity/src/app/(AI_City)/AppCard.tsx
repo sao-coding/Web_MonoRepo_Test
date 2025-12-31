@@ -1,10 +1,12 @@
 'use client'
 
 import type { AppType } from '@/types/app'
+import { usePostHog } from '@msi/ui'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 
 const AppCard = () => {
+  const posthog = usePostHog()
   const { status, data: apps = [] } = useQuery<AppType[]>({
     queryKey: ['apps'],
     queryFn: async () => {
@@ -65,6 +67,12 @@ const AppCard = () => {
           className: 'bg-gray-600 text-white hover:bg-gray-700',
           href: app.link || '#',
           disabled: false,
+          onClick: () => {
+            posthog.capture('app_opened', {
+              app_id: app.app_id,
+              app_name: app.name,
+            })
+          },
         }
       case 2:
         // 維護中狀態 - 不可點擊
@@ -142,6 +150,7 @@ const AppCard = () => {
                           className={`${buttonConfig.className} text-sm py-2 px-8 rounded-md transition-colors inline-block`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={buttonConfig.onClick}
                         >
                           {buttonConfig.text}
                         </a>

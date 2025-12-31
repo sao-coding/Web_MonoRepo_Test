@@ -1,7 +1,7 @@
-// Development Environment - 10.16.20.11 (測試機)
+// Production Environment - 10.16.20.36 (正式機)
 const path = require('path')
 
-const HOST = '10.16.20.11'
+const HOST = '10.16.20.36'
 
 module.exports = {
   apps: [
@@ -16,8 +16,8 @@ module.exports = {
       watch: false,
       autorestart: true,
       env: {
-        NODE_ENV: 'development',
-        APP_ENV: 'development',
+        NODE_ENV: 'production',
+        APP_ENV: 'production',
         PORT: 3001
       }
     },
@@ -32,8 +32,8 @@ module.exports = {
       watch: false,
       autorestart: true,
       env: {
-        NODE_ENV: 'development',
-        APP_ENV: 'development',
+        NODE_ENV: 'production',
+        APP_ENV: 'production',
         PORT: 3002
       }
     }

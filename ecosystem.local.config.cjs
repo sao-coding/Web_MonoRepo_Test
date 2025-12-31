@@ -1,14 +1,14 @@
-// Development Environment - 10.16.20.11 (測試機)
+// Local Development - localhost (本地開發測試用)
 const path = require('path')
 
-const HOST = '10.16.20.11'
+const HOST = 'localhost'
 
 module.exports = {
   apps: [
     {
       name: 'rd-aicity',
       script: 'node_modules/next/dist/bin/next',
-      args: `start -H ${HOST} -p 3001`,
+      args: `start -p 3001`,
       cwd: path.join(__dirname, 'apps', 'rd_aicity'),
       max_restarts: 3,
       min_uptime: '10s',
@@ -24,7 +24,7 @@ module.exports = {
     {
       name: 'product-spec',
       script: 'node_modules/next/dist/bin/next',
-      args: `start -H ${HOST} -p 3002`,
+      args: `start -p 3002`,
       cwd: path.join(__dirname, 'apps', 'product-spec'),
       max_restarts: 3,
       min_uptime: '10s',

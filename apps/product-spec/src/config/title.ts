@@ -43,7 +43,8 @@ export const titleConfig = [
   },
   {
     title: 'SpecCore',
-    logoUrl: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/product-spec/productSpec.png',
+    logoUrl:
+      'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/product-spec/productSpec.png',
     pathname: '/ProductSpec',
     banner: false
   },

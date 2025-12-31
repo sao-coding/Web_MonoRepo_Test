@@ -3,12 +3,7 @@
 import { getAppConfig } from '@msi/config/env'
 import { Button } from '@msi/ui/components/button'
 import { Card, CardContent } from '@msi/ui/components/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@msi/ui/components/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@msi/ui/components/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,24 +61,24 @@ const References = () => {
 
   const fetchReferences = async (recordDetailId: number) => {
     try {
-      const res = await fetch(`${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference-data/${recordDetailId}`, {
-        method: 'GET'
-      })
+      const res = await fetch(
+        `${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference-data/${recordDetailId}`,
+        {
+          method: 'GET'
+        }
+      )
       if (res.ok) {
         const data = await res.json()
         const dataRef = data.data.referenceData
         setRef(dataRef)
-      }
-      else {
+      } else {
         toast.error('Failed to fetch Reference.')
         console.error(`Failed to fetch references. Status: ${res.status}`)
       }
-    }
-    catch (err) {
+    } catch (err) {
       toast.error('An error occurred while fetching Reference.')
       console.error('參考資料--獲取失敗:', err)
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }
@@ -97,24 +92,24 @@ const References = () => {
       productPicture: null
     })
     try {
-      const res = await fetch(`${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference/${mktName}/specifications?language=${language}`, {
-        method: 'GET'
-      })
+      const res = await fetch(
+        `${getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL}/api/aicity/productspec/reference/${mktName}/specifications?language=${language}`,
+        {
+          method: 'GET'
+        }
+      )
       if (res.ok) {
         const data = await res.json()
         setProductInfo(data.data.productInfo)
         setSpec(data.data.specifications)
-      }
-      else {
+      } else {
         toast.error('Failed to fetch product spec.')
         console.error(`Failed to fetch Spec. Status: ${res.status}`)
       }
-    }
-    catch (err) {
+    } catch (err) {
       toast.error('An error occurred while fetching Spec.')
       console.error('產品規格--獲取失敗:', err)
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }
@@ -142,10 +137,16 @@ const References = () => {
 
   return (
     <div className='bg-blue-50 dark:bg-zinc-900'>
-      <div className='relative mx-auto w-full max-w-[1300px] overflow-y-auto bg-white dark:bg-zinc-950' style={{ height: 'calc(100vh - 64px)' }}>
+      <div
+        className='relative mx-auto w-full max-w-[1300px] overflow-y-auto bg-white dark:bg-zinc-950'
+        style={{ height: 'calc(100vh - 64px)' }}
+      >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='sticky top-[10px] left-[10px] z-50 w-[100px] border-gray-200 text-left dark:border-zinc-700'>
+            <Button
+              variant='outline'
+              className='sticky left-[10px] top-[10px] z-50 w-[100px] border-gray-200 text-left dark:border-zinc-700'
+            >
               {selectedLan}
             </Button>
           </DropdownMenuTrigger>
@@ -177,32 +178,28 @@ const References = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <div className='mx-auto flex max-w-6xl flex-col gap-4 px-4 py-16'>
-          {isLoading
-            ? (
-                <Loading text='Loading...' size='large' />
-              )
-            : ref.length > 0
-              ? (
-                  ref.map((ref) => (
-                    <Card
-                      key={ref.id}
-                      onClick={handleLinkClick}
-                      className='rounded-xl border-gray-300 bg-white p-0 shadow-lg dark:border-zinc-700 dark:bg-zinc-800'
-                    >
-                      <CardContent className='flex flex-col gap-6 px-16 py-6'>
-                        <div
-                          className='block text-lg font-bold'
-                          dangerouslySetInnerHTML={{ __html: ref.qaText }}
-                        />
-                      </CardContent>
-                    </Card>
-                  ))
-                )
-              : (
-                  <div className='col-span-full text-center text-lg text-gray-400 dark:text-gray-500'>
-                    No data
-                  </div>
-                )}
+          {isLoading ? (
+            <Loading text='Loading...' size='large' />
+          ) : ref.length > 0 ? (
+            ref.map((ref) => (
+              <Card
+                key={ref.id}
+                onClick={handleLinkClick}
+                className='rounded-xl border-gray-300 bg-white p-0 shadow-lg dark:border-zinc-700 dark:bg-zinc-800'
+              >
+                <CardContent className='flex flex-col gap-6 px-16 py-6'>
+                  <div
+                    className='block text-lg font-bold'
+                    dangerouslySetInnerHTML={{ __html: ref.qaText }}
+                  />
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className='col-span-full text-center text-lg text-gray-400 dark:text-gray-500'>
+              No data
+            </div>
+          )}
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent aria-describedby={undefined} className='gap-0 p-0'>
@@ -212,32 +209,33 @@ const References = () => {
               <div className='max-h-[80vh] overflow-y-auto px-6 py-4'>
                 <div className='mb-6 flex justify-center'>
                   {productInfo.productPicture && (
-                    <img
-                      src={productInfo.productPicture}
-                      className='w-1/2'
-                      alt=''
-                    />
+                    <img src={productInfo.productPicture} className='w-1/2' alt='' />
                   )}
                 </div>
-                {spec.length > 0
-                  ? (
-                      <ul className='flex flex-col gap-2'>
-                        {spec.map((spec, index) => (
-                          <li key={index}>
-                            <div className='inline-flex gap-2'>
-                              ◆
-                              <div>
-                              <div className='inline-block font-bold whitespace-nowrap' style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: `${spec.specName ?? ''}：` }}></div>
-                                <div className='inline-block' dangerouslySetInnerHTML={{ __html: spec.specValue ?? '' }}></div>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  : (
-                      <div className='mt-4 text-center text-gray-400 dark:text-gray-500'>No Data</div>
-                    )}
+                {spec.length > 0 ? (
+                  <ul className='flex flex-col gap-2'>
+                    {spec.map((spec, index) => (
+                      <li key={index}>
+                        <div className='inline-flex gap-2'>
+                          ◆
+                          <div>
+                            <div
+                              className='inline-block whitespace-nowrap font-bold'
+                              style={{ float: 'left' }}
+                              dangerouslySetInnerHTML={{ __html: `${spec.specName ?? ''}：` }}
+                            ></div>
+                            <div
+                              className='inline-block'
+                              dangerouslySetInnerHTML={{ __html: spec.specValue ?? '' }}
+                            ></div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className='mt-4 text-center text-gray-400 dark:text-gray-500'>No Data</div>
+                )}
               </div>
             </DialogContent>
           </Dialog>

@@ -88,7 +88,10 @@ interface RecordDetailResponse {
  * })
  * ```
  */
-export function useConversation({ apiBaseUrl, userId }: UseConversationOptions = {}): UseConversationReturn {
+export function useConversation({
+  apiBaseUrl,
+  userId
+}: UseConversationOptions = {}): UseConversationReturn {
   const [conversations, setConversations] = useState<ConversationItem[]>([])
   const [records, setRecords] = useState<RecordItem[]>([])
   const [activeRecordId, setActiveRecordId] = useState<number | null>(null)
@@ -103,75 +106,78 @@ export function useConversation({ apiBaseUrl, userId }: UseConversationOptions =
 
     setIsLoadingRecord(true)
     try {
-      const res = await fetch(
-        `${baseUrl}/api/aicity/productspec/history?userId=${userId}`,
-        { method: 'GET' }
-      )
+      const res = await fetch(`${baseUrl}/api/aicity/productspec/history?userId=${userId}`, {
+        method: 'GET'
+      })
       if (res.ok) {
         const data = (await res.json()) as RecordItem[]
         setRecords(data)
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.error('獲取紀錄失敗:', err)
       toast.error('獲取紀錄失敗')
-    }
-    finally {
+    } finally {
       setIsLoadingRecord(false)
     }
   }, [apiBaseUrl, userId])
 
-  const getRecordDetail = useCallback(async (seqNo: number): Promise<RecordDetailResponse | null> => {
-    const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
-    if (!baseUrl) {
-      return null
-    }
-
-    try {
-      const res = await fetch(
-        `${baseUrl}/api/aicity/productspec/history/${seqNo}`,
-        { method: 'GET' }
-      )
-      return (await res.json()) as RecordDetailResponse
-    }
-    catch (err) {
-      console.error('API 錯誤:', err)
-      return null
-    }
-  }, [apiBaseUrl])
-
-  const loadRecordDetails = useCallback(async (recordId: number) => {
-    try {
-      const details = await getRecordDetail(recordId)
-      if (details?.qaPairs && details.qaPairs.length > 0) {
-        const loadedConversations: ConversationItem[] = details.qaPairs.map((detail) => ({
-          question: detail.question,
-          answer: detail.answer,
-          isGood: detail.isGood,
-          comment: detail.comment,
-          recordDetailId: detail.recordDetailId,
-          isWeb: detail.isWeb
-        }))
-
-        setConversations(loadedConversations)
-        if (loadedConversations.length > 0) {
-          const lastAnswer = loadedConversations[loadedConversations.length - 1].answer
-          setMessage(lastAnswer)
-        }
+  const getRecordDetail = useCallback(
+    async (seqNo: number): Promise<RecordDetailResponse | null> => {
+      const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+      if (!baseUrl) {
+        return null
       }
-    }
-    catch (err) {
-      console.error('載入對話詳情失敗:', err)
-      toast.error('載入對話詳情失敗')
-    }
-  }, [getRecordDetail])
 
-  const selectRecord = useCallback((recordId: number | null) => {
-    if (activeRecordId === recordId) {
-      return
-    }
-    setActiveRecordId(recordId)
-  }, [activeRecordId])
+      try {
+        const res = await fetch(`${baseUrl}/api/aicity/productspec/history/${seqNo}`, {
+          method: 'GET'
+        })
+        return (await res.json()) as RecordDetailResponse
+      } catch (err) {
+        console.error('API 錯誤:', err)
+        return null
+      }
+    },
+    [apiBaseUrl]
+  )
+
+  const loadRecordDetails = useCallback(
+    async (recordId: number) => {
+      try {
+        const details = await getRecordDetail(recordId)
+        if (details?.qaPairs && details.qaPairs.length > 0) {
+          const loadedConversations: ConversationItem[] = details.qaPairs.map((detail) => ({
+            question: detail.question,
+            answer: detail.answer,
+            isGood: detail.isGood,
+            comment: detail.comment,
+            recordDetailId: detail.recordDetailId,
+            isWeb: detail.isWeb
+          }))
+
+          setConversations(loadedConversations)
+          if (loadedConversations.length > 0) {
+            const lastAnswer = loadedConversations[loadedConversations.length - 1].answer
+            setMessage(lastAnswer)
+          }
+        }
+      } catch (err) {
+        console.error('載入對話詳情失敗:', err)
+        toast.error('載入對話詳情失敗')
+      }
+    },
+    [getRecordDetail]
+  )
+
+  const selectRecord = useCallback(
+    (recordId: number | null) => {
+      if (activeRecordId === recordId) {
+        return
+      }
+      setActiveRecordId(recordId)
+    },
+    [activeRecordId]
+  )
 
   const startNewConversation = useCallback(() => {
     setActiveRecordId(null)
