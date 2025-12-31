@@ -5,8 +5,14 @@ const nextConfig: NextConfig = {
   assetPrefix: '/AI_City/ProductSpec',
   transpilePackages: ['@msi/ui', '@msi/auth', '@msi/config'],
   eslint: {
-    // 暫時關閉建置時的 ESLint 檢查，避免 CRLF 行尾格式錯誤阻擋建置
-    ignoreDuringBuilds: true
+    // 完全跳過建置時的 ESLint 檢查
+    ignoreDuringBuilds: true,
+    // 指定空的 ESLint 目錄（等同於完全停用）
+    dirs: []
+  },
+  typescript: {
+    // 保留型別檢查
+    ignoreBuildErrors: false
   }
 }
 

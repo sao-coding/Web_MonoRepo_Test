@@ -92,6 +92,29 @@ echo.
 
 :: Execute deployment steps manually to support filtering
 call pnpm secrets:decrypt:%secret_env%
+
+:: Configure Git to prevent CRLF conversion
+git config core.autocrlf false
+git config core.eol lf
+
+:: Reset line endings for modified files
+echo Normalizing line endings for selected apps...
+if "%app_choice%"=="1" (
+    git checkout -- apps/rd_aicity
+)
+if "%app_choice%"=="2" (
+    git checkout -- apps/product-spec
+)
+if "%app_choice%"=="3" (
+    git checkout -- apps/
+)
+if "%app_choice%"=="1,2" (
+    git checkout -- apps/rd_aicity apps/product-spec
+)
+if "%app_choice%"=="2,1" (
+    git checkout -- apps/rd_aicity apps/product-spec
+)
+
 call pnpm i
 :: Memory optimization for build
 set NODE_OPTIONS=--max-old-space-size=4096
