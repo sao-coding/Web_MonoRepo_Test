@@ -1,24 +1,41 @@
+// Development Environment - 10.16.20.11 (測試機)
+const path = require('path')
+
+const HOST = '10.16.20.11'
+
 module.exports = {
   apps: [
     {
-      name: 'rd-aicity-dev',  // 名稱加上 -dev 以示區別
-      script: 'C:\\Windows\\System32\\cmd.exe',
-      args: '/c pnpm run pm2:dev:aicity',
-      interpreter: 'none',
+      name: 'rd-aicity',
+      script: 'node_modules/next/dist/bin/next',
+      args: `start -H ${HOST} -p 3001`,
+      cwd: path.join(__dirname, 'apps', 'rd_aicity'),
+      max_restarts: 3,
+      min_uptime: '10s',
+      restart_delay: 5000,
+      watch: false,
+      autorestart: true,
       env: {
         NODE_ENV: 'development',
-        PORT: 3001 // 指定開發環境的 Port，避免與預設 3000 衝突
-      },
+        APP_ENV: 'development',
+        PORT: 3001
+      }
     },
     {
-      name: 'product-spec-dev',
-      script: 'C:\\Windows\\System32\\cmd.exe',
-      args: '/c pnpm run pm2:dev:product',
-      interpreter: 'none',
+      name: 'product-spec',
+      script: 'node_modules/next/dist/bin/next',
+      args: `start -H ${HOST} -p 3002`,
+      cwd: path.join(__dirname, 'apps', 'product-spec'),
+      max_restarts: 3,
+      min_uptime: '10s',
+      restart_delay: 5000,
+      watch: false,
+      autorestart: true,
       env: {
         NODE_ENV: 'development',
+        APP_ENV: 'development',
         PORT: 3002
-      },
-    },
-  ],
+      }
+    }
+  ]
 }

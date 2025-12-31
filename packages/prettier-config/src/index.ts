@@ -18,7 +18,7 @@ const msi = (options: Options = {}): Options => {
     tabWidth: 2,
     semi: false,
     trailingComma: 'none',
-    endOfLine: 'lf',
+    endOfLine: 'lf', // Force LF line endings for consistency
     plugins: [
       'prettier-plugin-sort-json',
       ...plugins,

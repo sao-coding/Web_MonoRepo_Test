@@ -14,7 +14,8 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import React, { useState } from 'react'
+import * as React from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { cn } from '../../lib/utils'
@@ -155,7 +156,7 @@ export function ChatSidebar({
     e.stopPropagation()
     toast('確定要刪除這條記錄嗎？', {
       action: { label: '確定', onClick: () => deleteRecord(chatId) },
-      cancel: { label: '取消', onClick: () => { } },
+      cancel: { label: '取消', onClick: () => undefined },
       position: 'top-center',
       duration: 10000,
       style: {
@@ -298,8 +299,9 @@ export function ChatSidebar({
                                         onChange={(e) => { setNewTitle(e.target.value) }}
                                         className='h-8 min-w-0 grow'
                                         ref={(el) => {
-                                          if (el)
-                                            el.focus()
+                                          if (el) {
+                                            setTimeout(() => { el.focus() }, 0)
+                                          }
                                         }}
                                         onKeyDown={(e) => {
                                           if (e.key === 'Enter')

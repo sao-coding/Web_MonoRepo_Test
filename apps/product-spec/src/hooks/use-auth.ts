@@ -31,7 +31,7 @@ interface UseAuthReturn {
   status: AuthStatus
   error: string | null
   isAuthenticated: boolean
-  login: (credentials: LoginCredentials) => Promise<{ success: boolean, error?: string }>
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>
   logout: () => boolean
   refreshUser: () => void
 }
@@ -44,12 +44,11 @@ const decodeJWT = (token: string): User | null => {
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map(c => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
-        .join(''),
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join('')
     )
     return JSON.parse(jsonPayload) as User
-  }
-  catch (error) {
+  } catch (error) {
     console.error('JWT 解碼失敗:', error)
     return null
   }
@@ -63,8 +62,7 @@ export const useAuth = (): UseAuthReturn => {
   // 快取 token 和解析結果
   const token = useMemo(() => Cookies.get('accessToken') || null, [])
   const parsedUser = useMemo(() => {
-    if (!token)
-      return null
+    if (!token) return null
     return decodeJWT(token)
   }, [token])
 
@@ -76,82 +74,77 @@ export const useAuth = (): UseAuthReturn => {
       if (parsedUser.exp && parsedUser.exp > currentTime) {
         setUser(parsedUser)
         setStatus('success')
-      }
-      else {
+      } else {
         // Token 已過期，清除
         Cookies.remove('accessToken', { domain: window.location.hostname })
         setUser(null)
         setStatus(null)
       }
-    }
-    else if (token && !parsedUser) {
+    } else if (token && !parsedUser) {
       setStatus('error')
       setError('Token 格式無效')
-    }
-    else {
+    } else {
       setStatus(null)
     }
   }, [token, parsedUser])
 
   // 登入函數 - 保留延遲，使用 useCallback 優化
-  const login = useCallback(async (
-    credentials: LoginCredentials,
-  ): Promise<{ success: boolean, error?: string }> => {
-    try {
-      setStatus('loading')
-      setError(null)
+  const login = useCallback(
+    async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
+      try {
+        setStatus('loading')
+        setError(null)
 
-      const res = await fetch(`${getAppConfig().NEXT_PUBLIC_LOGIN_API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-
-        // 儲存 token - 移除額外屬性
-        Cookies.set('accessToken', data.accessToken, {
-          expires: 100 * 365 * 24 * 60 * 60, // 100年
-          domain: getAppConfig().NEXT_PUBLIC_COOKIE_DOMAIN,
+        const res = await fetch(`${getAppConfig().NEXT_PUBLIC_LOGIN_API_URL}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(credentials)
         })
 
-        // 解析並設定用戶資訊
-        const payload = decodeJWT(data.accessToken)
-        if (payload) {
-          setUser(payload)
-          // 延遲一秒再設定狀態
-          setTimeout(() => {
-            setStatus('success')
-          }, 1000)
-          return { success: true }
-        }
-        else {
-          const errorMessage = 'Token 解析失敗'
+        if (res.ok) {
+          const data = await res.json()
+
+          // 儲存 token - 移除額外屬性
+          Cookies.set('accessToken', data.accessToken, {
+            expires: 100 * 365 * 24 * 60 * 60, // 100年
+            domain: getAppConfig().NEXT_PUBLIC_COOKIE_DOMAIN
+          })
+
+          // 解析並設定用戶資訊
+          const payload = decodeJWT(data.accessToken)
+          if (payload) {
+            setUser(payload)
+            // 延遲一秒再設定狀態
+            setTimeout(() => {
+              setStatus('success')
+            }, 1000)
+            return { success: true }
+          } else {
+            const errorMessage = 'Token 解析失敗'
+            setError(errorMessage)
+            setStatus('error')
+            return { success: false, error: errorMessage }
+          }
+        } else {
+          const errorData = await res.json()
+          console.error('登入失敗:', errorData)
+          const errorMessage = errorData.message || '登入失敗，請檢查您的帳號和密碼'
           setError(errorMessage)
           setStatus('error')
           return { success: false, error: errorMessage }
         }
-      }
-      else {
-        const errorData = await res.json()
-        console.error('登入失敗:', errorData)
-        const errorMessage = errorData.message || '登入失敗，請檢查您的帳號和密碼'
+      } catch (error) {
+        console.error('登入錯誤:', error)
+        const errorMessage = '網路連線錯誤，請稍後再試'
         setError(errorMessage)
         setStatus('error')
         return { success: false, error: errorMessage }
       }
-    }
-    catch (error) {
-      console.error('登入錯誤:', error)
-      const errorMessage = '網路連線錯誤，請稍後再試'
-      setError(errorMessage)
-      setStatus('error')
-      return { success: false, error: errorMessage }
-    }
-  }, [])
+    },
+    []
+  )
 
   // 登出函數 - 刪除所有 cookies，使用 useCallback 優化
   const logout = useCallback((): boolean => {
@@ -164,8 +157,7 @@ export const useAuth = (): UseAuthReturn => {
       setStatus(null)
       setError(null)
       return true
-    }
-    catch (error) {
+    } catch (error) {
       console.error('登出錯誤:', error)
       return false
     }
@@ -192,6 +184,6 @@ export const useAuth = (): UseAuthReturn => {
     isAuthenticated,
     login,
     logout,
-    refreshUser,
+    refreshUser
   }
 }

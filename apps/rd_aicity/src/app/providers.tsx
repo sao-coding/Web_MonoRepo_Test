@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthProvider } from '@msi/auth/src/provider'
+import { AuthProvider } from '@msi/auth'
 import { getAppConfig } from '@msi/config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as React from 'react'

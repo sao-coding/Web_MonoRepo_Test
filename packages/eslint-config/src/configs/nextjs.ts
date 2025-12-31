@@ -1,20 +1,20 @@
-import type { FlatConfig, RuleOverrides } from "../types";
+import type { FlatConfig, RuleOverrides } from '../types'
 
-import { nextPlugin } from "../plugins";
+import { nextPlugin } from '../plugins'
 
 export const nextjs = (overrides?: RuleOverrides): FlatConfig[] => [
   {
-    name: "eslint-config/nextjs/rules",
+    name: 'eslint-config/nextjs/rules',
     plugins: {
-      "@next/next": nextPlugin,
+      '@next/next': nextPlugin
     },
     rules: {
-      ...nextPlugin.configs["core-web-vitals"].rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
 
       // Unnecessary
-      "@next/next/no-html-link-for-pages": "off",
+      '@next/next/no-html-link-for-pages': 'off',
 
-      ...overrides,
-    },
-  },
-];
+      ...overrides
+    }
+  }
+]

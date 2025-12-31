@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import { FileSpreadsheet } from 'lucide-react'
 import React, { useCallback, useState } from 'react'
 import DragDropUploader from './_components/dropzone'

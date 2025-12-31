@@ -1,2 +1,2 @@
+export type { AIModel, ModelSelectorProps } from './ModelSelector'
 export { ModelSelector } from './ModelSelector'
-export type { ModelSelectorProps, AIModel } from './ModelSelector'

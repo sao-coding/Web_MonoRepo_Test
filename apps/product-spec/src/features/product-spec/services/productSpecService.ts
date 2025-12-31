@@ -5,7 +5,6 @@
  * 將 API 邏輯從元件中抽離，提供可重用的服務層
  */
 
-import { getAppConfig } from '@msi/config/env'
 import type {
   CreateChatRequest,
   CreateChatResponse,
@@ -22,8 +21,10 @@ import type {
   RecordDetail,
   RecordItem,
   ReferenceItem,
-  SpecItem,
+  SpecItem
 } from '../types'
+
+import { getAppConfig } from '@msi/config/env'
 
 // ============================================================================
 // Configuration
@@ -40,10 +41,9 @@ const getAiApiUrl = () => getAppConfig().NEXT_PUBLIC_AI_API_URL
  * 獲取使用者的聊天歷史記錄列表
  */
 export async function getHistory(userId: string | number): Promise<RecordItem[]> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/history?userId=${userId}`,
-    { method: 'GET' },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/history?userId=${userId}`, {
+    method: 'GET'
+  })
   if (!res.ok) {
     throw new Error('獲取紀錄失敗')
   }
@@ -54,10 +54,9 @@ export async function getHistory(userId: string | number): Promise<RecordItem[]>
  * 獲取特定對話的詳細內容
  */
 export async function getRecordDetail(seqNo: number): Promise<{ qaPairs: RecordDetail[] }> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/history/${seqNo}`,
-    { method: 'GET' },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/history/${seqNo}`, {
+    method: 'GET'
+  })
   if (!res.ok) {
     throw new Error('獲取對話詳情失敗')
   }
@@ -69,11 +68,11 @@ export async function getRecordDetail(seqNo: number): Promise<{ qaPairs: RecordD
  */
 export async function getParameters(
   userId: string | number,
-  chatId: number,
+  chatId: number
 ): Promise<ParameterSettings> {
   const res = await fetch(
     `${getPatentApiUrl()}/api/aicity/productspec/parameters?userId=${userId}&chatId=${chatId}`,
-    { method: 'GET' },
+    { method: 'GET' }
   )
   if (!res.ok) {
     throw new Error('獲取參數設定失敗')
@@ -85,14 +84,11 @@ export async function getParameters(
  * 建立新的聊天會話
  */
 export async function createNewChat(data: CreateChatRequest): Promise<CreateChatResponse> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/chat/new`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/chat/new`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
   if (!res.ok) {
     throw new Error('創建新聊天會話失敗')
   }
@@ -103,16 +99,13 @@ export async function createNewChat(data: CreateChatRequest): Promise<CreateChat
  * 插入對話詳情記錄
  */
 export async function insertRecordDetail(
-  data: InsertRecordDetailRequest,
+  data: InsertRecordDetailRequest
 ): Promise<InsertRecordDetailResponse> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/history`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/history`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
   if (!res.ok) {
     throw new Error('保存對話失敗')
   }
@@ -136,7 +129,7 @@ export async function sendMessageToAI(
     userPrompt: string
     searchWeb: boolean
     model: string
-  },
+  }
 ): Promise<Response> {
   const aiApiUrl = getAiApiUrl()
   if (!aiApiUrl) {
@@ -151,13 +144,13 @@ export async function sendMessageToAI(
     threshold: options.threshold,
     user_prompt: options.userPrompt,
     search_web: options.searchWeb,
-    model: options.model,
+    model: options.model
   }
 
   const res = await fetch(`${aiApiUrl}/spec`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody),
+    body: JSON.stringify(requestBody)
   })
 
   if (!res.ok) {
@@ -177,20 +170,17 @@ export async function sendMessageToAI(
 export async function insertReference(
   recordDetailId: number,
   referenceDataItems: EnrichedReferenceItem[],
-  userId: string | number | undefined,
+  userId: string | number | undefined
 ): Promise<void> {
-  await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/reference-data`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        recordDetailId,
-        referenceDataItems,
-        userId,
-      }),
-    },
-  )
+  await fetch(`${getPatentApiUrl()}/api/aicity/productspec/reference-data`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      recordDetailId,
+      referenceDataItems,
+      userId
+    })
+  })
 }
 
 /**
@@ -201,7 +191,7 @@ export async function getReferenceData(recordDetailId: number): Promise<{
 }> {
   const res = await fetch(
     `${getPatentApiUrl()}/api/aicity/productspec/reference-data/${recordDetailId}`,
-    { method: 'GET' },
+    { method: 'GET' }
   )
   if (!res.ok) {
     throw new Error('獲取參考資料失敗')
@@ -214,7 +204,7 @@ export async function getReferenceData(recordDetailId: number): Promise<{
  */
 export async function getProductSpec(
   mktName: string,
-  language: string = 'en',
+  language = 'en'
 ): Promise<{
   data: {
     productInfo: ProductInfo
@@ -223,7 +213,7 @@ export async function getProductSpec(
 }> {
   const res = await fetch(
     `${getPatentApiUrl()}/api/aicity/productspec/reference/${mktName}/specifications?language=${language}`,
-    { method: 'GET' },
+    { method: 'GET' }
   )
   if (!res.ok) {
     throw new Error('獲取產品規格失敗')
@@ -234,15 +224,11 @@ export async function getProductSpec(
 /**
  * 根據產品名稱獲取 ProductId
  */
-export async function getProductIdByName(
-  mktName: string,
-  language: string = 'en',
-): Promise<number | null> {
+export async function getProductIdByName(mktName: string, language = 'en'): Promise<number | null> {
   try {
     const data = await getProductSpec(mktName, language)
     return data.data.productInfo?.productId ? Number(data.data.productInfo.productId) : null
-  }
-  catch {
+  } catch {
     return null
   }
 }
@@ -255,14 +241,11 @@ export async function getProductIdByName(
  * 發送反饋
  */
 export async function sendFeedback(data: FeedbackRequest): Promise<void> {
-  await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/feedback`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    },
-  )
+  await fetch(`${getPatentApiUrl()}/api/aicity/productspec/feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
 }
 
 // ============================================================================
@@ -273,10 +256,9 @@ export async function sendFeedback(data: FeedbackRequest): Promise<void> {
  * 獲取使用者的記事列表
  */
 export async function getNotes(userId: string | number): Promise<NotesListItem[]> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/notes?userId=${userId}`,
-    { method: 'GET' },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/notes?userId=${userId}`, {
+    method: 'GET'
+  })
   if (!res.ok) {
     throw new Error('獲取記事列表失敗')
   }
@@ -288,16 +270,13 @@ export async function getNotes(userId: string | number): Promise<NotesListItem[]
  */
 export async function insertNote(
   recordDetailId: number,
-  userId: string | number | undefined,
+  userId: string | number | undefined
 ): Promise<void> {
-  await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/notes`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recordDetailId, userId }),
-    },
-  )
+  await fetch(`${getPatentApiUrl()}/api/aicity/productspec/notes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recordDetailId, userId })
+  })
 }
 
 /**
@@ -306,7 +285,7 @@ export async function insertNote(
 export async function getNoteDetail(noteId: number): Promise<NoteInfo> {
   const res = await fetch(
     `${getPatentApiUrl()}/api/aicity/productspec/notes/${noteId}/references/detail`,
-    { method: 'GET' },
+    { method: 'GET' }
   )
   if (!res.ok) {
     throw new Error('獲取記事內容失敗')
@@ -316,7 +295,7 @@ export async function getNoteDetail(noteId: number): Promise<NoteInfo> {
     noteInfo: [data.noteInfo],
     referenceData: data.referenceData,
     isWeb: data.isWeb,
-    recordDetailId: data.recordDetailId,
+    recordDetailId: data.recordDetailId
   }
 }
 
@@ -324,14 +303,11 @@ export async function getNoteDetail(noteId: number): Promise<NoteInfo> {
  * 更新記事標題
  */
 export async function updateNoteTitle(noteId: number, title: string): Promise<void> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/notes/${noteId}`,
-    {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title }),
-    },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/notes/${noteId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title })
+  })
   if (!res.ok) {
     throw new Error('更新標題失敗')
   }
@@ -341,10 +317,9 @@ export async function updateNoteTitle(noteId: number, title: string): Promise<vo
  * 刪除記事
  */
 export async function deleteNote(noteId: number): Promise<void> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/notes/${noteId}`,
-    { method: 'DELETE' },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/notes/${noteId}`, {
+    method: 'DELETE'
+  })
   if (!res.ok) {
     throw new Error('刪除記事失敗')
   }
@@ -358,10 +333,7 @@ export async function deleteNote(noteId: number): Promise<void> {
  * 獲取可用的 AI 模型列表
  */
 export async function getModels(): Promise<Model[]> {
-  const res = await fetch(
-    `${getPatentApiUrl()}/api/aicity/productspec/models`,
-    { method: 'GET' },
-  )
+  const res = await fetch(`${getPatentApiUrl()}/api/aicity/productspec/models`, { method: 'GET' })
   if (!res.ok) {
     throw new Error('獲取模型列表失敗')
   }
@@ -376,8 +348,7 @@ export async function getModels(): Promise<Model[]> {
  * 從 QA 文字中提取產品名稱
  */
 export function extractProductNamesFromText(qaText: string): string[] {
-  if (!qaText)
-    return []
+  if (!qaText) return []
   const productNames: string[] = []
   const regex = /data-product="([^"]*)"/g
   const matches = qaText.matchAll(regex)
@@ -394,14 +365,14 @@ export function extractProductNamesFromText(qaText: string): string[] {
  * 處理參考資料並豐富 productIds
  */
 export async function enrichReferenceItems(
-  items: ReferenceItem[],
+  items: ReferenceItem[]
 ): Promise<EnrichedReferenceItem[]> {
   return Promise.all(
     items.map(async (item) => {
       const productNames = extractProductNamesFromText(item.qa_text || '')
       let productIds: number[] = []
       if (productNames.length > 0) {
-        const productIdPromises = productNames.map(name => getProductIdByName(name))
+        const productIdPromises = productNames.map((name) => getProductIdByName(name))
         const results = await Promise.all(productIdPromises)
         productIds = results.filter((id): id is number => id !== null)
       }
@@ -412,9 +383,9 @@ export async function enrichReferenceItems(
         scores: item.scores,
         method: item.method,
         isWeb: item.is_web,
-        productIds,
+        productIds
       }
-    }),
+    })
   )
 }
 
@@ -454,7 +425,7 @@ export const productSpecService = {
 
   // Utilities
   extractProductNamesFromText,
-  enrichReferenceItems,
+  enrichReferenceItems
 }
 
 export default productSpecService

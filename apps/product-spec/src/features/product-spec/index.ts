@@ -11,6 +11,6 @@ export * from './hooks'
 export * from './services/productSpecService'
 
 // Types
-export * from './types'
+export type * from './types'
 
 // Note: ModelSelector moved to @/components/model-selector for reusability

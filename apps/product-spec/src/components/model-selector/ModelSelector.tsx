@@ -5,10 +5,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@msi/ui/components/dropdown-menu'
 import { ChevronDown, Star } from 'lucide-react'
-import React from 'react'
+import * as React from 'react'
 
 /**
  * AI 模型介面
@@ -56,43 +56,43 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
   models,
   selectedModel,
   onSelect,
-  isNoteMode = false,
+  isNoteMode = false
 }) => {
   if (isNoteMode) {
-    return <span className="font-medium">筆記</span>
+    return <span className='font-medium'>筆記</span>
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="gap-1">
+        <Button variant='ghost' className='gap-1'>
           {selectedModel
             ? `(${selectedModel.modelType === '1' ? 'Global' : '雲端'}) ${selectedModel.aliases}`
             : '選擇模型'}
-          <ChevronDown className="size-4 text-muted-foreground" />
+          <ChevronDown className='text-muted-foreground size-4' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-72">
-        {models.map(model => (
+      <DropdownMenuContent align='start' className='w-72'>
+        {models.map((model) => (
           <DropdownMenuItem
             key={model.id}
-            onSelect={() => onSelect(model.id)}
-            className="flex-col items-start gap-1"
+            onSelect={() => {
+              onSelect(model.id)
+            }}
+            className='flex-col items-start gap-1'
           >
-            <div className="flex items-center justify-between w-full">
-              <span className="font-medium">
-                ({model.modelType === '1' ? 'Global' : '雲端'})
-                {' '}
-                {model.aliases}
+            <div className='flex w-full items-center justify-between'>
+              <span className='font-medium'>
+                ({model.modelType === '1' ? 'Global' : '雲端'}) {model.aliases}
               </span>
               {model.recommend === '1' && (
-                <span className="text-red-500 font-bold flex items-center gap-1 text-xs">
-                  <Star className="size-3" fill="red" stroke="none" />
+                <span className='flex items-center gap-1 text-xs font-bold text-red-500'>
+                  <Star className='size-3' fill='red' stroke='none' />
                   推薦
                 </span>
               )}
             </div>
-            <span className="text-xs text-muted-foreground">{model.description}</span>
+            <span className='text-muted-foreground text-xs'>{model.description}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

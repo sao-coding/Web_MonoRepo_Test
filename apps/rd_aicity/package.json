@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@handsontable/react": "^16.1.1",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "@msi/auth": "workspace:*",
     "@msi/config": "workspace:*",
     "@msi/ui": "workspace:*",

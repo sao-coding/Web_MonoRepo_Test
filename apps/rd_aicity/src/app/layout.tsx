@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PostHogProvider } from '@msi/ui'
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
@@ -43,13 +44,15 @@ export default function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <NuqsAdapter>
-            <Providers>
-              <Banner />
-              {children}
-              <Toaster richColors />
-            </Providers>
-          </NuqsAdapter>
+          <PostHogProvider>
+            <NuqsAdapter>
+              <Providers>
+                <Banner />
+                {children}
+                <Toaster richColors />
+              </Providers>
+            </NuqsAdapter>
+          </PostHogProvider>
         </ThemeProvider>
       </body>
     </html>

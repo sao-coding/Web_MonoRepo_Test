@@ -121,20 +121,20 @@ export const stylistic = (overrides?: RuleOverrides): FlatConfig[] => [
       'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
       'no-trailing-spaces': 'error',
       'eol-last': ['error', 'always'],
-      'linebreak-style': ['error', 'unix'],
+      'linebreak-style': 'off', // Disabled for cross-platform compatibility - let Git handle line endings
 
       // Others
       'dot-location': ['error', 'property'],
       'max-len': [
-        'error',
+        'warn',
         {
-          code: 120,
+          code: 150,
           tabWidth: 2,
           ignoreUrls: true,
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
           ignoreRegExpLiterals: true,
-          ignoreComments: false
+          ignoreComments: true
         }
       ],
 

@@ -66,39 +66,37 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
     setIsLoading(true)
     try {
       const response = await fetch(`${baseUrl}/api/aicity/productspec/models`, {
-        method: 'GET',
+        method: 'GET'
       })
       const data: Model[] = await response.json()
       setModels(data)
 
       // 自動選擇預設模型
-      const defaultModel = data.find(model => model.isDefault === '1')
+      const defaultModel = data.find((model) => model.isDefault === '1')
+
       if (defaultModel) {
         setSelectedModelId(defaultModel.id)
-      }
-      else if (data.length > 0) {
+      } else if (data.length > 0) {
         setSelectedModelId(data[0].id)
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching models:', error)
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }, [apiBaseUrl])
 
   const selectDefaultModel = useCallback(() => {
-    const defaultModel = models.find(model => model.isDefault === '1')
+    const defaultModel = models.find((model) => model.isDefault === '1')
+
     if (defaultModel) {
       setSelectedModelId(defaultModel.id)
-    }
-    else if (models.length > 0) {
+    } else if (models.length > 0) {
       setSelectedModelId(models[0].id)
     }
   }, [models])
 
-  const selectedModel = models.find(model => model.id === selectedModelId)
+  const selectedModel = models.find((model) => model.id === selectedModelId)
 
   useEffect(() => {
     if (autoLoad) {
@@ -113,7 +111,7 @@ export function useModels({ apiBaseUrl, autoLoad = true }: UseModelsOptions = {}
     selectedModel,
     isLoading,
     fetchModels,
-    selectDefaultModel,
+    selectDefaultModel
   }
 }
 
