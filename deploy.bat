@@ -19,13 +19,15 @@ echo Please select the environment to deploy:
 echo 1. Development (dev)   [Expected Branch: dev]
 echo 2. Staging (staging)   [Expected Branch: test]
 echo 3. Production (prod)   [Expected Branch: prod]
+echo 4. Local (local)       [Any Branch]
 echo.
 
-set /p choice="Enter your choice (1-3): "
+set /p choice="Enter your choice (1-4): "
 
 if "%choice%"=="1" goto check_dev
 if "%choice%"=="2" goto check_staging
 if "%choice%"=="3" goto check_prod
+if "%choice%"=="4" goto check_local
 
 echo Invalid choice. Exiting.
 goto end
@@ -56,6 +58,14 @@ set secret_env=prod
 set ecosystem_config=ecosystem.prod.config.cjs
 if /i "%current_branch%"=="%expected_branch%" goto select_apps
 goto warning
+
+:check_local
+set target_env=Local
+set expected_branch=any
+set deploy_cmd=deploy:local
+set secret_env=dev
+set ecosystem_config=ecosystem.local.config.cjs
+goto select_apps
 
 :warning
 echo.

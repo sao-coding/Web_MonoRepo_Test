@@ -2,6 +2,7 @@
 
 import type { AppConfig } from '@msi/config/env'
 import { useAuth } from '@msi/auth'
+import { useTranslations } from '@msi/i18n'
 import { Button } from '@msi/ui/components/button'
 import { Checkbox } from '@msi/ui/components/checkbox'
 import { Input } from '@msi/ui/components/input'
@@ -19,7 +20,6 @@ import { EyeIcon, EyeOffIcon, Loader2Icon, RefreshCwIcon, UserIcon } from 'lucid
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import { useI18n } from '@/lib/i18n'
 import { CapsLockIndicator } from './language-switcher'
 
 // 區域選項
@@ -43,7 +43,7 @@ interface LoginFormProps {
  */
 export function LoginForm({ config }: LoginFormProps) {
   const { login, status } = useAuth()
-  const { t } = useI18n()
+  const t = useTranslations('login')
 
   // States
   const [region, setRegion] = useState<Region>('MSIHQ')
@@ -83,7 +83,7 @@ export function LoginForm({ config }: LoginFormProps) {
     event.preventDefault()
 
     if (Number.parseInt(captchaInput, 10) !== captcha.answer) {
-      toast.error(t('login.captchaError'))
+      toast.error(t('captchaError'))
       refreshCaptcha()
       return
     }
@@ -102,7 +102,7 @@ export function LoginForm({ config }: LoginFormProps) {
       window.location.href = config.NEXT_PUBLIC_BASE_PATH_URL
     }
     else {
-      toast.error(result.error || t('login.loginFailed'))
+      toast.error(result.error || t('loginFailed'))
       refreshCaptcha()
     }
   }
@@ -117,11 +117,11 @@ export function LoginForm({ config }: LoginFormProps) {
       {/* 區域選擇 - 強制 50px 高度 */}
       <Select value={region} onValueChange={value => setRegion(value as Region)}>
         <SelectTrigger className={`${inputClassName} !h-[50px] justify-between`}>
-          <SelectValue placeholder={t('login.selectRegion')} />
+          <SelectValue placeholder={t('selectRegion')} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>{t('login.selectRegion')}</SelectLabel>
+            <SelectLabel>{t('selectRegion')}</SelectLabel>
             {REGIONS.map(r => (
               <SelectItem key={r} value={r}>{r}</SelectItem>
             ))}
@@ -137,7 +137,7 @@ export function LoginForm({ config }: LoginFormProps) {
           type="text"
           value={userName}
           onChange={e => setUserName(e.target.value)}
-          placeholder={t('login.usernamePlaceholder')}
+          placeholder={t('usernamePlaceholder')}
           required
           disabled={isLoading}
           autoComplete="username"
@@ -156,7 +156,7 @@ export function LoginForm({ config }: LoginFormProps) {
           onChange={e => setPassword(e.target.value)}
           onKeyDown={handlePasswordKeyEvent}
           onKeyUp={handlePasswordKeyEvent}
-          placeholder={t('login.passwordPlaceholder')}
+          placeholder={t('passwordPlaceholder')}
           required
           disabled={isLoading}
           autoComplete="current-password"
@@ -185,7 +185,7 @@ export function LoginForm({ config }: LoginFormProps) {
           type="text"
           value={captchaInput}
           onChange={e => setCaptchaInput(e.target.value)}
-          placeholder={t('login.captchaPlaceholder')}
+          placeholder={t('captchaPlaceholder')}
           required
           disabled={isLoading}
           autoComplete="off"
@@ -219,7 +219,7 @@ export function LoginForm({ config }: LoginFormProps) {
           className="border-foreground/50 data-[state=checked]:bg-foreground data-[state=checked]:border-foreground"
         />
         <Label htmlFor="rememberMe" className="text-sm text-muted-foreground cursor-pointer hover:text-foreground">
-          {t('login.rememberMe')}
+          {t('rememberMe')}
         </Label>
       </div>
 
@@ -233,10 +233,10 @@ export function LoginForm({ config }: LoginFormProps) {
           ? (
               <>
                 <Loader2Icon className="animate-spin mr-2" />
-                {t('login.submitting')}
+                {t('submitting')}
               </>
             )
-          : t('login.submit')}
+          : t('submit')}
       </Button>
     </form>
   )

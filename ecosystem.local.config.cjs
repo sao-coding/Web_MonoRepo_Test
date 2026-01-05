@@ -7,8 +7,8 @@ module.exports = {
   apps: [
     {
       name: 'rd-aicity',
-      script: 'node_modules/next/dist/bin/next',
-      args: `start -p 3001`,
+      script: path.join(__dirname, 'apps', 'rd_aicity', 'node_modules', 'next', 'dist', 'bin', 'next'),
+      args: `start -H ${HOST} -p 3001`,
       cwd: path.join(__dirname, 'apps', 'rd_aicity'),
       max_restarts: 3,
       min_uptime: '10s',
@@ -23,8 +23,8 @@ module.exports = {
     },
     {
       name: 'product-spec',
-      script: 'node_modules/next/dist/bin/next',
-      args: `start -p 3002`,
+      script: path.join(__dirname, 'apps', 'product-spec', 'node_modules', 'next', 'dist', 'bin', 'next'),
+      args: `start -H ${HOST} -p 3002`,
       cwd: path.join(__dirname, 'apps', 'product-spec'),
       max_restarts: 3,
       min_uptime: '10s',

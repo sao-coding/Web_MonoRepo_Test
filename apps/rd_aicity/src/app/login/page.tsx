@@ -1,10 +1,10 @@
 'use client'
 
 import { getAppConfig } from '@msi/config/env'
+import { useTranslations } from '@msi/i18n'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 
-import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher, LoginForm } from './_components'
 
 /**
@@ -13,7 +13,7 @@ import { LanguageSwitcher, LoginForm } from './_components'
  */
 const LoginPage = () => {
   const config = useMemo(() => getAppConfig(), [])
-  const { t } = useI18n()
+  const t = useTranslations('login')
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const LoginPage = () => {
               fontSize: '18px',
             }}
           >
-            {t('login.title')}
+            {t('title')}
           </p>
         </div>
 

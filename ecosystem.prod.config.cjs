@@ -7,7 +7,7 @@ module.exports = {
   apps: [
     {
       name: 'rd-aicity',
-      script: path.join(__dirname, 'node_modules', 'next', 'dist', 'bin', 'next'),
+      script: path.join(__dirname, 'apps', 'rd_aicity', 'node_modules', 'next', 'dist', 'bin', 'next'),
       args: `start -H ${HOST} -p 3001`,
       cwd: path.join(__dirname, 'apps', 'rd_aicity'),
       interpreter: 'none',
@@ -25,7 +25,7 @@ module.exports = {
     },
     {
       name: 'product-spec',
-      script: path.join(__dirname, 'node_modules', 'next', 'dist', 'bin', 'next'),
+      script: path.join(__dirname, 'apps', 'product-spec', 'node_modules', 'next', 'dist', 'bin', 'next'),
       args: `start -H ${HOST} -p 3002`,
       cwd: path.join(__dirname, 'apps', 'product-spec'),
       interpreter: 'none',
