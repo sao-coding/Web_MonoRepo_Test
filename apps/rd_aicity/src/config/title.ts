@@ -1,6 +1,6 @@
 export const titleConfig = [
   {
-    title: 'AI City',
+    title: 'AIforce',
     logoUrl: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png',
     pathname: '/login',
     banner: false,
@@ -60,7 +60,7 @@ export const titleConfig = [
     banner: true,
   },
   {
-    title: 'AI City',
+    title: 'AIforce',
     logoUrl: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png',
     pathname: '/',
     banner: true,

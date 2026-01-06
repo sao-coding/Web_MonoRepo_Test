@@ -6,9 +6,11 @@ import { getLocale } from 'next-intl/server'
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import React from 'react'
 import { Toaster } from 'sonner'
 
 import Banner from '@/components/banner'
+import { LanguageProvider } from '@/context/Language'
 // 預先載入所有語系的翻譯
 import enMessages from '../../messages/en.json'
 import zhTWMessages from '../../messages/zh-TW.json'
@@ -59,20 +61,22 @@ export default async function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <PostHogProvider>
-            <NuqsAdapter>
-              <I18nProvider
-                initialLocale={locale}
-                allMessages={allMessages}
-              >
-                <Providers>
-                  <Banner />
-                  {children}
-                  <Toaster richColors />
-                </Providers>
-              </I18nProvider>
-            </NuqsAdapter>
-          </PostHogProvider>
+          <LanguageProvider>
+            <PostHogProvider>
+              <NuqsAdapter>
+                <I18nProvider
+                  initialLocale={locale}
+                  allMessages={allMessages}
+                >
+                  <Providers>
+                    <Banner />
+                    {children}
+                    <Toaster richColors />
+                  </Providers>
+                </I18nProvider>
+              </NuqsAdapter>
+            </PostHogProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -23,6 +23,17 @@
       "MSIEMEA": "MSIEMEA"
     }
   },
+  "homepage": {
+    "loading": "載入中...",
+    "noAvailable": "無可用應用",
+    "noAvailableD": "目前沒有可用的應用程序。",
+    "noRelated": "無相關應用",
+    "noRelatedD": "找不到與「",
+    "noRelatedDt": "」相關的應用。",
+    "info": "查看介紹",
+    "sysLink": "進入對話",
+    "addFavorite": "加入我的最愛"
+  },
   "language": {
     "zhTW": "繁體中文",
     "en": "English"
