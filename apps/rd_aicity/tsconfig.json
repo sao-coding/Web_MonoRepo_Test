@@ -11,7 +11,10 @@
       "@msi/config": ["../../packages/config/src/index.ts"],
       "@msi/config/*": ["../../packages/config/src/*"],
       "@msi/auth": ["../../packages/auth/dist/index.d.ts"],
-      "@msi/ui": ["../../packages/ui/dist/index.d.ts"]
+      "@msi/auth/*": ["../../packages/auth/*"],
+      "@msi/ui": ["../../packages/ui/dist/index.d.ts"],
+      "@msi/ui/*": ["../../packages/ui/*"],
+      "@msi/eslint-config/*": ["../../packages/eslint-config/*"]
     },
     "resolveJsonModule": true,
     "allowJs": true,

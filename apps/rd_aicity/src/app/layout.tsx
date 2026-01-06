@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import React from 'react'
 import { Toaster } from 'sonner'
 import Banner from '@/components/banner'
+import { LanguageProvider } from '@/context/Language'
 import Providers from './providers'
 import './globals.css'
 
@@ -43,13 +45,15 @@ export default function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <NuqsAdapter>
-            <Providers>
-              <Banner />
-              {children}
-              <Toaster richColors />
-            </Providers>
-          </NuqsAdapter>
+          <LanguageProvider>
+            <NuqsAdapter>
+              <Providers>
+                <Banner />
+                {children}
+                <Toaster richColors />
+              </Providers>
+            </NuqsAdapter>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

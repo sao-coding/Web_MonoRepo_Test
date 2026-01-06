@@ -5,17 +5,8 @@ import { getAppConfig } from '@msi/config/env'
 import { LogOutIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
-
 import { toast } from 'sonner'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 
 const UserMenu = () => {
   const { user, logout, status } = useAuth()
@@ -43,61 +34,32 @@ const UserMenu = () => {
     <div className="flex items-center gap-2">
       {user
         ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger className="rounded-full">
-                <Avatar>
-                  <AvatarImage
-                    src="https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/user.png"
-                  />
-                  <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              {/* 下面 距離右邊的距離 10px */}
-              <DropdownMenuContent align="end" className="right-10">
-                <DropdownMenuLabel className="rounded-sm hover:bg-accent">
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage
-                        src="https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/user.png"
-                      />
-                      <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
-                    </Avatar>
-
-                    <div>
-                      <h3>{user.name}</h3>
-                      <p>{user.userId}</p>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-2"
-                    onClick={async () => {
-                      // console.log('logout')
-                      const status = logout()
-                      if (status) {
-                        toast.success('登出成功')
-                        window.location.href = config.NEXT_PUBLIC_BASE_PATH_URL || '/'
-                      }
-                      else {
-                        toast.error('登出失敗，請稍後再試')
-                      }
-                    }}
-                  >
-                    <LogOutIcon />
-                    <span>登出</span>
-                  </button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="outline"
+              className="rounded-4xl px-6"
+              title={`${user.userId} ${user.name}`}
+              onClick={async () => {
+                // console.log('logout')
+                const status = logout()
+                if (status) {
+                  toast.success('登出成功')
+                  window.location.href = config.NEXT_PUBLIC_BASE_PATH_URL || '/'
+                }
+                else {
+                  toast.error('登出失敗，請稍後再試')
+                }
+              }}
+            >
+              <span>登出</span>
+            </Button>
           )
         : (
-            <Link href="/login" className="flex h-10 items-center gap-2">
-              <UserIcon />
+            <Button
+              className="rounded-4xl px-6"
+              onClick={() => window.location.href = '/login'}
+            >
               <span>登入</span>
-            </Link>
+            </Button>
           )}
     </div>
   )

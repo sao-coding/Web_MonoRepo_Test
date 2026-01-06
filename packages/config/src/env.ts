@@ -7,6 +7,7 @@ export interface AppConfig {
   NEXT_PUBLIC_PATENT_SERVICE_API_URL: string
   NEXT_PUBLIC_AI_API_URL: string
   NEXT_PUBLIC_VGA_AI_API_URL: string
+  NEXT_PUBLIC_AIforce_API_URL: string
   // 其他所有您需要的變數
 }
 
@@ -19,7 +20,8 @@ const DevConfig: AppConfig = {
   NEXT_PUBLIC_NIM_SERVICE_API_URL: 'http://10.16.20.152:8090', // 開發測試
   NEXT_PUBLIC_PATENT_SERVICE_API_URL: 'http://10.16.20.11:8081',
   NEXT_PUBLIC_AI_API_URL: 'http://10.16.20.152:8086',
-  NEXT_PUBLIC_VGA_AI_API_URL: 'http://10.16.20.152:8102'
+  NEXT_PUBLIC_VGA_AI_API_URL: 'http://10.16.20.152:8102',
+  NEXT_PUBLIC_AIforce_API_URL: 'http://10.16.20.11:8085'
 }
 
 // --- 2. 驗證測試配置 (對應 rdraid5_uat.msi.com / 10.16.20.12)
@@ -31,19 +33,21 @@ const UatConfig: AppConfig = {
   NEXT_PUBLIC_NIM_SERVICE_API_URL: 'https://dadaival.msi.com:7401',
   NEXT_PUBLIC_PATENT_SERVICE_API_URL: 'https://rdraid5_uat.msi.com:8084',
   NEXT_PUBLIC_AI_API_URL: 'https://dadaival.msi.com:7402',
-  NEXT_PUBLIC_VGA_AI_API_URL: 'https://dadaival.msi.com:7478'
+  NEXT_PUBLIC_VGA_AI_API_URL: 'https://dadaival.msi.com:7478',
+  NEXT_PUBLIC_AIforce_API_URL: 'https://rdraid5_uat.msi.com:8085'
 }
 
 // --- 3. 正式機配置 (其他網址)
 const ProdConfig: AppConfig = {
-  NEXT_PUBLIC_RD_SITE_URL: 'https://rdraid5.msi.com.tw/',
+  NEXT_PUBLIC_RD_SITE_URL: 'https://rdraid5.msi.com.tw',
   NEXT_PUBLIC_LOGIN_API_URL: 'https://rdraid5.msi.com.tw:8082',
   NEXT_PUBLIC_BASE_PATH_URL: '/AI_City',
   NEXT_PUBLIC_COOKIE_DOMAIN: '.msi.com.tw', // 正式機
   NEXT_PUBLIC_NIM_SERVICE_API_URL: 'https://api.msi.com.tw',
   NEXT_PUBLIC_PATENT_SERVICE_API_URL: 'https://rdraid5.msi.com.tw:8084',
   NEXT_PUBLIC_AI_API_URL: 'https://km.msi.com.tw:7402',
-  NEXT_PUBLIC_VGA_AI_API_URL: 'https://km.msi.com.tw:7478'
+  NEXT_PUBLIC_VGA_AI_API_URL: 'https://km.msi.com.tw:7478',
+  NEXT_PUBLIC_AIforce_API_URL: 'https://rdraid5.msi.com.tw:8085'
 }
 
 /**
