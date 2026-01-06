@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "tsc --noEmit",
-    "clean": "rm -rf .turbo",
-    "dev": "tsc --noEmit --watch",
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "clean": "rm -rf .turbo dist",
+    "dev": "tsup src/index.ts --watch --dts",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit"
@@ -23,20 +23,24 @@
     "@types/react": "^19.2.1",
     "@msi/eslint-config": "workspace:*",
     "@types/js-cookie": "^3.0.2",
+    "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "eslint": "^8.0.0"
   },
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "default": "./src/index.ts"
-    },
-    "./src/*": "./src/*",
-    "./*": "./src/*"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "license": "MIT"
 }
 

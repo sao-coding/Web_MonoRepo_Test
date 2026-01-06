@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import { getAppConfig } from '@msi/config/env'
 import { LogOutIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'

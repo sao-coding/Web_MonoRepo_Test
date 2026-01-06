@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import {
   CheckIcon,
   CopyIcon,

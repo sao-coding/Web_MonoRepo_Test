@@ -11,6 +11,8 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+!*.env.enc
+!*.env.example
 
 # Testing
 coverage
@@ -38,3 +40,7 @@ yarn-error.log*
 *.pem
 .github/copilot-instructions.md
 .agent/rules/monorepo.md
+nul
+.env.dev
+.env.staging
+.env.prod

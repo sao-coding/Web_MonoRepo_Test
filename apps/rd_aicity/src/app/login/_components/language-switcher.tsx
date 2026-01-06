@@ -1,17 +1,26 @@
 'use client'
 
+import type { Locale } from '@msi/i18n'
 import { mdiKeyboardCaps } from '@mdi/js'
 import Icon from '@mdi/react'
+import { useI18n, useTranslations } from '@msi/i18n'
 
-import { useI18n } from '@/lib/i18n'
 import { ThemeToggle } from './theme-toggle'
 
 /**
  * 語系切換組件
  * 採用與登入卡片相同的玻璃擬態風格
+ * 支援即時切換，無需頁面重整
  */
 export function LanguageSwitcher() {
-  const { locale, setLocale, t } = useI18n()
+  const { locale, setLocale, isPending } = useI18n()
+  const t = useTranslations('language')
+
+  const handleLocaleChange = (newLocale: Locale) => {
+    if (isPending)
+      return
+    setLocale(newLocale)
+  }
 
   return (
     <div className="absolute top-6 right-6 z-10 flex items-center gap-3">
@@ -43,14 +52,15 @@ export function LanguageSwitcher() {
 
         <button
           type="button"
-          onClick={() => setLocale('zh-TW')}
+          onClick={() => handleLocaleChange('zh-TW')}
+          disabled={isPending}
           className={`px-3 py-1 text-sm rounded-lg transition-all ${
             locale === 'zh-TW'
               ? 'text-foreground font-bold'
               : 'text-muted-foreground hover:text-foreground'
-          }`}
+          } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {t('language.zhTW')}
+          {t('zhTW')}
         </button>
 
         {/* 分隔線 - 淺色灰、深色白 */}
@@ -58,14 +68,15 @@ export function LanguageSwitcher() {
 
         <button
           type="button"
-          onClick={() => setLocale('en')}
+          onClick={() => handleLocaleChange('en')}
+          disabled={isPending}
           className={`px-3 py-1 text-sm rounded-lg transition-all ${
             locale === 'en'
               ? 'text-foreground font-bold'
               : 'text-muted-foreground hover:text-foreground'
-          }`}
+          } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {t('language.en')}
+          {t('en')}
         </button>
       </div>
     </div>
@@ -74,7 +85,7 @@ export function LanguageSwitcher() {
 
 // Caps Lock 圖標組件 - 顏色與其他 icon 一致
 export function CapsLockIndicator({ show }: { show: boolean }) {
-  const { t } = useI18n()
+  const t = useTranslations('login')
 
   if (!show)
     return null
@@ -82,7 +93,7 @@ export function CapsLockIndicator({ show }: { show: boolean }) {
   return (
     <div
       className="flex items-center text-muted-foreground"
-      title={t('login.capsLockOn')}
+      title={t('capsLockOn')}
     >
       <Icon path={mdiKeyboardCaps} size={0.8} />
     </div>

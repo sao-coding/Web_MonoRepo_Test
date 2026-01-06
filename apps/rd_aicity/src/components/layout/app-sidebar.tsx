@@ -1,7 +1,7 @@
 'use client'
 
 import type { LucideIcon } from 'lucide-react'
-import { IconMsi } from '@msi/ui/components/layout/icons/msi'
+import { IconMsi } from '@msi/ui/components/icons/msi'
 import UserMenu from '@msi/ui/components/layout/sidebar/user-menu'
 import {
   Sidebar,

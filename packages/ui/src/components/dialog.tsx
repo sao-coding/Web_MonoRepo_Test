@@ -5,11 +5,28 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@msi/ui/lib/utils"
+import { captureEvent } from "../lib/posthog-events"
+
+interface DialogProps extends React.ComponentProps<typeof DialogPrimitive.Root> {
+  /** Optional: Track this dialog in PostHog */
+  trackingName?: string
+}
 
 function Dialog({
+  trackingName,
+  onOpenChange,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+}: DialogProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (trackingName) {
+      captureEvent(open ? 'dialog_opened' : 'dialog_closed', {
+        dialog_name: trackingName
+      })
+    }
+    onOpenChange?.(open)
+  }
+
+  return <DialogPrimitive.Root data-slot="dialog" onOpenChange={handleOpenChange} {...props} />
 }
 
 function DialogTrigger({

@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@msi/auth/src/provider'
+import { useAuth } from '@msi/auth'
 import { useQuery } from '@tanstack/react-query'
 import { FilterIcon, SearchIcon, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'

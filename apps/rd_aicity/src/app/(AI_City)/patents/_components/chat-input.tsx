@@ -262,11 +262,11 @@ const ChatInput = ({
           >
             {isLoading
               ? (
-                <div className="animate-spin h-5 w-5 border-2 border-t-transparent border-white rounded-full"></div>
-              )
+                  <div className="animate-spin h-5 w-5 border-2 border-t-transparent border-white rounded-full"></div>
+                )
               : (
-                <SendHorizontalIcon className="h-5 w-5" />
-              )}
+                  <SendHorizontalIcon className="h-5 w-5" />
+                )}
           </Button>
         </div>
       </div>

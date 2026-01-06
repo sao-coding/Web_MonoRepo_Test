@@ -1,9 +1,9 @@
-import type { FlatConfig } from "../types";
+import type { FlatConfig } from '../types'
 
-import gitignorePlugin from "eslint-config-flat-gitignore";
+import gitignorePlugin from 'eslint-config-flat-gitignore'
 
 export const gitignore = (): FlatConfig[] => [
   gitignorePlugin({
-    name: "eslint-config/gitignore",
-  }),
-];
+    name: 'eslint-config/gitignore'
+  })
+]

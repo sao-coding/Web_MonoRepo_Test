@@ -35,11 +35,18 @@ export interface UseFeedbackReturn {
   /** 提交反饋 */
   submitFeedback: (recordDetailId: number, feedback: string) => void
   /** 發送反饋到 API */
-  sendFeedback: (recordDetailId: number, isGood: boolean | null, feedback?: string | null) => Promise<void>
+  sendFeedback: (
+    recordDetailId: number,
+    isGood: boolean | null,
+    feedback?: string | null
+  ) => Promise<void>
   /** 新增記事 */
   insertNote: (recordDetailId: number) => Promise<void>
   /** 設定顯示按鈕狀態 */
-  setButtonVisibility: (recordDetailId: number, options: { isGood?: boolean, unGood?: boolean, note?: boolean }) => void
+  setButtonVisibility: (
+    recordDetailId: number,
+    options: { isGood?: boolean; unGood?: boolean; note?: boolean }
+  ) => void
 }
 
 /**
@@ -63,118 +70,122 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
   const [unGood, setUnGood] = useState<Record<number, boolean>>({})
   const [noteEnabled, setNoteEnabled] = useState<Record<number, boolean>>({})
 
-  const sendFeedback = useCallback(async (
-    recordDetailId: number,
-    isGoodValue: boolean | null,
-    feedback: string | null = null,
-  ) => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
-    if (!baseUrl) {
-      return
-    }
+  const sendFeedback = useCallback(
+    async (recordDetailId: number, isGoodValue: boolean | null, feedback: string | null = null) => {
+      const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+      if (!baseUrl) {
+        return
+      }
 
-    try {
-      await fetch(`${baseUrl}/api/aicity/productspec/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recordDetailId,
-          isGood: isGoodValue,
-          comment: feedback,
-          userId,
-        }),
+      try {
+        await fetch(`${baseUrl}/api/aicity/productspec/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recordDetailId,
+            isGood: isGoodValue,
+            comment: feedback,
+            userId
+          })
+        })
+        if (feedback) {
+          setActiveFeedback((prev) => ({ ...prev, [recordDetailId]: feedback }))
+        }
+      } catch (err) {
+        console.error('POST 反饋API錯誤:', err)
+      }
+    },
+    [apiBaseUrl, userId]
+  )
+
+  const toggleIsGood = useCallback(
+    (recordDetailId: number) => {
+      setFeedbackStates((prev) => {
+        const current = prev[recordDetailId] ?? { isGoodEnabled: false, feedBackEnabled: false }
+        const newIsGoodEnabled = !current.isGoodEnabled
+
+        // 發送反饋
+        if (newIsGoodEnabled) {
+          sendFeedback(recordDetailId, true)
+        } else {
+          sendFeedback(recordDetailId, null)
+        }
+
+        return {
+          ...prev,
+          [recordDetailId]: {
+            isGoodEnabled: newIsGoodEnabled,
+            feedBackEnabled: false
+          }
+        }
       })
-      if (feedback) {
-        setActiveFeedback(prev => ({ ...prev, [recordDetailId]: feedback }))
-      }
-    }
-    catch (err) {
-      console.error('POST 反饋API錯誤:', err)
-    }
-  }, [apiBaseUrl, userId])
-
-  const toggleIsGood = useCallback((recordDetailId: number) => {
-    setFeedbackStates((prev) => {
-      const current = prev[recordDetailId] || { isGoodEnabled: false, feedBackEnabled: false }
-      const newIsGoodEnabled = !current.isGoodEnabled
-
-      // 發送反饋
-      if (newIsGoodEnabled) {
-        sendFeedback(recordDetailId, true)
-      }
-      else {
-        sendFeedback(recordDetailId, null)
-      }
-
-      return {
-        ...prev,
-        [recordDetailId]: {
-          isGoodEnabled: newIsGoodEnabled,
-          feedBackEnabled: false,
-        },
-      }
-    })
-  }, [sendFeedback])
+    },
+    [sendFeedback]
+  )
 
   const toggleFeedback = useCallback((recordDetailId: number) => {
-    setFeedbackStates(prev => ({
+    setFeedbackStates((prev) => ({
       ...prev,
       [recordDetailId]: {
         isGoodEnabled: false,
-        feedBackEnabled: !prev[recordDetailId]?.feedBackEnabled,
-      },
+        feedBackEnabled: !prev[recordDetailId]?.feedBackEnabled
+      }
     }))
   }, [])
 
-  const submitFeedback = useCallback((recordDetailId: number, feedback: string) => {
-    sendFeedback(recordDetailId, false, feedback)
-    setFeedbackStates(prev => ({
-      ...prev,
-      [recordDetailId]: { isGoodEnabled: false, feedBackEnabled: false },
-    }))
-    setIsGood(prev => ({ ...prev, [recordDetailId]: false }))
-    setUnGood(prev => ({ ...prev, [recordDetailId]: false }))
-    setNewFeedback(prev => ({ ...prev, [recordDetailId]: true }))
-  }, [sendFeedback])
+  const submitFeedback = useCallback(
+    (recordDetailId: number, feedback: string) => {
+      sendFeedback(recordDetailId, false, feedback)
+      setFeedbackStates((prev) => ({
+        ...prev,
+        [recordDetailId]: { isGoodEnabled: false, feedBackEnabled: false }
+      }))
+      setIsGood((prev) => ({ ...prev, [recordDetailId]: false }))
+      setUnGood((prev) => ({ ...prev, [recordDetailId]: false }))
+      setNewFeedback((prev) => ({ ...prev, [recordDetailId]: true }))
+    },
+    [sendFeedback]
+  )
 
-  const insertNote = useCallback(async (recordDetailId: number) => {
-    const baseUrl = apiBaseUrl || getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
-    if (!baseUrl) {
-      return
-    }
+  const insertNote = useCallback(
+    async (recordDetailId: number) => {
+      const baseUrl = apiBaseUrl ?? getAppConfig().NEXT_PUBLIC_PATENT_SERVICE_API_URL
+      if (!baseUrl) {
+        return
+      }
 
-    try {
-      await fetch(`${baseUrl}/api/aicity/productspec/notes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recordDetailId,
-          userId,
-        }),
-      })
-    }
-    catch (err) {
-      console.error('儲存記事API：', err)
-    }
-    finally {
-      setNoteEnabled(prev => ({ ...prev, [recordDetailId]: false }))
-    }
-  }, [apiBaseUrl, userId])
+      try {
+        await fetch(`${baseUrl}/api/aicity/productspec/notes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recordDetailId,
+            userId
+          })
+        })
+      } catch (err) {
+        console.error('儲存記事API：', err)
+      } finally {
+        setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: false }))
+      }
+    },
+    [apiBaseUrl, userId]
+  )
 
-  const setButtonVisibility = useCallback((
-    recordDetailId: number,
-    options: { isGood?: boolean, unGood?: boolean, note?: boolean },
-  ) => {
-    if (options.isGood !== undefined) {
-      setIsGood(prev => ({ ...prev, [recordDetailId]: options.isGood! }))
-    }
-    if (options.unGood !== undefined) {
-      setUnGood(prev => ({ ...prev, [recordDetailId]: options.unGood! }))
-    }
-    if (options.note !== undefined) {
-      setNoteEnabled(prev => ({ ...prev, [recordDetailId]: options.note! }))
-    }
-  }, [])
+  const setButtonVisibility = useCallback(
+    (recordDetailId: number, options: { isGood?: boolean; unGood?: boolean; note?: boolean }) => {
+      if (options.isGood !== undefined) {
+        setIsGood((prev) => ({ ...prev, [recordDetailId]: Boolean(options.isGood) }))
+      }
+      if (options.unGood !== undefined) {
+        setUnGood((prev) => ({ ...prev, [recordDetailId]: Boolean(options.unGood) }))
+      }
+      if (options.note !== undefined) {
+        setNoteEnabled((prev) => ({ ...prev, [recordDetailId]: Boolean(options.note) }))
+      }
+    },
+    []
+  )
 
   return {
     feedbackStates,
@@ -188,7 +199,7 @@ export function useFeedback({ apiBaseUrl, userId }: UseFeedbackOptions = {}): Us
     submitFeedback,
     sendFeedback,
     insertNote,
-    setButtonVisibility,
+    setButtonVisibility
   }
 }
 
