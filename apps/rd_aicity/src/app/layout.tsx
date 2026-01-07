@@ -1,5 +1,8 @@
+import type { Locale } from '@msi/i18n'
 import type { Metadata } from 'next'
+import { I18nProvider } from '@msi/i18n'
 import { PostHogProvider } from '@msi/ui'
+import { getLocale } from 'next-intl/server'
 import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
@@ -7,8 +10,18 @@ import React from 'react'
 import { Toaster } from 'sonner'
 import BannerWrapper from '@/components/banner/BannerWrapper'
 import { LanguageProvider } from '@/context/Language'
+
+// 預先載入所有語系的翻譯
+import enMessages from '../../messages/en.json'
+import zhTWMessages from '../../messages/zh-TW.json'
+
 import Providers from './providers'
 import './globals.css'
+
+const allMessages = {
+  'en': enMessages,
+  'zh-TW': zhTWMessages,
+}
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,11 +42,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale() as Locale
+
   return (
     <html lang="zh-TW" suppressHydrationWarning>
       <body
@@ -49,11 +64,16 @@ export default function RootLayout({
           <LanguageProvider>
             <PostHogProvider>
               <NuqsAdapter>
-                <Providers>
-                  <BannerWrapper />
-                  {children}
-                  <Toaster richColors />
-                </Providers>
+                <I18nProvider
+                  initialLocale={locale}
+                  allMessages={allMessages}
+                >
+                  <Providers>
+                    <BannerWrapper />
+                    {children}
+                    <Toaster richColors />
+                  </Providers>
+                </I18nProvider>
               </NuqsAdapter>
             </PostHogProvider>
           </LanguageProvider>

@@ -2,6 +2,7 @@
 
 import { useAuth } from '@msi/auth'
 import { getAppConfig } from '@msi/config/env'
+import { useI18n, useTranslations } from '@msi/i18n'
 import { Banner } from '@msi/ui/components/banner'
 import { Button } from '@msi/ui/components/button'
 import {
@@ -27,8 +28,10 @@ interface LanItem {
 }
 
 export default function BannerWrapper() {
+  const t = useTranslations('homepage')
   const pathname = usePathname()
   const { isAuthenticated, user } = useAuth()
+  const { setLocale } = useI18n()
   const { setLangCode, searchKeyword, setSearchKeyword } = useLanguage()
   const [selectedLan, setSelectedLan] = useState<string>('繁體中文')
   const [lanList, setLanList] = useState<LanItem[]>([])
@@ -128,14 +131,14 @@ export default function BannerWrapper() {
           centerContent={pathname === '/' && (
             <div className="flex items-center gap-8">
               <span className="inline-block py-2 px-1 border-b-3 border-black font-bold text-md">
-                AI 智能助手
+                {t('AIagent')}
               </span>
               <Button
                 variant="ghost"
                 className="font-bold py-2 px-1 text-gray-400 hover:text-black text-md hover:bg-transparent"
                 onClick={() => handleAuthRedirect('https://aiforum.msi.com.tw/index.php')}
               >
-                AI 論壇
+                {t('AIforum')}
               </Button>
             </div>
           )}
@@ -152,6 +155,11 @@ export default function BannerWrapper() {
                     <DropdownMenuItem
                       key={item.seqNo}
                       onSelect={() => {
+                        let targetLang = item.langCode
+                        if (targetLang === 'zh') {
+                          targetLang = 'zh-TW'
+                        }
+                        setLocale(targetLang as any)
                         setSelectedLan(item.langName)
                         setLangCode(item.langCode)
                         console.warn(`切換至: ${item.langCode}`)
@@ -166,7 +174,7 @@ export default function BannerWrapper() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="搜尋AI Agent"
+                  placeholder={t('search')}
                   value={searchKeyword}
                   onChange={handleSearchChange}
                   className="pl-9 pr-4 h-9 rounded-4xl border-gray-200 focus:ring-1 focus:ring-black"

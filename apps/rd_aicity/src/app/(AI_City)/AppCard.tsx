@@ -3,6 +3,7 @@
 import type { AppType } from '@/types/app'
 import { useAuth } from '@msi/auth'
 import { getAppConfig } from '@msi/config/env'
+import { useTranslations } from '@msi/i18n'
 import { Button } from '@msi/ui/components/button'
 import {
   Dialog,
@@ -11,6 +12,13 @@ import {
   DialogTitle,
 } from '@msi/ui/components/dialog'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@msi/ui/components/tooltip'
+import {
+  Info,
   Star,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -27,6 +35,7 @@ const AppCard = (
   }: {
     categoryId: number | 0
   }) => {
+  const t = useTranslations('homepage')
   const { isAuthenticated, user } = useAuth()
   const { langCode, searchKeyword } = useLanguage()
   const [apps, setApps] = useState<AppType[]>([])
@@ -91,7 +100,7 @@ const AppCard = (
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64 w-full">
-        <div className="text-lg font-medium text-gray-600">載入中...</div>
+        <div className="text-lg font-medium text-gray-600">{t('loading')}</div>
       </div>
     )
   }
@@ -101,8 +110,8 @@ const AppCard = (
     return (
       <div className="p-4 w-full">
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
-          <p className="font-medium">無可用應用</p>
-          <p>目前沒有可用的應用程序。</p>
+          <p className="font-medium">{t('noAvailable')}</p>
+          <p>{t('noAvailableD')}</p>
         </div>
       </div>
     )
@@ -112,11 +121,11 @@ const AppCard = (
     return (
       <div className="p-4 w-full">
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
-          <p className="font-medium">無相關應用</p>
+          <p className="font-medium">{t('noRelated')}</p>
           <p>
-            找不到與「
+            {t('noRelatedD')}
             {searchKeyword}
-            」相關的應用。
+            {t('noRelatedDt')}
           </p>
         </div>
       </div>
@@ -187,7 +196,7 @@ const AppCard = (
 
   return (
     <div className="p-2 w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-5 mx-auto" style={{ maxWidth: '1100px' }}>
         {filteredApps.map((app: AppType) => {
           const isFilled = addStar[app.seqNo] !== undefined
             ? addStar[app.seqNo]
@@ -195,22 +204,57 @@ const AppCard = (
           return (
             <div
               key={app.seqNo}
-              className="flex flex-col items-center overflow-hidden rounded-lg transition-shadow relative"
-              style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+              className="flex flex-col cursor-pointer items-center overflow-hidden rounded-lg shadow-md transition-shadow hover:shadow-black/30 relative"
+              onClick={() => {
+                setSelectedApp(app)
+              }}
             >
               <div className="w-full h-20 bg-gray-200 flex items-center justify-center relative">
-                <Button
-                  onClick={() => toggleStarEnabled(app.seqNo, app.isFavorite)}
-                  aria-label="加入我的最愛"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-2 right-2 rounded-4xl p-0 hover:bg-black/5 dark:hover:bg-white/5"
-                >
-                  <Star
-                    className="w-8 h-8"
-                    fill={isFilled ? 'black' : 'none'}
-                  />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => {
+                          setSelectedApp(app)
+                        }}
+                        aria-label={t('info')}
+                        variant="ghost"
+                        size="lg"
+                        className="absolute top-2 left-2 has-[>svg]:px-2 h-8 rounded-4xl p-0 hover:bg-black/5 dark:hover:bg-white/5"
+                      >
+                        <Info
+                          className="has-[>svg]:w-6 has-[>svg]:h-6 [&_svg:not([class*='size-'])]:size-4"
+                          size={20}
+                          stroke="gray"
+                        />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t('info')}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => toggleStarEnabled(app.seqNo, app.isFavorite)}
+                        aria-label={t('addFavorite')}
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-2 right-2 rounded-4xl p-0 hover:bg-black/5 dark:hover:bg-white/5"
+                      >
+                        <Star
+                          className="w-8 h-8"
+                          fill={isFilled ? 'black' : 'none'}
+                        />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t('addFavorite')}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               <div className="absolute z-10" style={{ top: '20px' }}>
@@ -234,19 +278,10 @@ const AppCard = (
                 </h3>
                 <div className="w-full">
                   <Button
-                    className="hover:bg-black hover:text-white w-full my-1 rounded-4xl hover:border-none"
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedApp(app)
-                    }}
-                  >
-                    查看介紹
-                  </Button>
-                  <Button
                     className="hover:bg-white hover:text-black w-full my-1 rounded-4xl hover:border"
                     onClick={() => handleAuthRedirect(app.sysUrl || '')}
                   >
-                    進入對話
+                    {t('sysLink')}
                   </Button>
                 </div>
               </div>
