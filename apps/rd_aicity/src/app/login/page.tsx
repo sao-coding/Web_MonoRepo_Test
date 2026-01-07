@@ -56,7 +56,7 @@ const LoginPage = () => {
         {/* Logo 區塊 - 放大圖片並增加間距 */}
         <div className="flex flex-col items-center mb-10 mt-4">
           <Image
-            src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce.png`}
+            src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce-new.png`}
             alt="MSI AIforce"
             width={340}
             height={40}

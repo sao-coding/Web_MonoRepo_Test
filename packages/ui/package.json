@@ -98,6 +98,7 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
+    "./components/banner": "./src/components/banner/index.tsx",
     "./components/chat-layout": "./src/components/chat-layout/index.ts",
     "./components/chat-layout/*": "./src/components/chat-layout/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
@@ -106,8 +107,5 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": [
-    "dist",
-    "styles"
-  ]
+  "files": ["dist", "styles"]
 }
