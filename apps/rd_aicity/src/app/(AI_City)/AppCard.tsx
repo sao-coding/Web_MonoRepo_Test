@@ -257,32 +257,24 @@ const AppCard = (
                 </TooltipProvider>
               </div>
 
-              <div className="absolute z-10" style={{ top: '40px' }}>
+              <div className="absolute z-10" style={{ top: '20px' }}>
                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  {app.logo
-                    ? (
-                        <img
-                          src={app.logo}
-                          alt={`${app.name} 圖標`}
-                          className="w-16 h-16 rounded-full object-contain"
-                          onError={(e) => {
-                            const imgElement = e.target as HTMLImageElement
-                            imgElement.src
-                              = 'https://via.placeholder.com/64?text=AI'
-                          }}
-                        />
-                      )
-                    : (
-                        <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold text-xl">
-                          {app.name?.[0]?.toUpperCase() || 'AI'}
-                        </div>
-                      )}
+                  <Image
+                    src={app.sysImgUrl
+                      ? app.sysImgUrl
+                      : DEFAULT_LOGO}
+                    alt={app.sysName}
+                    width={64}
+                    height={64}
+                    className="rounded-full object-contain"
+                    unoptimized
+                  />
                 </div>
               </div>
 
-              <div className="w-full bg-white pt-16 pb-6 px-4 flex flex-col items-center flex-grow h-full">
-                <h3 className="text-center font-bold text-lg text-gray-800 mt-2">
-                  {app.name}
+              <div className="w-full bg-white h-full pt-8 pb-4 px-4 flex flex-col items-center">
+                <h3 className="text-center font-bold text-lg text-gray-800 mt-6 flex-1">
+                  {app.sysName}
                 </h3>
                 <div className="w-full">
                   <Button
@@ -296,6 +288,108 @@ const AppCard = (
             </div>
           )
         })}
+        <Dialog open={!!selectedApp} onOpenChange={open => !open && setSelectedApp(null)}>
+          <DialogContent aria-describedby={undefined}>
+            <DialogHeader className="justify-center">
+              <DialogTitle>
+                <div className="flex gap-4 items-center">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <Image
+                      src={selectedApp?.sysImgUrl && selectedApp.sysImgUrl !== null
+                        ? selectedApp.sysImgUrl
+                        : DEFAULT_LOGO}
+                      alt={`${selectedApp?.sysName}`}
+                      width={64}
+                      height={64}
+                      className="rounded-full object-contain"
+                      onError={(e) => {
+                        const imgElement = e.target as HTMLImageElement
+                        if (imgElement.src !== DEFAULT_LOGO) {
+                          imgElement.src = DEFAULT_LOGO
+                        }
+                      }}
+                      unoptimized
+                    />
+                  </div>
+                  <h2 className="text-2xl font-bold">{selectedApp?.sysName}</h2>
+                </div>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="px-6 pb-6 grid gap-4 overflow-y-auto">
+              {selectedApp?.infos.map(info => (
+                <div key={info.name}>
+                  <div className="mb-4 flex">
+                    <span
+                      className="text-white rounded-[30px] px-4 py-2 font-bold text-lg"
+                      style={{ background: 'linear-gradient(to right,#000,#868789,#000)' }}
+                    >
+                      {info.name}
+                    </span>
+                  </div>
+                  <ReactMarkdown
+                    className="max-w-none dark:prose-invert grid"
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    skipHtml={false}
+                    components={{
+                      table: ({ node, ...props }) => (
+                        <div className="overflow-x-auto my-4 border rounded-lg max-w-full" style={{ maxWidth: '100%' }}>
+                          <div className="max-w-5xl overflow-x-auto">
+                            <table className="border-collapse table-auto w-full" {...props} style={{ minWidth: '600px', tableLayout: 'auto', margin: '0' }} />
+                          </div>
+                        </div>
+                      ),
+                      th: ({ node, ...props }) => (
+                        <th className="border bg-gray-100 p-2 text-left font-bold whitespace-nowrap" {...props} style={{ minWidth: '80px', verticalAlign: 'middle' }} />
+                      ),
+                      td: ({ node, ...props }) => (
+                        <td className="border p-2" {...props} style={{ minWidth: '60px', maxWidth: '200px', wordWrap: 'break-word', overflow: 'hidden', textOverflow: 'ellipsis' }} />
+                      ),
+                      p: ({ node, ...props }) => (
+                        <p className="mb-2 last:mb-0" {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul className="list-disc pl-4 mb-2 space-y-1" {...props} />
+                      ),
+                      ol: ({ node, ...props }) => (
+                        <ol className="list-decimal pl-4 mb-2 space-y-1" {...props} />
+                      ),
+                      li: ({ node, ...props }) => (
+                        <li className="mb-1" {...props} />
+                      ),
+                      h1: ({ node, ...props }) => (
+                        <h1 className="text-lg font-bold mb-2 mt-4 first:mt-0" {...props} />
+                      ),
+                      h2: ({ node, ...props }) => (
+                        <h2 className="text-base font-bold mb-2 mt-3 first:mt-0" {...props} />
+                      ),
+                      h3: ({ node, ...props }) => (
+                        <h3 className="text-sm font-bold mb-2 mt-2 first:mt-0" {...props} />
+                      ),
+                      h4: ({ node, ...props }) => (
+                        <h4 className="text-sm font-semibold mb-1 mt-2 first:mt-0" {...props} />
+                      ),
+                      strong: ({ node, ...props }) => (
+                        <strong className="font-bold" {...props} />
+                      ),
+                      em: ({ node, ...props }) => (
+                        <em className="italic" {...props} />
+                      ),
+                      code: ({ node, ...props }) => (
+                        <code className="bg-gray-100 px-1 py-0.5 rounded text-sm" {...props} />
+                      ),
+                      blockquote: ({ node, ...props }) => (
+                        <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2" {...props} />
+                      ),
+                    }}
+                  >
+                    {info.value}
+                  </ReactMarkdown>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
