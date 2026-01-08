@@ -23,6 +23,20 @@
       "MSIEMEA": "MSIEMEA"
     }
   },
+  "homepage": {
+    "loading": "Loading...",
+    "noAvailable": "No available applications",
+    "noAvailableD": "There are currently no available applications.",
+    "noRelated": "No related applications",
+    "noRelatedD": "No applications related to &quot;",
+    "noRelatedDt": "&quot; can be found.",
+    "info": "View Details",
+    "sysLink": "Start Chat",
+    "addFavorite": "Add to my favorites",
+    "AIagent": "AI Agent",
+    "AIforum": "AI Forum",
+    "search": "Search AI Agent"
+  },
   "language": {
     "zhTW": "繁體中文",
     "en": "English"

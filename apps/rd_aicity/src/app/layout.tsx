@@ -7,8 +7,9 @@ import { ThemeProvider } from 'next-themes'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from 'sonner'
+import BannerWrapper from '@/components/banner/BannerWrapper'
+import { LanguageProvider } from '@/context/Language'
 
-import Banner from '@/components/banner'
 // 預先載入所有語系的翻譯
 import enMessages from '../../messages/en.json'
 import zhTWMessages from '../../messages/zh-TW.json'
@@ -48,7 +49,7 @@ export default async function RootLayout({
   const locale = await getLocale() as Locale
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="zh-TW" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased grid grid-rows-[auto_1fr] min-h-screen`}
       >
@@ -59,20 +60,22 @@ export default async function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <PostHogProvider>
-            <NuqsAdapter>
-              <I18nProvider
-                initialLocale={locale}
-                allMessages={allMessages}
-              >
-                <Providers>
-                  <Banner />
-                  {children}
-                  <Toaster richColors />
-                </Providers>
-              </I18nProvider>
-            </NuqsAdapter>
-          </PostHogProvider>
+          <LanguageProvider>
+            <PostHogProvider>
+              <NuqsAdapter>
+                <I18nProvider
+                  initialLocale={locale}
+                  allMessages={allMessages}
+                >
+                  <Providers>
+                    <BannerWrapper />
+                    {children}
+                    <Toaster richColors />
+                  </Providers>
+                </I18nProvider>
+              </NuqsAdapter>
+            </PostHogProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
