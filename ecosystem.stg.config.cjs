@@ -40,6 +40,24 @@ module.exports = {
         APP_ENV: 'staging',
         PORT: 3002
       }
+    },
+    {
+      name: 'asr',
+      script: path.join(__dirname, 'node_modules', 'next', 'dist', 'bin', 'next'),
+      args: `start -H ${HOST} -p 3003`,
+      cwd: path.join(__dirname, 'apps', 'asr'),
+      interpreter: 'none',
+      max_restarts: 3,
+      min_uptime: '10s',
+      restart_delay: 5000,
+      watch: false,
+      autorestart: true,
+      windowsHide: true,
+      env: {
+        NODE_ENV: 'production',
+        APP_ENV: 'staging',
+        PORT: 3003
+      }
     }
   ]
 }

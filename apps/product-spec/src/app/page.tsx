@@ -37,7 +37,23 @@ const HomePage = () => {
   const chatContainerRef = React.useRef<HTMLDivElement>(null)
 
   // Auth
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+
+  // 登出處理
+  const handleLogout = () => {
+    const success = logout()
+    if (success) {
+      toast.success('已登出')
+      // 動態計算登入頁 URL - 使用當前瀏覽器的 port
+      const { protocol, hostname, port } = window.location
+      const portSuffix = port ? `:${port}` : ''
+      const redirectUrl = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      console.log('Logout redirect:', { hostname, protocol, port, redirectUrl })
+      window.location.href = redirectUrl
+    } else {
+      toast.error('登出失敗')
+    }
+  }
 
   // Models hook
   const { models, setSelectedModelId, selectedModel } = useModels({
@@ -214,7 +230,7 @@ const HomePage = () => {
               isNoteMode={isShowingNote}
             />
           }
-          onLogout={() => toast.info('登出功能')}
+          onLogout={handleLogout}
         />
       }
       rightSidebar={

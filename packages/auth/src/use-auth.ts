@@ -11,7 +11,7 @@ export interface User {
   userId: string
   userName: string
   name: string
-  email: string
+  email?: string
   deptId?: string
   domain?: string
   system?: string
@@ -19,12 +19,25 @@ export interface User {
   iat?: number
   exp?: number
   iss?: string
-  aud?: string
+  aud?: string | string[]
 }
 
 export interface LoginCredentials {
   userName: string
   password: string
+  system?: string
+  domain?: string
+}
+
+export interface LoginResponse {
+  userId: string
+  userName: string
+  name: string
+  deptId: string
+  domain: string
+  message: string
+  accessToken: string
+  chatbotToken: string
 }
 
 export type AuthStatus = 'initializing' | 'loading' | 'success' | 'error' | 'idle'
@@ -37,6 +50,7 @@ export interface UseAuthReturn {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>
   logout: () => boolean
   refreshUser: () => void
+  getChatbotToken: () => string | null
 }
 
 /**
@@ -59,7 +73,7 @@ const decodeJWT = (token: string): User | null => {
     )
     return JSON.parse(jsonPayload) as User
   } catch (err) {
-    // keep debug log but不拋出
+    // keep debug log但不拋出
     // eslint-disable-next-line no-console
     console.error('JWT 解碼失敗:', err)
     return null
@@ -90,6 +104,9 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
   // 讀取 accessToken 每次需要最新值時直接從 Cookies 取得，避免 useMemo 導致 stale token
   const readToken = useCallback(() => Cookies.get('accessToken') || null, [])
 
+  // 讀取 chatbotToken
+  const getChatbotToken = useCallback(() => Cookies.get('chatbotToken') || null, [])
+
   const loadUser = useCallback(() => {
     const token = readToken()
     if (!token) {
@@ -115,7 +132,11 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
       // token 過期，嘗試移除 cookie（同時嘗試有 domain / 無 domain）
       const domain = getCookieDomain()
       Cookies.remove('accessToken')
-      if (domain) Cookies.remove('accessToken', { domain })
+      Cookies.remove('chatbotToken')
+      if (domain) {
+        Cookies.remove('accessToken', { domain })
+        Cookies.remove('chatbotToken', { domain })
+      }
       setUser(null)
       setStatus('idle')
       setError(null)
@@ -136,12 +157,18 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
           return { success: false, error: msg }
         }
 
-        const res = await fetch(`${apiBase.replace(/\/$/, '')}/auth/login`, {
+        // 新 API: POST /api/System/Login
+        const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/System/Login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(credentials),
+          body: JSON.stringify({
+            userName: credentials.userName,
+            password: credentials.password,
+            system: credentials.system || '',
+            domain: credentials.domain || ''
+          }),
         })
 
         if (!res.ok) {
@@ -152,7 +179,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
           return { success: false, error: errorMessage }
         }
 
-        const data = await res.json()
+        const data: LoginResponse = await res.json()
         const token = data?.accessToken
         if (!token || typeof token !== 'string') {
           const msg = '伺服器未回傳有效的 accessToken'
@@ -164,7 +191,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         // expires: 傳入天數 (js-cookie)
         const expiresDays = 36500 // 約 100 年（如需更短請調整）
         const domain = getCookieDomain()
-        const cookieOptions: Record<string, any> = {
+        const cookieOptions: Record<string, unknown> = {
           expires: expiresDays,
           sameSite: 'lax',
         }
@@ -172,15 +199,28 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         // 若在 https 下，啟用 secure
         if (typeof window !== 'undefined' && window.location.protocol === 'https:') cookieOptions.secure = true
 
+        // 儲存 accessToken
         Cookies.set('accessToken', token, cookieOptions)
+
+        // 儲存 chatbotToken（如果有的話）
+        if (data.chatbotToken) {
+          Cookies.set('chatbotToken', data.chatbotToken, cookieOptions)
+        }
 
         // 解析 token 並更新狀態
         const payload = decodeJWT(token)
         if (!payload) {
-          const msg = 'Token 解析失敗'
-          setError(msg)
-          setStatus('error')
-          return { success: false, error: msg }
+          // 如果 JWT 解析失敗，使用 API 回傳的資料建立 user
+          const userFromResponse: User = {
+            userId: data.userId,
+            userName: data.userName,
+            name: data.name,
+            deptId: data.deptId,
+            domain: data.domain
+          }
+          setUser(userFromResponse)
+          setTimeout(() => setStatus('success'), 300)
+          return { success: true }
         }
 
         setUser(payload)
@@ -196,7 +236,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         return { success: false, error: msg }
       }
     },
-    [],
+    [config?.loginApiUrl],
   )
 
   const logout = useCallback((): boolean => {
@@ -204,7 +244,11 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
       const domain = getCookieDomain()
       // 嘗試移除可能存在的 cookie（含/不含 domain）
       Cookies.remove('accessToken')
-      if (domain) Cookies.remove('accessToken', { domain })
+      Cookies.remove('chatbotToken')
+      if (domain) {
+        Cookies.remove('accessToken', { domain })
+        Cookies.remove('chatbotToken', { domain })
+      }
       // 也嘗試移除其他 cookies
       Object.keys(Cookies.get()).forEach((name) => {
         Cookies.remove(name)
@@ -244,5 +288,6 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
     login,
     logout,
     refreshUser,
+    getChatbotToken,
   }
 }

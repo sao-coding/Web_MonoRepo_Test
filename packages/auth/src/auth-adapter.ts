@@ -13,7 +13,8 @@ export function useAuthAdapter(auth: UseAuthReturn) {
   const router = useRouter();
 
   useEffect(() => {
-    const isLoginPage = pathname === "/login";
+    // 檢查是否在登入頁 (相容不同 basePath)
+    const isLoginPage = pathname === "/login" || pathname.endsWith("/login");
 
     // 等待認證初始化完成
     if (status === "initializing") return;
@@ -32,7 +33,11 @@ export function useAuthAdapter(auth: UseAuthReturn) {
       if (status === "error") {
         logout();
       }
-      router.replace("/login");
+      // 使用 window.location 導向到 rd_aicity 的登入頁，避免 basePath 問題
+      const { protocol, hostname, port } = window.location;
+      // 保留當前 port（Docker 環境可能是 8080，PM2 可能是 3000）
+      const portSuffix = port ? `:${port}` : '';
+      window.location.href = `${protocol}//${hostname}${portSuffix}/AI_City/login`;
     }
   }, [pathname, router, status, isAuthenticated, logout]);
 }

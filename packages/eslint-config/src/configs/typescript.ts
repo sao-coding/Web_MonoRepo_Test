@@ -58,10 +58,10 @@ export const typescript = (
       ],
 
       // Too opinionated
-      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/consistent-type-definitions': 'off',
       // 放寬更多過於嚴格的規則
       '@typescript-eslint/no-unsafe-return': 'off',

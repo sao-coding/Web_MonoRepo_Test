@@ -42,7 +42,7 @@ const UserMenu = () => {
             <DropdownMenuTrigger className='flex w-full items-center gap-2 rounded-md p-2 hover:bg-accent'>
               <Avatar className='size-8'>
                 <AvatarImage
-                  src={`https://www.gravatar.com/avatar/${md5(user.email)}?d=identicon`}
+                  src={`https://www.gravatar.com/avatar/${md5(user.email ?? '')}?d=identicon`}
                 />
                 <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>

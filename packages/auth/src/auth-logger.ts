@@ -34,7 +34,7 @@ export function useAuthLogger(
       };
 
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_LOGIN_API_URL}/api/logs`, {
+        await fetch(`${process.env.NEXT_PUBLIC_LOGIN_API_URL}/api/System/Log`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
