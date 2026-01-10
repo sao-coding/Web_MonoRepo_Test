@@ -1,9 +1,10 @@
-"use client";
+'use client'
 
-import Cookies from "js-cookie";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
-import { type AuthStatus, type User } from "./use-auth";
+import type { AuthStatus, User } from './use-auth'
+
+import Cookies from 'js-cookie'
+import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 
 export interface LogConfig {
   webSystem: string;
@@ -19,34 +20,34 @@ export function useAuthLogger(
   status: AuthStatus,
   logConfig?: LogConfig
 ) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   useEffect(() => {
     // 避免在認證狀態不穩定時執行
-    if (status === "initializing" || status === "loading" || !logConfig) {
-      return;
+    if (status === 'initializing' || status === 'loading' || !logConfig) {
+      return
     }
 
     const writeLog = async () => {
       const logData = {
         ...logConfig,
-        url: `${process.env.NEXT_PUBLIC_BASE_PATH_URL}${pathname}`,
-      };
+        url: `${process.env.NEXT_PUBLIC_BASE_PATH_URL}${pathname}`
+      }
 
       try {
         await fetch(`${process.env.NEXT_PUBLIC_LOGIN_API_URL}/api/System/Log`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Cookies.get('accessToken')}`
           },
-          body: JSON.stringify(logData),
-        });
+          body: JSON.stringify(logData)
+        })
       } catch (error) {
-        console.error("Failed to write log:", error);
+        console.error('Failed to write log:', error)
       }
-    };
+    }
 
-    writeLog();
-  }, [pathname, user, status, logConfig]);
+    writeLog()
+  }, [pathname, user, status, logConfig])
 }

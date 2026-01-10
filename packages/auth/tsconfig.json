@@ -2,5 +2,5 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "exclude": ["node_modules"],
   "extends": "@msi/typescript-config/react-library.json",
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "eslint.config.ts"]
 }

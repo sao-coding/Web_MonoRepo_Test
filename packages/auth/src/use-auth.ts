@@ -61,7 +61,7 @@ const decodeJWT = (token: string): User | null => {
     if (!token || typeof token !== 'string') return null
     const parts = token.split('.')
     if (parts.length !== 3) return null
-    const base64Url = parts[1] as string
+    const base64Url = parts[1]!
     // 補齊 base64 padding
     const padded = base64Url.padEnd(base64Url.length + (4 - (base64Url.length % 4)) % 4, '=')
     const base64 = padded.replace(/-/g, '+').replace(/_/g, '/')
@@ -69,12 +69,12 @@ const decodeJWT = (token: string): User | null => {
       atob(base64)
         .split('')
         .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
-        .join(''),
+        .join('')
     )
     return JSON.parse(jsonPayload) as User
   } catch (err) {
     // keep debug log但不拋出
-    // eslint-disable-next-line no-console
+
     console.error('JWT 解碼失敗:', err)
     return null
   }
@@ -94,7 +94,7 @@ export interface AuthConfig {
 
 export const useAuth = (config?: AuthConfig): UseAuthReturn => {
   // Log React version to debug "Invalid hook call"
-  // eslint-disable-next-line no-console
+
   console.log('[@msi/auth] React version:', React.version)
 
   const [user, setUser] = useState<User | null>(null)
@@ -131,12 +131,10 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
     } else {
       // token 過期，嘗試移除 cookie（同時嘗試有 domain / 無 domain）
       const domain = getCookieDomain()
-      Cookies.remove('accessToken')
-      Cookies.remove('chatbotToken')
-      if (domain) {
-        Cookies.remove('accessToken', { domain })
-        Cookies.remove('chatbotToken', { domain })
-      }
+
+      Cookies.remove('accessToken', { domain })
+      Cookies.remove('chatbotToken', { domain })
+
       setUser(null)
       setStatus('idle')
       setError(null)
@@ -161,14 +159,14 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/System/Login`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             userName: credentials.userName,
             password: credentials.password,
             system: credentials.system || '',
             domain: credentials.domain || ''
-          }),
+          })
         })
 
         if (!res.ok) {
@@ -193,7 +191,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         const domain = getCookieDomain()
         const cookieOptions: Record<string, unknown> = {
           expires: expiresDays,
-          sameSite: 'lax',
+          sameSite: 'lax'
         }
         if (domain) cookieOptions.domain = domain
         // 若在 https 下，啟用 secure
@@ -219,16 +217,16 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
             domain: data.domain
           }
           setUser(userFromResponse)
-          setTimeout(() => setStatus('success'), 300)
+          setTimeout(() => { setStatus('success') }, 300)
           return { success: true }
         }
 
         setUser(payload)
         // 小幅延遲以便顯示 loading 動畫（如需要可刪除）
-        setTimeout(() => setStatus('success'), 300)
+        setTimeout(() => { setStatus('success') }, 300)
         return { success: true }
       } catch (err) {
-        // eslint-disable-next-line no-console
+
         console.error('登入錯誤:', err)
         const msg = '網路連線錯誤，請稍後再試'
         setError(msg)
@@ -236,7 +234,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         return { success: false, error: msg }
       }
     },
-    [config?.loginApiUrl],
+    [config]
   )
 
   const logout = useCallback((): boolean => {
@@ -259,7 +257,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
       setError(null)
       return true
     } catch (err) {
-      // eslint-disable-next-line no-console
+
       console.error('登出錯誤:', err)
       return false
     }
@@ -288,6 +286,6 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
     login,
     logout,
     refreshUser,
-    getChatbotToken,
+    getChatbotToken
   }
 }

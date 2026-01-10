@@ -9,6 +9,15 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   const [queryClient] = React.useState(() => new QueryClient())
   const config = React.useMemo(() => getAppConfig(), [])
 
+  // authAdapterOptions={
+  //   {
+  //     debug: {
+  //       enable: true,
+  //       skipAuthGuard: true,
+  //     },
+  //   }
+  // }
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider

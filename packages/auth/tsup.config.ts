@@ -12,6 +12,6 @@ export default defineConfig({
     options.jsx = 'automatic'
   },
   banner: {
-    js: '"use client";',
-  },
+    js: '"use client";'
+  }
 })
