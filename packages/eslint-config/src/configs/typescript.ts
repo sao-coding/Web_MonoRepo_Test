@@ -63,21 +63,6 @@ export const typescript = (
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/consistent-type-definitions': 'off',
-      // 放寬更多過於嚴格的規則
-      '@typescript-eslint/no-unsafe-return': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/restrict-plus-operands': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
-      '@typescript-eslint/no-shadow': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': ['warn', {
-        'ignoreConditionalTests': true,
-        'ignorePrimitives': {
-          'boolean': true,
-          'string': true,
-          'number': true
-        }
-      }],
       ...overrides
     }
   }
