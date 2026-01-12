@@ -9,7 +9,7 @@ import {
 
 import React from 'react'
 import { toast } from 'sonner'
-import Banner from '@/components/banner-b'
+import BannerWrapper from '@/components/banner/BannerWrapper'
 import DefaltInfo from '@/components/chat-robot/defalt-info'
 import { Button } from '@/components/ui/button'
 import {
@@ -376,7 +376,7 @@ const HomePage = () => {
 
       {/* 主要內容區域 */}
       <div className="flex-1 flex flex-col">
-        <Banner><>&nbsp;</></Banner>
+        <BannerWrapper />
         {/* 聊天/生成內容顯示區域 - 使用與翻譯頁面相同的樣式 */}
         <div className={`flex flex-col flex-1
           ${!userMessage && !url && !isLoading && 'justify-center'}`}

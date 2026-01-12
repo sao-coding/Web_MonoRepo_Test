@@ -122,6 +122,141 @@ services:
     depends_on:
       - traefik
 
+  translate:
+    build:
+      context: .
+      dockerfile: apps/translate/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: translate-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3004
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+      - .config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.translate.rule=PathPrefix(`/AI_City/translate`)"
+      - "traefik.http.routers.translate.priority=10"
+      - "traefik.http.routers.translate.entrypoints=web"
+      - "traefik.http.services.translate.loadbalancer.server.port=3004"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  tts:
+    build:
+      context: .
+      dockerfile: apps/tts/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: tts-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3005
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+      - .config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tts.rule=PathPrefix(`/AI_City/tts`)"
+      - "traefik.http.routers.tts.priority=10"
+      - "traefik.http.routers.tts.entrypoints=web"
+      - "traefik.http.services.tts.loadbalancer.server.port=3005"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  img2text:
+    build:
+      context: .
+      dockerfile: apps/img2text/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: img2text-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3006
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+      - .config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.img2text.rule=PathPrefix(`/AI_City/img2text`)"
+      - "traefik.http.routers.img2text.priority=10"
+      - "traefik.http.routers.img2text.entrypoints=web"
+      - "traefik.http.services.img2text.loadbalancer.server.port=3006"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  patents:
+    build:
+      context: .
+      dockerfile: apps/patents/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: patents-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3007
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+      - .config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.patents.rule=PathPrefix(`/AI_City/patents`)"
+      - "traefik.http.routers.patents.priority=10"
+      - "traefik.http.routers.patents.entrypoints=web"
+      - "traefik.http.services.patents.loadbalancer.server.port=3007"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  pcb:
+    build:
+      context: .
+      dockerfile: apps/pcb/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: pcb-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3008
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+      - .config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pcb.rule=PathPrefix(`/AI_City/pcb`)"
+      - "traefik.http.routers.pcb.priority=10"
+      - "traefik.http.routers.pcb.entrypoints=web"
+      - "traefik.http.services.pcb.loadbalancer.server.port=3008"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
 networks:
   ai-city:
     driver: bridge

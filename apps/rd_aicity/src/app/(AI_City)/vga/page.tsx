@@ -13,7 +13,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
-import Banner from '@/components/banner-b'
+import BannerWrapper from '@/components/banner/BannerWrapper'
 import DefaltInfo from '@/components/chat-robot/defalt-info'
 import { Button } from '@/components/ui/button'
 import {
@@ -538,7 +538,7 @@ const HomePage = () => {
         </LeftSidebar>
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <Banner><>&nbsp;</></Banner>
+          <BannerWrapper />
           <div className={`flex flex-col flex-1 overflow-hidden pt-8
             ${!conversations.length && !currentUserQuestion ? 'justify-center' : ''}`}
           >

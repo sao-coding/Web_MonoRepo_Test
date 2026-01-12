@@ -5,7 +5,7 @@ const CHATGPT_REDIRECT_API = 'https://msi-chatgpt.msi.com/api/v1/auths/redirect'
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({})) // 防止 json 解析失敗崩潰
+    const body = await req.json().catch(() => ({}))
     const { targetUrl } = body
 
     if (!targetUrl) {
@@ -13,21 +13,39 @@ export async function POST(req: Request) {
     }
 
     const cookieStore = await cookies()
-    const tokenObj = cookieStore.get('chatbotToken')
-    const token = tokenObj?.value
+    const allCookies = cookieStore.getAll()
 
-    // 印出所有 Cookie 與 Token 狀態
-    console.warn('[Debug Redirect] All Cookies:', cookieStore.getAll().map(c => c.name))
-    console.warn('[Debug Redirect] Token found:', !!token)
-    console.warn('token', token)
+    // 嘗試多種可能的 token cookie 名稱
+    const chatbotToken = cookieStore.get('chatbotToken')?.value
+    const accessToken = cookieStore.get('accessToken')?.value
+
+    // Debug 日誌
+    console.warn('[Redirect API] Available cookies:', allCookies.map(c => c.name))
+    console.warn('[Redirect API] chatbotToken found:', !!chatbotToken)
+    console.warn('[Redirect API] accessToken found:', !!accessToken)
+    console.warn('[Redirect API] targetUrl:', targetUrl)
+
+    // 優先使用 chatbotToken，如果沒有則嘗試 accessToken
+    const token = chatbotToken || accessToken
 
     if (!token) {
-      return NextResponse.json({ success: false, error: '尚未登入 (Token Missing)' }, { status: 401 })
+      return NextResponse.json({
+        success: false,
+        error: '尚未登入或 Token 已過期，請重新登入',
+        debug: {
+          availableCookies: allCookies.map(c => c.name),
+          hasChatbotToken: !!chatbotToken,
+          hasAccessToken: !!accessToken,
+        },
+      }, { status: 401 })
     }
 
+    // 構建重導向 URL
     const redirectUrl = new URL(CHATGPT_REDIRECT_API)
     redirectUrl.searchParams.append('token', token)
     redirectUrl.searchParams.append('redirect_url', targetUrl)
+
+    console.warn('[Redirect API] Redirect URL:', redirectUrl.toString())
 
     return NextResponse.json({
       success: true,
@@ -35,7 +53,10 @@ export async function POST(req: Request) {
     })
   }
   catch (e) {
-    console.error('[redirect] error', e)
-    return NextResponse.json({ success: false, error: '系統錯誤' }, { status: 500 })
+    console.error('[Redirect API] Error:', e)
+    return NextResponse.json({
+      success: false,
+      error: e instanceof Error ? e.message : '系統錯誤',
+    }, { status: 500 })
   }
 }

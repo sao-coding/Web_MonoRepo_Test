@@ -28,6 +28,7 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 import { useLanguage } from '@/context/Language'
+import { useAppNavigation } from '@/hooks/use-app-navigation'
 
 const AppCard = (
   {
@@ -36,7 +37,8 @@ const AppCard = (
     categoryId: number | 0
   }) => {
   const t = useTranslations('homepage')
-  const { isAuthenticated, user } = useAuth()
+  const { user } = useAuth()
+  const { navigateToApp } = useAppNavigation()
   const { langCode, searchKeyword } = useLanguage()
   const [apps, setApps] = useState<AppType[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -158,42 +160,6 @@ const AppCard = (
     }))
   }
 
-  // 處理轉址的核心邏輯 (對應 Vue 的邏輯) ---
-  const handleAuthRedirect = async (targetUrl: string) => {
-    // A. 檢查登入
-    if (!isAuthenticated || !user) {
-      return
-    }
-
-    try {
-    // 改成呼叫新的 redirect API
-      const response = await fetch('/AI_City/api/apps/auth/redirect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ targetUrl }),
-      })
-
-      if (!response.ok) {
-        throw new Error('redirect API 呼叫失敗')
-      }
-
-      const data = await response.json()
-
-      if (!data.success || !data.redirectUrl) {
-        throw new Error('redirect URL 取得失敗')
-      }
-
-      // 🔴 由 server 回來的完整 URL，直接開
-      window.open(data.redirectUrl, '_blank')
-    }
-    catch (e) {
-      console.error('開啟應用程式失敗:', e)
-    }
-  }
-
   return (
     <div className="p-2 w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-5 mx-auto" style={{ maxWidth: '1100px' }}>
@@ -281,16 +247,8 @@ const AppCard = (
                     className="w-full my-1 rounded-4xl"
                     onClick={(e) => {
                       e.stopPropagation()
-                      if (app.sysUrl) {
-                        // 如果是內部連結（以 /AI_City 開頭），直接導航
-                        if (app.sysUrl.startsWith('/AI_City') || app.sysUrl.startsWith('/')) {
-                          window.location.href = app.sysUrl
-                        }
-                        else {
-                          // 外部連結，使用 auth redirect
-                          handleAuthRedirect(app.sysUrl)
-                        }
-                      }
+                      // 使用 sysName 作為 fallback 識別符
+                      navigateToApp(app.sysUrl || null, app.sysName)
                     }}
                   >
                     {t('sysLink')}

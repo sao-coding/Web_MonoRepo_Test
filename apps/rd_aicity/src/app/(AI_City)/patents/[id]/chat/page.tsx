@@ -9,7 +9,7 @@ import {
 import { useParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import Banner from '@/components/banner-b'
+import BannerWrapper from '@/components/banner/BannerWrapper'
 import { usePatentsAiSummaryStore } from '@/store/patents-ai-summary'
 import ChatInput from '../../_components/chat-input'
 import PatentsCard from '../../_components/patents-card'
@@ -279,7 +279,7 @@ const PatentsIdChatPage = () => {
   return (
     <div className="flex flex-1">
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <Banner><>&nbsp;</></Banner>
+        <BannerWrapper />
         <div className="p-4 sm:py-6 mt-4 overflow-y-auto flex-1 grid gap-4" ref={chatAreaRef}>
           {patents && patents.map((patent, index) => (
             patent.type === 'text' || patent.type === 'compare' || patent.rawContent

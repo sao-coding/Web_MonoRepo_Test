@@ -56,8 +56,8 @@ const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
             onClick={() => onCategoryChange(item.category)}
             className={`flex items-center transition-all mr-0
               ${activeCategory === item.category
-            ? 'invert bg-white font-bold'
-            : 'bg-gray-100 hover:invert hover:font-bold'}`}
+            ? 'bg-foreground text-background font-bold'
+            : 'bg-muted text-foreground hover:bg-foreground hover:text-background hover:font-bold'}`}
           >
             {item.icon && (
               <Image
@@ -65,8 +65,7 @@ const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
                 alt={item.name}
                 width="15"
                 height="15"
-                // 翻轉圖片顏色
-                className="object-contain"
+                className={`object-contain ${activeCategory === item.category ? 'invert dark:invert-0' : 'dark:invert'}`}
                 unoptimized
               />
             )}
