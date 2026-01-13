@@ -81,7 +81,7 @@ goto end
 :select_apps
 echo.
 echo Please select apps to build (comma separated, e.g., 1,2):
-echo 1. rd-ai-city
+echo 1. aiforce
 echo 2. product-spec
 echo 3. asr
 echo 4. All
@@ -89,17 +89,17 @@ echo.
 set /p app_choice="Enter your choice: "
 
 set filter_args=
-if "%app_choice%"=="1" set filter_args=--filter=rd-ai-city
+if "%app_choice%"=="1" set filter_args=--filter=aiforce
 if "%app_choice%"=="2" set filter_args=--filter=product-spec
 if "%app_choice%"=="3" set filter_args=--filter=asr
 if "%app_choice%"=="4" set filter_args=
-if "%app_choice%"=="1,2" set filter_args=--filter=rd-ai-city --filter=product-spec
-if "%app_choice%"=="2,1" set filter_args=--filter=rd-ai-city --filter=product-spec
-if "%app_choice%"=="1,3" set filter_args=--filter=rd-ai-city --filter=asr
-if "%app_choice%"=="3,1" set filter_args=--filter=rd-ai-city --filter=asr
+if "%app_choice%"=="1,2" set filter_args=--filter=aiforce --filter=product-spec
+if "%app_choice%"=="2,1" set filter_args=--filter=aiforce --filter=product-spec
+if "%app_choice%"=="1,3" set filter_args=--filter=aiforce --filter=asr
+if "%app_choice%"=="3,1" set filter_args=--filter=aiforce --filter=asr
 if "%app_choice%"=="2,3" set filter_args=--filter=product-spec --filter=asr
 if "%app_choice%"=="3,2" set filter_args=--filter=product-spec --filter=asr
-if "%app_choice%"=="1,2,3" set filter_args=--filter=rd-ai-city --filter=product-spec --filter=asr
+if "%app_choice%"=="1,2,3" set filter_args=--filter=aiforce --filter=product-spec --filter=asr
 
 echo.
 echo Deploying to %target_env% environment...
@@ -117,7 +117,7 @@ git config core.eol lf
 :: Reset line endings for modified files
 echo Normalizing line endings for selected apps...
 if "%app_choice%"=="1" (
-    git checkout -- apps/rd_aicity
+    git checkout -- apps/aiforce
 )
 if "%app_choice%"=="2" (
     git checkout -- apps/product-spec
@@ -129,16 +129,16 @@ if "%app_choice%"=="4" (
     git checkout -- apps/
 )
 if "%app_choice%"=="1,2" (
-    git checkout -- apps/rd_aicity apps/product-spec
+    git checkout -- apps/aiforce apps/product-spec
 )
 if "%app_choice%"=="2,1" (
-    git checkout -- apps/rd_aicity apps/product-spec
+    git checkout -- apps/aiforce apps/product-spec
 )
 if "%app_choice%"=="1,3" (
-    git checkout -- apps/rd_aicity apps/asr
+    git checkout -- apps/aiforce apps/asr
 )
 if "%app_choice%"=="3,1" (
-    git checkout -- apps/rd_aicity apps/asr
+    git checkout -- apps/aiforce apps/asr
 )
 if "%app_choice%"=="2,3" (
     git checkout -- apps/product-spec apps/asr
@@ -147,7 +147,7 @@ if "%app_choice%"=="3,2" (
     git checkout -- apps/product-spec apps/asr
 )
 if "%app_choice%"=="1,2,3" (
-    git checkout -- apps/rd_aicity apps/product-spec apps/asr
+    git checkout -- apps/aiforce apps/product-spec apps/asr
 )
 
 call pnpm i

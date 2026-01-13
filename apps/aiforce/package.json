@@ -1,5 +1,5 @@
 {
-  "name": "rd-ai-city",
+  "name": "aiforce",
   "type": "module",
   "version": "0.1.0",
   "private": true,
@@ -10,7 +10,7 @@
     "start:dev": "next start -p 3011",
     "start:stg": "next start -H 10.16.20.12 -p 3011",
     "start:prod": "next start -H 10.16.20.36 -p 3011",
-    "start:pm2": "pm2 start pnpm --name 'rd-ai-city' -- start -H 10.16.20.11 -p 3011",
+    "start:pm2": "pm2 start pnpm --name 'aiforce' -- start -H 10.16.20.11 -p 3011",
     "lint": "next lint",
     "cz": "cross-env NODE_OPTIONS=\"--experimental-transform-types --disable-warning=ExperimentalWarning\" czg",
     "commit": "pnpm cz",

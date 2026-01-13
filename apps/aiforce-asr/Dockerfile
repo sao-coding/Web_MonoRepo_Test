@@ -11,8 +11,8 @@ RUN npm install -g turbo
 # Copy entire monorepo
 COPY . .
 
-# Prune - 只保留 product-spec 需要的 packages
-RUN turbo prune product-spec --docker
+# Prune - 只保留 asr 需要的 packages
+RUN turbo prune aiforce-asr --docker
 
 # ===========================================
 # Stage 2: Install dependencies
@@ -51,7 +51,7 @@ ENV NODE_ENV=production
 ENV APP_ENV=${APP_ENV}
 
 # Build the app
-RUN pnpm turbo run build --filter=product-spec
+RUN pnpm turbo run build --filter=aiforce-asr
 
 # ===========================================
 # Stage 4: Production runner
@@ -61,7 +61,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3002
+ENV PORT=3003
 ENV HOSTNAME=0.0.0.0
 
 # Create non-root user
@@ -69,12 +69,12 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy built standalone output
-COPY --from=builder /app/apps/product-spec/.next/standalone ./
-COPY --from=builder /app/apps/product-spec/.next/static ./apps/product-spec/.next/static
-COPY --from=builder /app/apps/product-spec/public ./apps/product-spec/public
+COPY --from=builder /app/apps/aiforce-asr/.next/standalone ./
+COPY --from=builder /app/apps/aiforce-asr/.next/static ./apps/aiforce-asr/.next/static
+COPY --from=builder /app/apps/aiforce-asr/public ./apps/aiforce-asr/public
 
 USER nextjs
 
-EXPOSE 3002
+EXPOSE 3003
 
-CMD ["node", "apps/product-spec/server.js"]
+CMD ["node", "apps/aiforce-asr/server.js"]

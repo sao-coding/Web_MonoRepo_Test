@@ -6,7 +6,7 @@ FROM node:22-alpine AS pruner
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-RUN turbo prune img2text --docker
+RUN turbo prune aiforce-img2text --docker
 
 # ===========================================
 # Stage 2: Install dependencies
@@ -33,7 +33,7 @@ ARG APP_ENV=production
 ENV NODE_ENV=production
 ENV APP_ENV=${APP_ENV}
 
-RUN pnpm turbo run build --filter=img2text
+RUN pnpm turbo run build --filter=aiforce-img2text
 
 # ===========================================
 # Stage 4: Production runner
@@ -49,11 +49,11 @@ ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/img2text/.next/standalone ./
-COPY --from=builder /app/apps/img2text/.next/static ./apps/img2text/.next/static
+COPY --from=builder /app/apps/aiforce-img2text/.next/standalone ./
+COPY --from=builder /app/apps/aiforce-img2text/.next/static ./apps/aiforce-img2text/.next/static
 
 USER nextjs
 
 EXPOSE 3006
 
-CMD ["node", "apps/img2text/server.js"]
+CMD ["node", "apps/aiforce-img2text/server.js"]

@@ -25,13 +25,13 @@ services:
       - ai-city
     restart: unless-stopped
 
-  rd-aicity:
+  aiforce:
     build:
       context: .
-      dockerfile: apps/rd_aicity/Dockerfile
+      dockerfile: apps/aiforce/Dockerfile
       args:
         APP_ENV: staging
-    container_name: rd-aicity-stg
+    container_name: aiforce-stg
     environment:
       - NODE_ENV=production
       - APP_ENV=staging

@@ -11,8 +11,8 @@ RUN npm install -g turbo
 # Copy entire monorepo
 COPY . .
 
-# Prune - 只保留 rd-ai-city 需要的 packages
-RUN turbo prune rd-ai-city --docker
+# Prune - 只保留 aiforce 需要的 packages
+RUN turbo prune aiforce --docker
 
 # ===========================================
 # Stage 2: Install dependencies
@@ -29,7 +29,7 @@ COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Copy prisma schema for postinstall
-COPY --from=pruner /app/out/full/apps/rd_aicity/prisma ./apps/rd_aicity/prisma
+COPY --from=pruner /app/out/full/apps/aiforce/prisma ./apps/aiforce/prisma
 
 # Install dependencies (ignore-scripts to avoid prisma generate failing)
 RUN pnpm install --ignore-scripts
@@ -80,10 +80,10 @@ ENV NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY}
 ENV NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
 
 # Generate Prisma client
-RUN pnpm --filter=rd-ai-city exec prisma generate
+RUN pnpm --filter=aiforce exec prisma generate
 
 # Build the app
-RUN pnpm turbo run build --filter=rd-ai-city
+RUN pnpm turbo run build --filter=aiforce
 
 # ===========================================
 # Stage 4: Production runner
@@ -101,18 +101,18 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy built standalone output
-COPY --from=builder /app/apps/rd_aicity/.next/standalone ./
-COPY --from=builder /app/apps/rd_aicity/.next/static ./apps/rd_aicity/.next/static
-COPY --from=builder /app/apps/rd_aicity/public ./apps/rd_aicity/public
+COPY --from=builder /app/apps/aiforce/.next/standalone ./
+COPY --from=builder /app/apps/aiforce/.next/static ./apps/aiforce/.next/static
+COPY --from=builder /app/apps/aiforce/public ./apps/aiforce/public
 # Copy messages for next-intl translations (required at runtime)
-COPY --from=builder /app/apps/rd_aicity/messages ./apps/rd_aicity/messages
+COPY --from=builder /app/apps/aiforce/messages ./apps/aiforce/messages
 
 # Create cache directory with correct permissions (fixes EACCES error)
-RUN mkdir -p /app/apps/rd_aicity/.next/cache && \
-    chown -R nextjs:nodejs /app/apps/rd_aicity/.next
+RUN mkdir -p /app/apps/aiforce/.next/cache && \
+    chown -R nextjs:nodejs /app/apps/aiforce/.next
 
 USER nextjs
 
 EXPOSE 3001
 
-CMD ["node", "apps/rd_aicity/server.js"]
+CMD ["node", "apps/aiforce/server.js"]

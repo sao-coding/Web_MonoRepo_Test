@@ -6,10 +6,10 @@ const HOST = 'localhost'
 module.exports = {
   apps: [
     {
-      name: 'rd-aicity',
-      script: path.join(__dirname, 'apps', 'rd_aicity', 'node_modules', 'next', 'dist', 'bin', 'next'),
+      name: 'aiforce',
+      script: path.join(__dirname, 'apps', 'aiforce', 'node_modules', 'next', 'dist', 'bin', 'next'),
       args: `start -H ${HOST} -p 3001`,
-      cwd: path.join(__dirname, 'apps', 'rd_aicity'),
+      cwd: path.join(__dirname, 'apps', 'aiforce'),
       max_restarts: 3,
       min_uptime: '10s',
       restart_delay: 5000,

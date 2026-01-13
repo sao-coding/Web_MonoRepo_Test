@@ -29,10 +29,10 @@ services:
       - ai-city
     restart: unless-stopped
 
-  rd-aicity:
+  aiforce:
     build:
       context: .
-      dockerfile: apps/rd_aicity/Dockerfile
+      dockerfile: apps/aiforce/Dockerfile
       args:
         APP_ENV: development
         # NEXT_PUBLIC 變數需要在 build time 傳入
@@ -47,7 +47,7 @@ services:
         NEXT_PUBLIC_AIforce_API_URL: ${NEXT_PUBLIC_AIforce_API_URL:-}
         NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY:-}
         NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-}
-    container_name: rd-aicity-dev
+    container_name: aiforce-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -58,23 +58,23 @@ services:
       - .config    # 機密參數 (tokens/keys) - CI/CD 注入
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aicity.rule=PathPrefix(`/AI_City`)"
-      - "traefik.http.routers.aicity.priority=1"
-      - "traefik.http.routers.aicity.entrypoints=web"
-      - "traefik.http.services.aicity.loadbalancer.server.port=3001"
+      - "traefik.http.routers.aiforce.rule=PathPrefix(`/AI_City`)"
+      - "traefik.http.routers.aiforce.priority=1"
+      - "traefik.http.routers.aiforce.entrypoints=web"
+      - "traefik.http.services.aiforce.loadbalancer.server.port=3001"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  product-spec:
+  aiforce-productspec:
     build:
       context: .
-      dockerfile: apps/product-spec/Dockerfile
+      dockerfile: apps/aiforce-productspec/Dockerfile
       args:
         APP_ENV: development
-    container_name: product-spec-dev
+    container_name: aiforce-productspec-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -85,23 +85,23 @@ services:
       - .config    # 機密參數 (tokens/keys) - CI/CD 注入
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
-      - "traefik.http.routers.productspec.priority=10"
-      - "traefik.http.routers.productspec.entrypoints=web"
-      - "traefik.http.services.productspec.loadbalancer.server.port=3002"
+      - "traefik.http.routers.aiforce-productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
+      - "traefik.http.routers.aiforce-productspec.priority=10"
+      - "traefik.http.routers.aiforce-productspec.entrypoints=web"
+      - "traefik.http.services.aiforce-productspec.loadbalancer.server.port=3002"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  asr:
+  aiforce-asr:
     build:
       context: .
-      dockerfile: apps/asr/Dockerfile
+      dockerfile: apps/aiforce-asr/Dockerfile
       args:
         APP_ENV: development
-    container_name: asr-dev
+    container_name: aiforce-asr-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -112,23 +112,23 @@ services:
       - .config    # 機密參數 (tokens/keys) - CI/CD 注入
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.asr.rule=PathPrefix(`/AI_City/asr`)"
-      - "traefik.http.routers.asr.priority=10"
-      - "traefik.http.routers.asr.entrypoints=web"
-      - "traefik.http.services.asr.loadbalancer.server.port=3003"
+      - "traefik.http.routers.aiforce-asr.rule=PathPrefix(`/AI_City/asr`)"
+      - "traefik.http.routers.aiforce-asr.priority=10"
+      - "traefik.http.routers.aiforce-asr.entrypoints=web"
+      - "traefik.http.services.aiforce-asr.loadbalancer.server.port=3003"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  translate:
+  aiforce-translate:
     build:
       context: .
-      dockerfile: apps/translate/Dockerfile
+      dockerfile: apps/aiforce-translate/Dockerfile
       args:
         APP_ENV: development
-    container_name: translate-dev
+    container_name: aiforce-translate-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -139,20 +139,20 @@ services:
       - .config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.translate.rule=PathPrefix(`/AI_City/translate`)"
-      - "traefik.http.routers.translate.priority=10"
-      - "traefik.http.routers.translate.entrypoints=web"
-      - "traefik.http.services.translate.loadbalancer.server.port=3004"
+      - "traefik.http.routers.aiforce-translate.rule=PathPrefix(`/AI_City/translate`)"
+      - "traefik.http.routers.aiforce-translate.priority=10"
+      - "traefik.http.routers.aiforce-translate.entrypoints=web"
+      - "traefik.http.services.aiforce-translate.loadbalancer.server.port=3004"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  tts:
+  aiforce-tts:
     build:
       context: .
-      dockerfile: apps/tts/Dockerfile
+      dockerfile: apps/aiforce-tts/Dockerfile
       args:
         APP_ENV: development
     container_name: tts-dev
@@ -166,23 +166,23 @@ services:
       - .config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.tts.rule=PathPrefix(`/AI_City/tts`)"
-      - "traefik.http.routers.tts.priority=10"
-      - "traefik.http.routers.tts.entrypoints=web"
-      - "traefik.http.services.tts.loadbalancer.server.port=3005"
+      - "traefik.http.routers.aiforce-tts.rule=PathPrefix(`/AI_City/tts`)"
+      - "traefik.http.routers.aiforce-tts.priority=10"
+      - "traefik.http.routers.aiforce-tts.entrypoints=web"
+      - "traefik.http.services.aiforce-tts.loadbalancer.server.port=3005"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  img2text:
+  aiforce-img2text:
     build:
       context: .
-      dockerfile: apps/img2text/Dockerfile
+      dockerfile: apps/aiforce-img2text/Dockerfile
       args:
         APP_ENV: development
-    container_name: img2text-dev
+    container_name: aiforce-img2text-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -193,23 +193,23 @@ services:
       - .config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.img2text.rule=PathPrefix(`/AI_City/img2text`)"
-      - "traefik.http.routers.img2text.priority=10"
-      - "traefik.http.routers.img2text.entrypoints=web"
-      - "traefik.http.services.img2text.loadbalancer.server.port=3006"
+      - "traefik.http.routers.aiforce-img2text.rule=PathPrefix(`/AI_City/img2text`)"
+      - "traefik.http.routers.aiforce-img2text.priority=10"
+      - "traefik.http.routers.aiforce-img2text.entrypoints=web"
+      - "traefik.http.services.aiforce-img2text.loadbalancer.server.port=3006"
     networks:
       - ai-city
     restart: unless-stopped
     depends_on:
       - traefik
 
-  patents:
+  aiforce-patents:
     build:
       context: .
-      dockerfile: apps/patents/Dockerfile
+      dockerfile: apps/aiforce-patents/Dockerfile
       args:
         APP_ENV: development
-    container_name: patents-dev
+    container_name: aiforce-patents-dev
     environment:
       - NODE_ENV=production
       - APP_ENV=development
@@ -220,37 +220,10 @@ services:
       - .config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.patents.rule=PathPrefix(`/AI_City/patents`)"
-      - "traefik.http.routers.patents.priority=10"
-      - "traefik.http.routers.patents.entrypoints=web"
-      - "traefik.http.services.patents.loadbalancer.server.port=3007"
-    networks:
-      - ai-city
-    restart: unless-stopped
-    depends_on:
-      - traefik
-
-  pcb:
-    build:
-      context: .
-      dockerfile: apps/pcb/Dockerfile
-      args:
-        APP_ENV: development
-    container_name: pcb-dev
-    environment:
-      - NODE_ENV=production
-      - APP_ENV=development
-      - PORT=3008
-      - HOSTNAME=0.0.0.0
-    env_file:
-      - .env
-      - .config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pcb.rule=PathPrefix(`/AI_City/pcb`)"
-      - "traefik.http.routers.pcb.priority=10"
-      - "traefik.http.routers.pcb.entrypoints=web"
-      - "traefik.http.services.pcb.loadbalancer.server.port=3008"
+      - "traefik.http.routers.aiforce-patents.rule=PathPrefix(`/AI_City/patents`)"
+      - "traefik.http.routers.aiforce-patents.priority=10"
+      - "traefik.http.routers.aiforce-patents.entrypoints=web"
+      - "traefik.http.services.aiforce-patents.loadbalancer.server.port=3007"
     networks:
       - ai-city
     restart: unless-stopped
