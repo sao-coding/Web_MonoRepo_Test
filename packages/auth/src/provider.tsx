@@ -10,13 +10,14 @@ import { useAuthLogger, type LogConfig } from "./auth-logger";
 import {
   type AuthStatus,
   type LoginCredentials,
+  type LoginResponse,
   useAuth as useAuthSource,
   type UseAuthReturn,
   type User,
 } from "./use-auth";
 
 // Re-export types
-export type { AuthStatus, LoginCredentials, LogConfig, UseAuthReturn, User };
+export type { AuthStatus, LoginCredentials, LoginResponse, LogConfig, UseAuthReturn, User };
 
 const AuthContext = createContext<UseAuthReturn | null>(null);
 

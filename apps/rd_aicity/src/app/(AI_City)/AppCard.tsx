@@ -204,12 +204,12 @@ const AppCard = (
           return (
             <div
               key={app.seqNo}
-              className="flex flex-col cursor-pointer items-center overflow-hidden rounded-lg shadow-md transition-shadow hover:shadow-black/30 relative"
+              className="flex flex-col cursor-pointer items-center overflow-hidden rounded-lg shadow-md transition-shadow hover:shadow-black/30 dark:hover:shadow-white/20 relative bg-card border border-border"
               onClick={() => {
                 setSelectedApp(app)
               }}
             >
-              <div className="w-full h-20 bg-gray-200 flex items-center justify-center relative">
+              <div className="w-full h-20 bg-muted flex items-center justify-center relative">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -246,7 +246,7 @@ const AppCard = (
                       >
                         <Star
                           className="w-8 h-8"
-                          fill={isFilled ? 'black' : 'none'}
+                          fill={isFilled ? 'currentColor' : 'none'}
                         />
                       </Button>
                     </TooltipTrigger>
@@ -258,7 +258,7 @@ const AppCard = (
               </div>
 
               <div className="absolute z-10" style={{ top: '20px' }}>
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <div className="w-20 h-20 bg-background rounded-full flex items-center justify-center shadow-sm border border-border">
                   <Image
                     src={app.sysImgUrl
                       ? app.sysImgUrl
@@ -272,14 +272,26 @@ const AppCard = (
                 </div>
               </div>
 
-              <div className="w-full bg-white h-full pt-8 pb-4 px-4 flex flex-col items-center">
-                <h3 className="text-center font-bold text-lg text-gray-800 mt-6 flex-1">
+              <div className="w-full bg-card h-full pt-8 pb-4 px-4 flex flex-col items-center">
+                <h3 className="text-center font-bold text-lg text-foreground mt-6 flex-1">
                   {app.sysName}
                 </h3>
                 <div className="w-full">
                   <Button
-                    className="hover:bg-white hover:text-black w-full my-1 rounded-4xl hover:border"
-                    onClick={() => handleAuthRedirect(app.sysUrl || '')}
+                    className="w-full my-1 rounded-4xl"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (app.sysUrl) {
+                        // 如果是內部連結（以 /AI_City 開頭），直接導航
+                        if (app.sysUrl.startsWith('/AI_City') || app.sysUrl.startsWith('/')) {
+                          window.location.href = app.sysUrl
+                        }
+                        else {
+                          // 外部連結，使用 auth redirect
+                          handleAuthRedirect(app.sysUrl)
+                        }
+                      }
+                    }}
                   >
                     {t('sysLink')}
                   </Button>

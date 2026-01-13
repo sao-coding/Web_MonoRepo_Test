@@ -1,0 +1,127 @@
+# Docker Compose for Development Environment (10.16.20.11)
+# 使用方式: docker compose -f docker-compose.dev.yml up -d --build
+#
+# Port 配置說明:
+# - Traefik: 80 (HTTP), 8080 (Dashboard)
+# - 各 App 內部 Port 不對外暴露，由 Traefik 統一路由
+# - 避免與現有 PM2 服務衝突 (3001-3003)
+
+# 自動載入環境變數檔案（不需要 --env-file 參數）
+x-env-file: &env-file .env.dev
+
+services:
+  traefik:
+    image: traefik:v3.6.6
+    container_name: traefik-dev
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --log.level=DEBUG
+    ports:
+      - "3000:80"
+      - "8090:8080"  # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ai-city
+    restart: unless-stopped
+
+  rd-aicity:
+    build:
+      context: .
+      dockerfile: apps/rd_aicity/Dockerfile
+      args:
+        APP_ENV: development
+        # NEXT_PUBLIC 變數需要在 build time 傳入
+        NEXT_PUBLIC_RD_SITE_URL: ${NEXT_PUBLIC_RD_SITE_URL}
+        NEXT_PUBLIC_LOGIN_API_URL: ${NEXT_PUBLIC_LOGIN_API_URL}
+        NEXT_PUBLIC_BASE_PATH_URL: ${NEXT_PUBLIC_BASE_PATH_URL:-/AI_City}
+        NEXT_PUBLIC_COOKIE_DOMAIN: ${NEXT_PUBLIC_COOKIE_DOMAIN}
+        NEXT_PUBLIC_NIM_SERVICE_API_URL: ${NEXT_PUBLIC_NIM_SERVICE_API_URL}
+        NEXT_PUBLIC_PATENT_SERVICE_API_URL: ${NEXT_PUBLIC_PATENT_SERVICE_API_URL}
+        NEXT_PUBLIC_AI_API_URL: ${NEXT_PUBLIC_AI_API_URL}
+        NEXT_PUBLIC_VGA_AI_API_URL: ${NEXT_PUBLIC_VGA_AI_API_URL}
+        NEXT_PUBLIC_AIforce_API_URL: ${NEXT_PUBLIC_AIforce_API_URL:-}
+        NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY:-}
+        NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-}
+    container_name: rd-aicity-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3001
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env       # 公開參數 (URLs/IPs) - 上版控
+      - .config    # 機密參數 (tokens/keys) - CI/CD 注入
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aicity.rule=PathPrefix(`/AI_City`)"
+      - "traefik.http.routers.aicity.priority=1"
+      - "traefik.http.routers.aicity.entrypoints=web"
+      - "traefik.http.services.aicity.loadbalancer.server.port=3001"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  product-spec:
+    build:
+      context: .
+      dockerfile: apps/product-spec/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: product-spec-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3002
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env       # 公開參數 (URLs/IPs) - 上版控
+      - .config    # 機密參數 (tokens/keys) - CI/CD 注入
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
+      - "traefik.http.routers.productspec.priority=10"
+      - "traefik.http.routers.productspec.entrypoints=web"
+      - "traefik.http.services.productspec.loadbalancer.server.port=3002"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  asr:
+    build:
+      context: .
+      dockerfile: apps/asr/Dockerfile
+      args:
+        APP_ENV: development
+    container_name: asr-dev
+    environment:
+      - NODE_ENV=production
+      - APP_ENV=development
+      - PORT=3003
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env       # 公開參數 (URLs/IPs) - 上版控
+      - .config    # 機密參數 (tokens/keys) - CI/CD 注入
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.asr.rule=PathPrefix(`/AI_City/asr`)"
+      - "traefik.http.routers.asr.priority=10"
+      - "traefik.http.routers.asr.entrypoints=web"
+      - "traefik.http.services.asr.loadbalancer.server.port=3003"
+    networks:
+      - ai-city
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+networks:
+  ai-city:
+    driver: bridge

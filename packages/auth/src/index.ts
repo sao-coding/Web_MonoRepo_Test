@@ -9,6 +9,7 @@ export type {
   AuthProviderProps,
   AuthStatus,
   LoginCredentials,
+  LoginResponse,
   LogConfig,
   UseAuthReturn,
   User,

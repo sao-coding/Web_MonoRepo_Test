@@ -49,7 +49,7 @@ export default async function RootLayout({
   const locale = await getLocale() as Locale
 
   return (
-    <html lang="zh-TW" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased grid grid-rows-[auto_1fr] min-h-screen`}
       >

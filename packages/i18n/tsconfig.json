@@ -2,5 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "exclude": ["node_modules"],
   "extends": "@msi/typescript-config/base.json",
-  "include": ["**/*.ts"]
+  "compilerOptions": {
+    "types": ["react"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
 }

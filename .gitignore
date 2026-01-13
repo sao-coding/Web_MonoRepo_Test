@@ -5,14 +5,16 @@ node_modules
 .pnp
 .pnp.js
 
-# Local env files
-.env
+# Local env files (機密參數不上版控)
+.config
+.config.dev
+.config.stg
+.config.prod
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-!*.env.enc
-!*.env.example
+!*.example
 
 # Testing
 coverage
@@ -41,6 +43,3 @@ yarn-error.log*
 .github/copilot-instructions.md
 .agent/rules/monorepo.md
 nul
-.env.dev
-.env.staging
-.env.prod

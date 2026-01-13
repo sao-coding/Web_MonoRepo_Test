@@ -12,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@msi/ui/components/dropdown-menu'
 import { Input } from '@msi/ui/components/input'
-import { Search } from 'lucide-react'
+import { Moon, Search, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -30,11 +31,12 @@ interface LanItem {
 export default function BannerWrapper() {
   const t = useTranslations('homepage')
   const pathname = usePathname()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth()
   const { setLocale } = useI18n()
   const { setLangCode, searchKeyword, setSearchKeyword } = useLanguage()
   const [selectedLan, setSelectedLan] = useState<string>('繁體中文')
   const [lanList, setLanList] = useState<LanItem[]>([])
+  const { theme, setTheme } = useTheme()
 
   // Get page config
   const config = titleConfig.find(item => pathname.startsWith(item.pathname))
@@ -144,6 +146,22 @@ export default function BannerWrapper() {
           )}
           rightContent={pathname === '/' && (
             <>
+              {/* 深色模式切換 */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="rounded-full"
+              >
+                {theme === 'dark'
+                  ? (
+                      <Sun className="h-5 w-5" />
+                    )
+                  : (
+                      <Moon className="h-5 w-5" />
+                    )}
+              </Button>
+              {/* 語系切換 */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost">
@@ -171,18 +189,30 @@ export default function BannerWrapper() {
                 </DropdownMenuContent>
               </DropdownMenu>
               <div className="relative max-w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder={t('search')}
                   value={searchKeyword}
                   onChange={handleSearchChange}
-                  className="pl-9 pr-4 h-9 rounded-4xl border-gray-200 focus:ring-1 focus:ring-black"
+                  className="pl-9 pr-4 h-9 rounded-4xl border-border focus:ring-1 focus:ring-primary"
                 />
               </div>
             </>
           )}
-          onLogout={() => toast.info('登出功能')}
+          onLogout={() => {
+            const success = logout()
+            if (success) {
+              toast.success('已登出')
+              // 使用當前瀏覽器的 port 導向登入頁
+              const { protocol, hostname, port } = window.location
+              const portSuffix = port ? `:${port}` : ''
+              window.location.href = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+            }
+            else {
+              toast.error('登出失敗')
+            }
+          }}
         />
       )}
     </>
