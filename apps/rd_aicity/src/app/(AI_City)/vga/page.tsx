@@ -75,7 +75,12 @@ const HomePage = () => {
       })
       if (res.ok) {
         const data = await res.json()
-        setRecords(data)
+        if (Array.isArray(data)) {
+          setRecords(data)
+        }
+        else {
+          setRecords([])
+        }
       }
     }
     catch (err) {
@@ -197,9 +202,9 @@ const HomePage = () => {
   const loadRecordDetails = async (recordId: number) => {
     try {
       const details = await getRecordDetail(recordId)
-      if (details && details.length > 0) {
+      if (Array.isArray(details) && details.length > 0) {
         const loadedConversations = details.map((detail: RecordDetail) => ({
-          question: detail.F_Question,
+          question: detail.F_Question.toString(),
           answer: detail.F_Answer,
         }))
 

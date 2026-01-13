@@ -13,13 +13,21 @@ import { usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { BannerActions } from '@/components/homepage'
 import { titleConfig } from '@/config/title'
-import { useAppNavigation } from '@/hooks/use-app-navigation'
+import { redirectToForum } from '@/lib/forum-redirect'
 
 export default function BannerWrapper() {
   const t = useTranslations('homepage')
   const pathname = usePathname()
   const { user, logout } = useAuth()
-  const { handleAuthRedirect } = useAppNavigation()
+
+  // 處理 AI 論壇跳轉 - 使用 Form POST 方式傳遞認證資訊
+  const handleForumClick = () => {
+    const success = redirectToForum()
+    if (!success) {
+      // 認證資訊不足，提示用戶
+      toast.error('請先登入後再前往 AI 論壇')
+    }
+  }
 
   // 取得頁面設定
   const config = titleConfig.find(item => pathname.startsWith(item.pathname))
@@ -65,7 +73,7 @@ export default function BannerWrapper() {
           <Button
             variant="ghost"
             className="font-bold py-2 px-1 text-muted-foreground hover:text-foreground text-md hover:bg-transparent"
-            onClick={() => handleAuthRedirect('https://aiforum.msi.com.tw/index.php')}
+            onClick={handleForumClick}
           >
             {t('AIforum')}
           </Button>

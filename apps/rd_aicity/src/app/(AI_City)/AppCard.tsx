@@ -180,7 +180,8 @@ const AppCard = (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation()
                           setSelectedApp(app)
                         }}
                         aria-label={t('info')}
@@ -204,7 +205,10 @@ const AppCard = (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        onClick={() => toggleStarEnabled(app.seqNo, app.isFavorite)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleStarEnabled(app.seqNo, app.isFavorite)
+                        }}
                         aria-label={t('addFavorite')}
                         variant="ghost"
                         size="sm"

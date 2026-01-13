@@ -38,6 +38,7 @@ export interface LoginResponse {
   message: string
   accessToken: string
   chatbotToken: string
+  aiForumToken?: string // 專門給 AI Forum 跨域登入使用的 token
 }
 
 export type AuthStatus = 'initializing' | 'loading' | 'success' | 'error' | 'idle'
@@ -128,12 +129,23 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
       setUser(payload)
       setStatus('success')
       setError(null)
+
+      // 注意：AIforce_token（aiForumToken）與 chatbotToken 是完全分離的
+      // aiForumToken 專門給 AI Forum 使用，只在登入時設置
+      // loadUser 不再處理 AIforce_token，避免混用不同用途的 token
     } else {
       // token 過期，嘗試移除 cookie（同時嘗試有 domain / 無 domain）
       const domain = getCookieDomain()
 
       Cookies.remove('accessToken', { domain })
       Cookies.remove('chatbotToken', { domain })
+
+      // 清除 localStorage 中的 AI Forum 認證資訊
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('AIforce_token')
+        localStorage.removeItem('AIforce_username')
+        localStorage.removeItem('AIforce_region')
+      }
 
       setUser(null)
       setStatus('idle')
@@ -200,9 +212,19 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         // 儲存 accessToken
         Cookies.set('accessToken', token, cookieOptions)
 
-        // 儲存 chatbotToken（如果有的話）
+        // 儲存 chatbotToken（如果有的話）- 給 ChatGPT 機器人使用
         if (data.chatbotToken) {
           Cookies.set('chatbotToken', data.chatbotToken, cookieOptions)
+        }
+
+        // 儲存 AI Forum 跨網域登入資訊到 localStorage
+        // aiForumToken 專門給 AI Forum 使用，與 chatbotToken 完全分離
+        if (typeof window !== 'undefined') {
+          if (data.aiForumToken) {
+            localStorage.setItem('AIforce_token', data.aiForumToken)
+          }
+          localStorage.setItem('AIforce_username', data.userName || '')
+          localStorage.setItem('AIforce_region', data.domain || 'msi')
         }
 
         // 解析 token 並更新狀態
@@ -252,6 +274,14 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         Cookies.remove(name)
         if (domain) Cookies.remove(name, { domain })
       })
+
+      // 清除 AI Forum 跨網域登入的 localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('AIforce_token')
+        localStorage.removeItem('AIforce_username')
+        localStorage.removeItem('AIforce_region')
+      }
+
       setUser(null)
       setStatus('idle')
       setError(null)

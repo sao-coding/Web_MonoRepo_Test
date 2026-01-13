@@ -54,10 +54,10 @@ const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
             key={item.category}
             variant="ghost"
             onClick={() => onCategoryChange(item.category)}
-            className={`flex items-center transition-all mr-0
+            className={`group flex items-center gap-2 transition-all mr-0
               ${activeCategory === item.category
             ? 'bg-foreground text-background font-bold'
-            : 'bg-muted text-foreground hover:bg-foreground hover:text-background hover:font-bold'}`}
+            : 'bg-muted text-foreground hover:bg-foreground hover:text-background hover:font-bold dark:hover:bg-white dark:hover:text-black'}`}
           >
             {item.icon && (
               <Image
@@ -65,7 +65,10 @@ const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
                 alt={item.name}
                 width="15"
                 height="15"
-                className={`object-contain ${activeCategory === item.category ? 'invert dark:invert-0' : 'dark:invert'}`}
+                className={`object-contain transition-all ${activeCategory === item.category
+                  ? 'invert dark:invert-0'
+                  : 'dark:invert group-hover:invert group-hover:dark:invert-0'
+                }`}
                 unoptimized
               />
             )}

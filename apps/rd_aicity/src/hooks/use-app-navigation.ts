@@ -7,6 +7,7 @@
 import { useAuth } from '@msi/auth'
 import { getAppConfig } from '@msi/config/env'
 import { useCallback } from 'react'
+import { redirectToForum } from '@/lib/forum-redirect'
 
 interface UseAppNavigationReturn {
   navigateToApp: (sysUrl: string | null, appIdentifier?: string) => void
@@ -22,27 +23,34 @@ interface UseAppNavigationReturn {
  */
 const APP_ROUTE_MAP: Record<string, string> = {
   // 已分離為獨立專案 - 英文 key
-  product_spec: '/AI_City/ProductSpec',
-  productspec: '/AI_City/ProductSpec',
-  asr: '/AI_City/asr',
-  translate: '/AI_City/translate',
-  tts: '/AI_City/tts',
-  vga: '/AI_City/vga',
-  patents: '/AI_City/patents',
-  pcb: '/AI_City/pcb',
-  img2text: '/AI_City/img2text',
+  'product_spec': '/AI_City/ProductSpec',
+  'productspec': '/AI_City/ProductSpec',
+  'asr': '/AI_City/asr',
+  'translate': '/AI_City/translate',
+  'tts': '/AI_City/tts',
+  'vga': '/AI_City/vga',
+  'patents': '/AI_City/patents',
+  'pcb': '/AI_City/pcb',
+  'img2text': '/AI_City/img2text',
 
   // 中文 sysName 對應 (根據 API 回傳)
-  翻譯助手: '/AI_City/translate',
-  語音轉文字: '/AI_City/tts',
-  規格書助手: '/AI_City/ProductSpec',
-  知識管理助手: '/AI_City/km', // 需要確認路徑
-  線路圖比對助手: '/AI_City/trackcad',
-  全球專利助手: '/AI_City/patents',
-  gpu競品分析助手: '/AI_City/vga',
-  圖意探險家: '/AI_City/img2text',
-  會議助理: '/AI_City/meeting',
-  繪圖助手: '/AI_City/draw',
+  '翻譯助手': '/AI_City/translate',
+  '語音轉文字': '/AI_City/asr',
+  '規格書助手': '/AI_City/ProductSpec',
+  '知識管理助手': '/AI_City/km', // 需要確認路徑
+  '線路圖比對助手': '/AI_City/trackcad',
+  '全球專利助手': '/AI_City/patents',
+  'GPU競品分析助手': '/AI_City/vga',
+  '圖意探險家': '/AI_City/img2text',
+  '會議助理': '/AI_City/meeting',
+  '繪圖助手': '/AI_City/draw',
+  '文字轉語音': '/AI_City/tts',
+
+  // AI 論壇 - 使用特殊 Form POST 跳轉
+  'ai_forum': '__FORUM_REDIRECT__',
+  'aiforum': '__FORUM_REDIRECT__',
+  'AI 論壇': '__FORUM_REDIRECT__',
+  'ai論壇': '__FORUM_REDIRECT__',
 }
 
 /**
@@ -185,6 +193,16 @@ export function useAppNavigation(): UseAppNavigationReturn {
       if (appIdentifier) {
         const fallbackRoute = getRouteByAppId(appIdentifier)
         if (fallbackRoute) {
+          // 特殊處理：AI 論壇
+          if (fallbackRoute === '__FORUM_REDIRECT__') {
+            const success = redirectToForum()
+            if (!success) {
+              console.error('AI 論壇跳轉失敗：認證資訊不足')
+              // 可以選擇跳轉到登入頁或顯示錯誤提示
+            }
+            return
+          }
+
           console.warn(`sysUrl 為空，使用 fallback 路由: ${fallbackRoute}`)
           window.location.href = fallbackRoute
           return
