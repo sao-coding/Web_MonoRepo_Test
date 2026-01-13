@@ -1,50 +1,108 @@
+# Docker Compose for Development Environment (10.16.20.11)
+# 使用方式: docker compose --env-file .env.compose.{dev/test/prod} up -d --build
+#
+# Port 配置說明:
+# - Traefik: 80 (HTTP), 8080 (Dashboard)
+# - 各 App 內部 Port 不對外暴露，由 Traefik 統一路由
+# - 避免與現有 PM2 服務衝突 (3001-3003)
 services:
-  web:
-    image: 192.168.2.40:5005/msi/monorepo/web:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
-    container_name: msi_stack_web # 容器名稱
-    environment:
-      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
-      - HOSTNAME=0.0.0.0
-      - PORT=3001
-    deploy:
-      replicas: 2 # 設定啟動 2 個副本
-      update_config:
-        parallelism: 1 # 在更新時，一次更新 1 個副本
-        delay: 10s # 每次更新之間等待 10 秒
-        failure_action: rollback # 如果更新失敗，則回滾
-      restart_policy:
-        condition: any # 任何情況下都會重啟容器
+  traefik:
+    image: ${TRAEFIK_IMAGE}
+    container_name: ${TRAEFIK_CONTAINER}
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=${TRAEFIK_ENTRYPOINT_WEB_ADDR}
+      - --log.level=DEBUG
     ports:
-      - target: 3001 # 容器內部的端口設定為 3001
-        published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
-        protocol: tcp # 使用 TCP 協議
-        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
+      - "${TRAEFIK_HOSTPORT_WEB}:80"
+      - "${TRAEFIK_HOSTPORT_DASHBOARD}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - msi # 使用名為 "msi" 的 overlay 網絡
+      - ${NETWORK_NAME}
+    restart: unless-stopped
 
-  docs:
-    image: 192.168.2.40:5005/msi/monorepo/docs:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
-    container_name: msi_stack_docs # 容器名稱
+  aicity:
+    build:
+      context: .
+      dockerfile: ${AICITY_DOCKERFILE}
+      args:
+        APP_ENV: ${APP_ENV}
+    container_name: ${AICITY_CONTAINER}
     environment:
-      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
-      - HOSTNAME=0.0.0.0
-      - PORT=3002
-    deploy:
-      replicas: 2 # 設定啟動 2 個副本
-      update_config:
-        parallelism: 1 # 在更新時，一次更新 1 個副本
-        delay: 10s # 每次更新之間等待 10 秒
-        failure_action: rollback # 如果更新失敗，則回滾
-      restart_policy:
-        condition: any # 任何情況下都會重啟容器
-    ports:
-      - target: 3002 # 容器內部的端口設定為 3002
-        published: 3002 # 將容器的 3000 端口映射到宿主機的 3002 端口
-        protocol: tcp # 使用 TCP 協議
-        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
+      - NODE_ENV=${NODE_ENV}
+      - APP_ENV=${APP_ENV}
+      - PORT=${AICITY_PORT}
+      - HOSTNAME=${HOSTNAME}
+    env_file:
+      - .env.dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aicity.rule=${AICITY_RULE}"
+      - "traefik.http.routers.aicity.priority=${AICITY_PRIORITY}"
+      - "traefik.http.routers.aicity.entrypoints=${AICITY_ENTRYPOINT}"
+      - "traefik.http.services.aicity.loadbalancer.server.port=${AICITY_PORT}"
     networks:
-      - msi # 使用名為 "msi" 的 overlay 網絡
+      - ${NETWORK_NAME}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  product-spec:
+    build:
+      context: .
+      dockerfile: ${PRODUCTSPEC_DOCKERFILE}
+      args:
+        APP_ENV: ${APP_ENV}
+    container_name: ${PRODUCTSPEC_CONTAINER}
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - APP_ENV=${APP_ENV}
+      - PORT=${PRODUCTSPEC_PORT}
+      - HOSTNAME=${HOSTNAME}
+    env_file:
+      - .env.dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.productspec.rule=${PRODUCTSPEC_RULE}"
+      - "traefik.http.routers.productspec.priority=${PRODUCTSPEC_PRIORITY}"
+      - "traefik.http.routers.productspec.entrypoints=${PRODUCTSPEC_ENTRYPOINT}"
+      - "traefik.http.services.productspec.loadbalancer.server.port=${PRODUCTSPEC_PORT}"
+    networks:
+      - ${NETWORK_NAME}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  asr:
+    build:
+      context: .
+      dockerfile: ${ASR_DOCKERFILE}
+      args:
+        APP_ENV: ${APP_ENV}
+    container_name: ${ASR_CONTAINER}
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - APP_ENV=${APP_ENV}
+      - PORT=${ASR_PORT}
+      - HOSTNAME=${HOSTNAME}
+    env_file:
+      - .env.dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.asr.rule=${ASR_RULE}"
+      - "traefik.http.routers.asr.priority=${ASR_PRIORITY}"
+      - "traefik.http.routers.asr.entrypoints=${ASR_ENTRYPOINT}"
+      - "traefik.http.services.asr.loadbalancer.server.port=${ASR_PORT}"
+    networks:
+      - ${NETWORK_NAME}
+    restart: unless-stopped
+    depends_on:
+      - traefik
 
 networks:
-  msi:
-    driver: overlay # 使用 overlay 驅動程式，適合於 Docker Swarm 集群
+  ai-city:
+    driver: bridge

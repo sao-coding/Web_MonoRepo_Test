@@ -57,8 +57,8 @@ export function LoginForm({ config }: LoginFormProps) {
 
   // 初始化 - 讀取記住的帳號
   useEffect(() => {
-    const storedUser = localStorage.getItem('rd-ai-city-remembered-username')
-    const storedRegion = localStorage.getItem('rd-ai-city-remembered-region') as Region
+    const storedUser = localStorage.getItem('aicity-remembered-username')
+    const storedRegion = localStorage.getItem('aicity-remembered-region') as Region
 
     if (storedUser) {
       setUserName(storedUser)
@@ -89,12 +89,12 @@ export function LoginForm({ config }: LoginFormProps) {
     }
 
     if (rememberMe) {
-      localStorage.setItem('rd-ai-city-remembered-username', userName)
-      localStorage.setItem('rd-ai-city-remembered-region', region)
+      localStorage.setItem('aicity-remembered-username', userName)
+      localStorage.setItem('aicity-remembered-region', region)
     }
     else {
-      localStorage.removeItem('rd-ai-city-remembered-username')
-      localStorage.removeItem('rd-ai-city-remembered-region')
+      localStorage.removeItem('aicity-remembered-username')
+      localStorage.removeItem('aicity-remembered-region')
     }
 
     const result = await login({ userName, password })

@@ -39,7 +39,7 @@ async function main() {
   const key = crypto.createHash('sha256').update(String(MASTER_KEY)).digest()
 
   const apps = [
-    path.join(__dirname, '../apps/rd_aicity'),
+    path.join(__dirname, '../apps/aicity'),
     path.join(__dirname, '../apps/product-spec')
   ]
 
