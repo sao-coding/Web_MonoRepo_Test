@@ -1,2 +1,164 @@
-include:
-  - component: $CI_SERVER_FQDN/dad_team/ci-templates/turbo-workflow-main@ci-tools
+# stages:
+#   - check
+#   - publish-npm
+#   - build-docker
+#   - deploy-docker
+
+# variables:
+#   # This variable should be set in GitLab CI/CD Settings > Variables
+#   # ENV_MASTER_KEY: "your_secret_key"
+
+# check-affected:
+#   stage: check
+#   image: node:lts-alpine3.20
+#   # rules:
+#   #   - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#   before_script:
+#     - export SHELL=/bin/bash
+#     - npm install --global corepack@latest
+#     - corepack enable
+#     - corepack prepare pnpm@latest-10 --activate
+#     - export PNPM_HOME="/root/.local/share/pnpm"
+#     - export PATH="$PNPM_HOME:$PATH"
+#     - pnpm setup
+#     - pnpm config set store-dir .pnpm-store
+#     - pnpm install -g turbo@latest
+#     - apk update && apk add jq git bash
+#     # - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
+#   script:
+#     # - export TURBO_SCM_BASE=$(git merge-base main HEAD) # 設定基準提交
+#     # - export TURBO_SCM_HEAD=HEAD # 設定頭部提交
+#     - export TURBO_SCM_BASE=$(git rev-parse HEAD~1) # 比較上一個提交
+#     - export TURBO_SCM_HEAD=$(git rev-parse HEAD) # 當前提交
+#     - turbo run build --affected --dry=json > affected-packages.json
+#     - |
+#       if [ "$(jq '.packages | length' affected-packages.json)" -eq 0 ]; then
+#         echo "沒有包受到影響，跳過後續步驟"
+#         exit 0
+#       fi
+#     - export AFFECTED_APPS=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and (.directory | type=="string") and (.directory | startswith("apps/"))) | .package' affected-packages.json | sort -u | tr '\n' ' ')
+#     - export AFFECTED_PACKAGES=$(jq -r '.packages[] | select(. != "//")' affected-packages.json | xargs -I{} jq -r --arg pkg {} '.tasks[] | select(.package == $pkg and (.directory | type=="string") and (.directory | startswith("packages/"))) | .package' affected-packages.json | sort -u | tr '\n' ' ')
+#     - 'echo "受影響的應用程式: $AFFECTED_APPS"'
+#     - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
+#     - |
+#       if [ -z "$AFFECTED_APPS" ]; then
+#         echo "AFFECTED_APPS=" >> build.env
+#       else
+#         echo "AFFECTED_APPS=$AFFECTED_APPS" >> build.env
+#       fi
+#       if [ -z "$AFFECTED_PACKAGES" ]; then
+#         echo "AFFECTED_PACKAGES=" >> build.env
+#       else
+#         echo "AFFECTED_PACKAGES=$AFFECTED_PACKAGES" >> build.env
+#       fi
+#     - cat build.env
+#   artifacts:
+#     reports:
+#       dotenv: build.env
+
+# build-docker:
+#   stage: build-docker
+#   image: docker:28.1.1-cli-alpine3.21
+#   services:
+#     - name: docker:28.1.1-dind-alpine3.21
+#       command: ['--insecure-registry=192.168.2.40:5005']
+#   variables:
+#     DOCKER_TLS_CERTDIR: ''
+#     DOCKER_HOST: tcp://docker:2375
+#     DOCKER_DRIVER: overlay2
+#   before_script:
+#     - |
+#       if [ -z "$AFFECTED_APPS" ]; then
+#         echo "AFFECTED_APPS 為空，跳過構建步驟"
+#         exit 0
+#       fi
+#     # Inject ENV_MASTER_KEY for build process if needed (e.g. for decrypting secrets during build)
+#     - export ENV_MASTER_KEY=$ENV_MASTER_KEY
+#   script:
+#     - echo "Docker 登入"
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - |
+#       for app in $AFFECTED_APPS; do
+#         echo "構建 Docker 映像檔: $app"
+#         echo "使用的參數: APP_NAME=$app, TURBO_TEAM=$TURBO_TEAM, TURBO_TOKEN=$TURBO_TOKEN"
+#         # Pass ENV_MASTER_KEY as build arg if your Dockerfile needs it
+#         docker build -f ./apps/$app/Dockerfile -t $CI_REGISTRY_IMAGE/$app:latest . --build-arg APP_NAME=$app --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN --build-arg ENV_MASTER_KEY=$ENV_MASTER_KEY --no-cache
+#         docker push $CI_REGISTRY_IMAGE/$app:latest
+#       done
+#   needs:
+#     - job: check-affected
+#       artifacts: true
+#   rules:
+#     - changes:
+#         - apps/**/*
+
+# deploy-docker:
+#   stage: deploy-docker
+#   image: alpine:latest
+#   before_script:
+#     - apk update && apk add openssh-client bash
+#     - eval $(ssh-agent -s)
+#     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > deploy.pem
+#     - chmod 400 deploy.pem
+#     - ssh-add deploy.pem
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+#   script:
+#     - echo "📤 傳輸 docker-compose.yml 至伺服器 docker/msi 目錄"
+#     - ssh ${SSH_USER}@${SSH_SERVER_IP} "mkdir -p /home/${SSH_USER}/docker/msi"
+#     - scp $(pwd)/docker-compose.yml ${SSH_USER}@${SSH_SERVER_IP}:/home/${SSH_USER}/docker/msi/
+#     - |
+#       for app in $AFFECTED_APPS; do
+#         echo "🔄 拉取最新映像檔: $app"
+#         ssh ${SSH_USER}@${SSH_SERVER_IP} "docker pull $CI_REGISTRY_IMAGE/$app:latest"
+#       done
+#     - echo "🧹 停止並移除現有服務 (保持不停機)"
+#     # Pass ENV_MASTER_KEY to the deployment command if needed
+#     - ssh ${SSH_USER}@${SSH_SERVER_IP} "export ENV_MASTER_KEY=$ENV_MASTER_KEY && cd /home/${SSH_USER}/docker/msi && docker stack deploy -c docker-compose.yml msi_stack --with-registry-auth"
+#     - echo "✅ 部署完成，查看運行中的容器"
+#     - ssh ${SSH_USER}@${SSH_SERVER_IP} "docker ps"
+#   needs:
+#     - job: check-affected
+#       artifacts: true
+#     - job: build-docker
+#   rules:
+#     - changes:
+#         - apps/**/*
+
+# publish-npm:
+#   stage: publish-npm
+#   image: node:lts-alpine3.20
+#   before_script:
+#     - |
+#       if [ -z "$AFFECTED_PACKAGES" ]; then
+#         echo "AFFECTED_PACKAGES 為空，跳過發佈步驟"
+#         exit 0
+#       fi
+#     - export SHELL=/bin/bash
+#     - npm install --global corepack@latest
+#     - corepack enable
+#     - corepack prepare pnpm@latest-10 --activate
+#     - export PNPM_HOME="/root/.local/share/pnpm"
+#     - export PATH="$PNPM_HOME:$PATH"
+#     - pnpm setup
+#     - pnpm config set store-dir .pnpm-store
+#     - pnpm install -g turbo@latest
+#   script:
+#     - 'echo "受影響的套件: $AFFECTED_PACKAGES"'
+#     - echo "@msi:registry=https://${CI_SERVER_HOST}/api/v4/packages/npm/" >> .npmrc
+#     - echo "//${CI_SERVER_HOST}/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+#     - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+#     - pnpm install --frozen-lockfile
+#     - |
+#       for package in $AFFECTED_PACKAGES; do
+#         echo "發布 NPM 套件: $package"
+#           package_dir=$(echo $package | sed 's|^@msi/||')
+#           cd packages/$package_dir && pnpm publish --no-git-checks && cd -
+#       done
+#   needs:
+#     - job: check-affected
+#       artifacts: true
+#   rules:
+#     - changes:
+#         - packages/**/*

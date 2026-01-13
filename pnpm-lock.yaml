@@ -177,7 +177,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
-  apps/aicity:
+  apps/rd_aicity:
     dependencies:
       '@handsontable/react':
         specifier: ^16.1.1

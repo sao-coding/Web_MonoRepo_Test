@@ -24,7 +24,7 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
-const LOCALE_STORAGE_KEY = 'aicity'
+const LOCALE_STORAGE_KEY = 'rd-ai-city-locale'
 
 function getInitialLocale(): Locale {
   if (typeof window === 'undefined')
