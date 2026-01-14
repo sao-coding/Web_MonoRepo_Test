@@ -1,50 +1,237 @@
-services:
-  web:
-    image: 192.168.2.40:5005/msi/monorepo/web:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
-    container_name: msi_stack_web # 容器名稱
-    environment:
-      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
-      - HOSTNAME=0.0.0.0
-      - PORT=3001
-    deploy:
-      replicas: 2 # 設定啟動 2 個副本
-      update_config:
-        parallelism: 1 # 在更新時，一次更新 1 個副本
-        delay: 10s # 每次更新之間等待 10 秒
-        failure_action: rollback # 如果更新失敗，則回滾
-      restart_policy:
-        condition: any # 任何情況下都會重啟容器
-    ports:
-      - target: 3001 # 容器內部的端口設定為 3001
-        published: 3001 # 將容器的 3000 端口映射到宿主機的 3001 端口
-        protocol: tcp # 使用 TCP 協議
-        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
-    networks:
-      - msi # 使用名為 "msi" 的 overlay 網絡
+# =============================================================================
+# Docker Compose 模板檔
+# =============================================================================
+# 使用方式:
+#   docker compose --env-file .env.compose.dev up -d      # Dev 環境
+#   docker compose --env-file .env.compose.prod up -d     # Prod 環境
+#
+# Port 配置說明:
+# - Traefik: 80 (HTTP), 8080 (Dashboard)
+# - 各 App 內部 Port 不對外暴露，由 Traefik 統一路由
+#
+# Priority 規則:
+# - PostHog PathPrefix('/') = 15，所有服務需 > 15
+# - 主服務 (aiforce) = 100
+# - 子服務 = 200
 
-  docs:
-    image: 192.168.2.40:5005/msi/monorepo/docs:latest # 指定容器映像，這裡使用的是 192.168.2.40:5005/msi/monorepo/web:main
-    container_name: msi_stack_docs # 容器名稱
-    environment:
-      - NODE_ENV=production # 設定環境變數，這裡設定為生產環境
-      - HOSTNAME=0.0.0.0
-      - PORT=3002
-    deploy:
-      replicas: 2 # 設定啟動 2 個副本
-      update_config:
-        parallelism: 1 # 在更新時，一次更新 1 個副本
-        delay: 10s # 每次更新之間等待 10 秒
-        failure_action: rollback # 如果更新失敗，則回滾
-      restart_policy:
-        condition: any # 任何情況下都會重啟容器
+services:
+  traefik:
+    image: ${TRAEFIK_IMAGE:-traefik:v3.6.6}
+    container_name: ${TRAEFIK_CONTAINER:-traefik}
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --log.level=${TRAEFIK_LOG_LEVEL:-DEBUG}
     ports:
-      - target: 3002 # 容器內部的端口設定為 3002
-        published: 3002 # 將容器的 3000 端口映射到宿主機的 3002 端口
-        protocol: tcp # 使用 TCP 協議
-        mode: ingress # 使用 Swarm 的 Ingress 模式，這樣流量會自動被分配到所有的副本上
+      - "${TRAEFIK_HOSTPORT_WEB:-80}:80"
+      - "${TRAEFIK_HOSTPORT_DASHBOARD:-8080}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - msi # 使用名為 "msi" 的 overlay 網絡
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+
+  aiforce:
+    build:
+      context: .
+      dockerfile: ${AIFORCE_DOCKERFILE:-apps/aiforce/Dockerfile}
+      args:
+        APP_ENV: ${APP_ENV:-development}
+        NEXT_PUBLIC_RD_SITE_URL: ${NEXT_PUBLIC_RD_SITE_URL:-}
+        NEXT_PUBLIC_LOGIN_API_URL: ${NEXT_PUBLIC_LOGIN_API_URL:-}
+        NEXT_PUBLIC_BASE_PATH_URL: ${NEXT_PUBLIC_BASE_PATH_URL:-/AI_City}
+        NEXT_PUBLIC_COOKIE_DOMAIN: ${NEXT_PUBLIC_COOKIE_DOMAIN:-}
+        NEXT_PUBLIC_NIM_SERVICE_API_URL: ${NEXT_PUBLIC_NIM_SERVICE_API_URL:-}
+        NEXT_PUBLIC_PATENT_SERVICE_API_URL: ${NEXT_PUBLIC_PATENT_SERVICE_API_URL:-}
+        NEXT_PUBLIC_AI_API_URL: ${NEXT_PUBLIC_AI_API_URL:-}
+        NEXT_PUBLIC_VGA_AI_API_URL: ${NEXT_PUBLIC_VGA_AI_API_URL:-}
+        NEXT_PUBLIC_AIforce_API_URL: ${NEXT_PUBLIC_AIforce_API_URL:-}
+        NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY:-}
+        NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-}
+    container_name: ${AIFORCE_CONTAINER:-aiforce}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${AIFORCE_PORT:-3001}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce.rule=PathPrefix(`/AI_City`)"
+      - "traefik.http.routers.aiforce.priority=100"
+      - "traefik.http.routers.aiforce.entrypoints=web"
+      - "traefik.http.services.aiforce.loadbalancer.server.port=${AIFORCE_PORT:-3001}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  aiforce-productspec:
+    build:
+      context: .
+      dockerfile: apps/aiforce-productspec/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: ${PRODUCTSPEC_CONTAINER:-aiforce-productspec}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${PRODUCTSPEC_PORT:-3002}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce-productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
+      - "traefik.http.routers.aiforce-productspec.priority=200"
+      - "traefik.http.routers.aiforce-productspec.entrypoints=web"
+      - "traefik.http.services.aiforce-productspec.loadbalancer.server.port=${PRODUCTSPEC_PORT:-3002}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  aiforce-asr:
+    build:
+      context: .
+      dockerfile: apps/aiforce-asr/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: ${ASR_CONTAINER:-aiforce-asr}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${ASR_PORT:-3003}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce-asr.rule=PathPrefix(`/AI_City/asr`)"
+      - "traefik.http.routers.aiforce-asr.priority=200"
+      - "traefik.http.routers.aiforce-asr.entrypoints=web"
+      - "traefik.http.services.aiforce-asr.loadbalancer.server.port=${ASR_PORT:-3003}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  aiforce-translate:
+    build:
+      context: .
+      dockerfile: apps/aiforce-translate/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: ${TRANSLATE_CONTAINER:-aiforce-translate}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${TRANSLATE_PORT:-3004}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce-translate.rule=PathPrefix(`/AI_City/translate`)"
+      - "traefik.http.routers.aiforce-translate.priority=200"
+      - "traefik.http.routers.aiforce-translate.entrypoints=web"
+      - "traefik.http.services.aiforce-translate.loadbalancer.server.port=${TRANSLATE_PORT:-3004}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  aiforce-tts:
+    build:
+      context: .
+      dockerfile: apps/aiforce-tts/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: ${TTS_CONTAINER:-aiforce-tts}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${TTS_PORT:-3005}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce-tts.rule=PathPrefix(`/AI_City/tts`)"
+      - "traefik.http.routers.aiforce-tts.priority=200"
+      - "traefik.http.routers.aiforce-tts.entrypoints=web"
+      - "traefik.http.services.aiforce-tts.loadbalancer.server.port=${TTS_PORT:-3005}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  aiforce-img2text:
+    build:
+      context: .
+      dockerfile: apps/aiforce-img2text/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-development}
+    container_name: ${IMG2TEXT_CONTAINER:-aiforce-img2text}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - APP_ENV=${APP_ENV:-development}
+      - PORT=${IMG2TEXT_PORT:-3006}
+      - HOSTNAME=0.0.0.0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiforce-img2text.rule=PathPrefix(`/AI_City/img2text`)"
+      - "traefik.http.routers.aiforce-img2text.priority=200"
+      - "traefik.http.routers.aiforce-img2text.entrypoints=web"
+      - "traefik.http.services.aiforce-img2text.loadbalancer.server.port=${IMG2TEXT_PORT:-3006}"
+    networks:
+      - ${NETWORK_NAME:-ai-city}
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+  # ==========================================================================
+  # 以下服務尚未從 aiforce 獨立，待分離後取消註解
+  # ==========================================================================
+
+  # aiforce-patents:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/aiforce-patents/Dockerfile
+  #     args:
+  #       APP_ENV: ${APP_ENV:-development}
+  #   container_name: ${PATENTS_CONTAINER:-aiforce-patents}
+  #   environment:
+  #     - NODE_ENV=${NODE_ENV:-production}
+  #     - APP_ENV=${APP_ENV:-development}
+  #     - PORT=${PATENTS_PORT:-3007}
+  #     - HOSTNAME=0.0.0.0
+  #   env_file:
+  #     - .env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.aiforce-patents.rule=PathPrefix(`/AI_City/patents`)"
+  #     - "traefik.http.routers.aiforce-patents.priority=200"
+  #     - "traefik.http.routers.aiforce-patents.entrypoints=web"
+  #     - "traefik.http.services.aiforce-patents.loadbalancer.server.port=${PATENTS_PORT:-3007}"
+  #   networks:
+  #     - ${NETWORK_NAME:-ai-city}
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - traefik
 
 networks:
-  msi:
-    driver: overlay # 使用 overlay 驅動程式，適合於 Docker Swarm 集群
+  ai-city:
+    name: ${NETWORK_NAME:-ai-city}
+    driver: bridge

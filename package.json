@@ -18,18 +18,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint",
     "prepare-fixme": "husky && pnpm build:packages",
-    "knip": "knip",
-    "pm2:aicity": "turbo run start --filter rd-ai-city",
-    "pm2:product": "turbo run start --filter product-spec",
-    "pm2:dev:aicity": "turbo run dev --filter rd-ai-city -- --port 3001",
-    "pm2:dev:product": "turbo run dev --filter product-spec",
-    "secrets:encrypt": "node scripts/secrets.js encrypt",
-    "secrets:decrypt:dev": "node scripts/secrets.js decrypt dev",
-    "secrets:decrypt:staging": "node scripts/secrets.js decrypt staging",
-    "secrets:decrypt:prod": "node scripts/secrets.js decrypt prod",
-    "deploy:dev": "pnpm secrets:decrypt:dev && pnpm i && pnpm build && pm2 startOrReload ecosystem.config.cjs --env development",
-    "deploy:staging": "pnpm secrets:decrypt:staging && pnpm i && pnpm build && pm2 startOrReload ecosystem.config.cjs --env staging",
-    "deploy:prod": "pnpm secrets:decrypt:prod && pnpm i && pnpm build && pm2 startOrReload ecosystem.config.cjs --env production"
+    "knip": "knip"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -69,12 +58,9 @@
       "ttf2woff2",
       "unrs-resolver"
     ],
-    "ignoredBuiltDependencies": [
-      "@tailwindcss/oxide"
-    ]
+    "ignoredBuiltDependencies": ["@tailwindcss/oxide"]
   },
   "dependencies": {
-    "@radix-ui/react-avatar": "^1.1.11",
-    "pm2": "^6.0.14"
+    "@radix-ui/react-avatar": "^1.1.11"
   }
 }

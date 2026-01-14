@@ -33,6 +33,7 @@
     "nextjs",
     "POSTHOG",
     "productspec",
-    "traefik"
+    "traefik",
+    "tts"
   ]
 }
