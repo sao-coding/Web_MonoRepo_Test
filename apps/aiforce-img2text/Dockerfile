@@ -52,6 +52,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/apps/aiforce-img2text/.next/standalone ./
 COPY --from=builder /app/apps/aiforce-img2text/.next/static ./apps/aiforce-img2text/.next/static
 
+# Fix permissions for nextjs user
+RUN chown -R nextjs:nodejs /app
+
 USER nextjs
 
 EXPOSE 3006

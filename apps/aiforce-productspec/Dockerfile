@@ -73,6 +73,9 @@ COPY --from=builder /app/apps/aiforce-productspec/.next/standalone ./
 COPY --from=builder /app/apps/aiforce-productspec/.next/static ./apps/aiforce-productspec/.next/static
 COPY --from=builder /app/apps/aiforce-productspec/public ./apps/aiforce-productspec/public
 
+# Fix permissions for nextjs user
+RUN chown -R nextjs:nodejs /app
+
 USER nextjs
 
 EXPOSE 3002

@@ -109,7 +109,8 @@ COPY --from=builder /app/apps/aiforce/messages ./apps/aiforce/messages
 
 # Create cache directory with correct permissions (fixes EACCES error)
 RUN mkdir -p /app/apps/aiforce/.next/cache && \
-    chown -R nextjs:nodejs /app/apps/aiforce/.next
+    chown -R nextjs:nodejs /app/apps/aiforce/.next && \
+    chown -R nextjs:nodejs /app/apps/aiforce/public
 
 USER nextjs
 

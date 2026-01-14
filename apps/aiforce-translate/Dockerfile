@@ -73,6 +73,9 @@ COPY --from=builder /app/apps/aiforce-translate/.next/standalone ./
 COPY --from=builder /app/apps/aiforce-translate/.next/static ./apps/aiforce-translate/.next/static
 COPY --from=builder /app/apps/aiforce-translate/public ./apps/aiforce-translate/public
 
+# Fix permissions for nextjs user
+RUN chown -R nextjs:nodejs /app
+
 USER nextjs
 
 EXPOSE 3004

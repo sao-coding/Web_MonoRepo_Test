@@ -73,6 +73,9 @@ COPY --from=builder /app/apps/aiforce-asr/.next/standalone ./
 COPY --from=builder /app/apps/aiforce-asr/.next/static ./apps/aiforce-asr/.next/static
 COPY --from=builder /app/apps/aiforce-asr/public ./apps/aiforce-asr/public
 
+# Fix permissions for nextjs user
+RUN chown -R nextjs:nodejs /app
+
 USER nextjs
 
 EXPOSE 3003
