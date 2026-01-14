@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@msi/auth": "workspace:*",
     "@msi/ui": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",
