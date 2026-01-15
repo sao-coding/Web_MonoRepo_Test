@@ -3,11 +3,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 interface LanSelectorProps {
   onLanChange: (language: string) => void
+  disabled?: boolean
 }
 
-const LanSelector = ({ onLanChange }: LanSelectorProps) => {
+const LanSelector = ({ onLanChange, disabled = false }: LanSelectorProps) => {
   return (
-    <Select onValueChange={onLanChange} defaultValue='no'>
+    <Select onValueChange={onLanChange} defaultValue='no' disabled={disabled}>
       <SelectTrigger className='w-[130px]'>
         <SelectValue placeholder='無需轉譯' />
       </SelectTrigger>
