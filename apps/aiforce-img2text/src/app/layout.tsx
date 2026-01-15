@@ -2,7 +2,10 @@ import type { Metadata } from 'next'
 
 import './globals.css'
 
+import { AuthProvider } from '@msi/auth'
+import { PostHogProvider } from '@msi/ui'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 
 const geistSans = Geist({
@@ -25,14 +28,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
-    <html lang='zh-TW'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <Toaster richColors />
+    <html lang='zh-TW' suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableColorScheme
+          disableTransitionOnChange
+        >
+          <PostHogProvider>
+            <AuthProvider>
+              {children}
+              <Toaster richColors />
+            </AuthProvider>
+          </PostHogProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

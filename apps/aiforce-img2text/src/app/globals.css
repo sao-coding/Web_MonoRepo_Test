@@ -1,3 +1,44 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
 @import '@msi/ui/styles/preset.css';
+
+@source "../../../../packages/ui/src/components/**/*.{ts,tsx}";
+
+.product-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 自定義滾動條樣式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(209 213 219);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(156 163 175);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(55 65 81);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(75 85 99);
+}

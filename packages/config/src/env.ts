@@ -10,7 +10,10 @@ export interface AppConfig {
   NEXT_PUBLIC_AIforce_API_URL: string
   NEXT_PUBLIC_POSTHOG_KEY: string
   NEXT_PUBLIC_POSTHOG_HOST: string
-  // 其他所有您需要的變數
+  // 子應用 API URLs
+  NEXT_PUBLIC_IMG2TEXT_API_URL: string
+  NEXT_PUBLIC_TTS_API_URL: string
+  NEXT_PUBLIC_TRANSLATE_API_URL: string
 }
 
 /**
@@ -29,6 +32,11 @@ export function getAppConfig(): AppConfig {
     NEXT_PUBLIC_VGA_AI_API_URL: process.env.NEXT_PUBLIC_VGA_AI_API_URL || '',
     NEXT_PUBLIC_AIforce_API_URL: process.env.NEXT_PUBLIC_AIforce_API_URL || '',
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
-    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST || ''
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST || '',
+    // 子應用 API URLs
+    NEXT_PUBLIC_IMG2TEXT_API_URL: process.env.NEXT_PUBLIC_IMG2TEXT_API_URL || '',
+    NEXT_PUBLIC_TTS_API_URL: process.env.NEXT_PUBLIC_TTS_API_URL || '',
+    NEXT_PUBLIC_TRANSLATE_API_URL: process.env.NEXT_PUBLIC_TRANSLATE_API_URL || ''
   }
 }
+

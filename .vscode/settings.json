@@ -30,9 +30,11 @@
     "aiforce",
     "EACCES",
     "exposedbydefault",
+    "HOSTPORT",
     "nextjs",
     "POSTHOG",
     "productspec",
+    "rdraid",
     "traefik",
     "tts"
   ]

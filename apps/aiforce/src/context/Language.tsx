@@ -12,7 +12,7 @@ interface LanguageType {
 const Language = createContext<LanguageType | undefined>(undefined)
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [langCode, setLangCode] = useState('zh') // 預設語言
+  const [langCode, setLangCode] = useState('zh-TW') // 預設語言
   const [searchKeyword, setSearchKeyword] = useState('') // 搜尋功能
   return (
     <Language value={{ langCode, setLangCode, searchKeyword, setSearchKeyword }}>

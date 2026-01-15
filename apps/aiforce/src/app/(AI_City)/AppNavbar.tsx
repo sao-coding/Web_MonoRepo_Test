@@ -22,14 +22,19 @@ interface AppNavbarProps {
 }
 
 const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
-  const { user } = useAuth()
+  const { user, status } = useAuth()
   const { langCode } = useLanguage()
   const [navItems, setNavItems] = useState<NavbarItem[]>([])
 
   useEffect(() => {
+    // 確保 auth 已完成載入且 user 存在
+    if (status !== 'success' || !user?.userId) {
+      return
+    }
+
     const fetchNavbar = async () => {
       try {
-        const res = await fetch(`${getAppConfig().NEXT_PUBLIC_AIforce_API_URL}/api/AIForce/Navbar?userId=${user?.userId}&deptId=${user?.deptId}&lang=${langCode}`, {
+        const res = await fetch(`${getAppConfig().NEXT_PUBLIC_AIforce_API_URL}/api/AIForce/Navbar?userId=${user.userId}&deptId=${user.deptId}&lang=${langCode}`, {
           method: 'GET',
         })
         if (res.ok) {
@@ -44,7 +49,7 @@ const AppNavbar = ({ activeCategory, onCategoryChange }: AppNavbarProps) => {
     }
 
     fetchNavbar()
-  }, [langCode, user?.userId, user?.deptId])
+  }, [langCode, status, user])
 
   return (
     <div className="flex flex-wrap gap-2 justify-center items-center my-6">
