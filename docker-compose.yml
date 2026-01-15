@@ -1,13 +1,13 @@
 # =============================================================================
-# Docker Compose 模板檔
+# Docker Compose 模板檔 (前端服務)
 # =============================================================================
 # 使用方式:
-#   docker compose --env-file .env.compose.dev up -d      # Dev 環境
-#   docker compose --env-file .env.compose.prod up -d     # Prod 環境
+#   1. 先啟動 Traefik: docker compose -f docker-compose.traefik.yml up -d
+#   2. 再啟動前端服務: docker compose up -d
 #
-# Port 配置說明:
-# - Traefik: 80 (HTTP), 8080 (Dashboard)
-# - 各 App 內部 Port 不對外暴露，由 Traefik 統一路由
+# 前置條件:
+#   - Traefik 已獨立部署 (docker-compose.traefik.yml)
+#   - traefik-proxy network 已存在
 #
 # Priority 規則:
 # - PostHog PathPrefix('/') = 15，所有服務需 > 15
@@ -15,25 +15,6 @@
 # - 子服務 = 200
 
 services:
-  traefik:
-    image: ${TRAEFIK_IMAGE:-traefik:v3.6.6}
-    container_name: ${TRAEFIK_CONTAINER:-traefik}
-    command:
-      - --api.dashboard=true
-      - --api.insecure=true
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --log.level=${TRAEFIK_LOG_LEVEL:-DEBUG}
-    ports:
-      - "${TRAEFIK_HOSTPORT_WEB:-80}:80"
-      - "${TRAEFIK_HOSTPORT_DASHBOARD:-8080}:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - ${NETWORK_NAME:-ai-city}
-    restart: unless-stopped
-
   aiforce:
     build:
       context: .
@@ -63,13 +44,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce.rule=PathPrefix(`/AI_City`)"
       - "traefik.http.routers.aiforce.priority=100"
-      - "traefik.http.routers.aiforce.entrypoints=web"
+      - "traefik.http.routers.aiforce.entrypoints=websecure"
+      - "traefik.http.routers.aiforce.tls=true"
       - "traefik.http.services.aiforce.loadbalancer.server.port=${AIFORCE_PORT:-3001}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   aiforce-productspec:
     build:
@@ -89,13 +69,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce-productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
       - "traefik.http.routers.aiforce-productspec.priority=200"
-      - "traefik.http.routers.aiforce-productspec.entrypoints=web"
+      - "traefik.http.routers.aiforce-productspec.entrypoints=websecure"
+      - "traefik.http.routers.aiforce-productspec.tls=true"
       - "traefik.http.services.aiforce-productspec.loadbalancer.server.port=${PRODUCTSPEC_PORT:-3002}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   aiforce-asr:
     build:
@@ -115,13 +94,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce-asr.rule=PathPrefix(`/AI_City/asr`)"
       - "traefik.http.routers.aiforce-asr.priority=200"
-      - "traefik.http.routers.aiforce-asr.entrypoints=web"
+      - "traefik.http.routers.aiforce-asr.entrypoints=websecure"
+      - "traefik.http.routers.aiforce-asr.tls=true"
       - "traefik.http.services.aiforce-asr.loadbalancer.server.port=${ASR_PORT:-3003}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   aiforce-translate:
     build:
@@ -141,13 +119,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce-translate.rule=PathPrefix(`/AI_City/translate`)"
       - "traefik.http.routers.aiforce-translate.priority=200"
-      - "traefik.http.routers.aiforce-translate.entrypoints=web"
+      - "traefik.http.routers.aiforce-translate.entrypoints=websecure"
+      - "traefik.http.routers.aiforce-translate.tls=true"
       - "traefik.http.services.aiforce-translate.loadbalancer.server.port=${TRANSLATE_PORT:-3004}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   aiforce-tts:
     build:
@@ -167,13 +144,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce-tts.rule=PathPrefix(`/AI_City/tts`)"
       - "traefik.http.routers.aiforce-tts.priority=200"
-      - "traefik.http.routers.aiforce-tts.entrypoints=web"
+      - "traefik.http.routers.aiforce-tts.entrypoints=websecure"
+      - "traefik.http.routers.aiforce-tts.tls=true"
       - "traefik.http.services.aiforce-tts.loadbalancer.server.port=${TTS_PORT:-3005}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   aiforce-img2text:
     build:
@@ -193,13 +169,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.aiforce-img2text.rule=PathPrefix(`/AI_City/img2text`)"
       - "traefik.http.routers.aiforce-img2text.priority=200"
-      - "traefik.http.routers.aiforce-img2text.entrypoints=web"
+      - "traefik.http.routers.aiforce-img2text.entrypoints=websecure"
+      - "traefik.http.routers.aiforce-img2text.tls=true"
       - "traefik.http.services.aiforce-img2text.loadbalancer.server.port=${IMG2TEXT_PORT:-3006}"
     networks:
-      - ${NETWORK_NAME:-ai-city}
+      - traefik-proxy
     restart: unless-stopped
-    depends_on:
-      - traefik
 
   # ==========================================================================
   # 以下服務尚未從 aiforce 獨立，待分離後取消註解
@@ -223,15 +198,13 @@ services:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.aiforce-patents.rule=PathPrefix(`/AI_City/patents`)"
   #     - "traefik.http.routers.aiforce-patents.priority=200"
-  #     - "traefik.http.routers.aiforce-patents.entrypoints=web"
+  #     - "traefik.http.routers.aiforce-patents.entrypoints=websecure"
+  #     - "traefik.http.routers.aiforce-patents.tls=true"
   #     - "traefik.http.services.aiforce-patents.loadbalancer.server.port=${PATENTS_PORT:-3007}"
   #   networks:
-  #     - ${NETWORK_NAME:-ai-city}
+  #     - traefik-proxy
   #   restart: unless-stopped
-  #   depends_on:
-  #     - traefik
 
 networks:
-  ai-city:
-    name: ${NETWORK_NAME:-ai-city}
-    driver: bridge
+  traefik-proxy:
+    external: true
