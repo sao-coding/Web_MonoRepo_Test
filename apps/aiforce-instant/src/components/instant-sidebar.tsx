@@ -52,21 +52,23 @@ export interface RecordItem {
 
 interface InstantSidebarProps extends React.ComponentProps<typeof Sidebar> {
   /** 是否為音檔上傳模式 */
-  isUpload: boolean
+  isUpload?: boolean
+  /** 設定是否為音檔上傳模式 */
+  setIsUpload?: React.Dispatch<React.SetStateAction<boolean>>
   /** 目前選中的記錄 ID */
-  activeRecordId: number | null
+  activeRecordId?: number | null
   /** 選擇記錄時的回調 */
-  onSelectRecord: (recordId: number | null) => void
+  onSelectRecord?: (recordId: number | null) => void
   /** 開始新即時會議 */
-  onStartNewInstant: () => void
+  onStartNewInstant?: () => void
   /** 開始新音檔上傳 */
-  onStartNewUpload: () => void
+  onStartNewUpload?: () => void
   /** 是否正在載入記錄 */
-  isLoadingRecord: boolean
+  isLoadingRecord?: boolean
   /** 記錄列表 */
   records: RecordItem[]
   /** 記錄變更時的回調 (用於重新獲取記錄) */
-  onRecordsChange: () => void
+  onRecordsChange?: () => void
   /** 頁面標題 */
   title?: string
   /** Logo URL */
@@ -81,10 +83,9 @@ interface InstantSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function InstantSidebar({
   isUpload,
+  setIsUpload,
   activeRecordId,
   onSelectRecord,
-  onStartNewInstant,
-  onStartNewUpload,
   isLoadingRecord,
   records,
   onRecordsChange,
@@ -110,8 +111,8 @@ export function InstantSidebar({
       if (res.ok) {
         toast.success('紀錄已刪除')
         if (activeRecordId === seqNo)
-          onSelectRecord(null)
-        onRecordsChange()
+          onSelectRecord?.(null)
+        onRecordsChange?.()
       }
       else {
         toast.error('刪除失敗')
@@ -142,7 +143,7 @@ export function InstantSidebar({
       if (res.ok) {
         toast.success('標題已更新')
         setIsEditingTitle(null)
-        onRecordsChange()
+        onRecordsChange?.()
       }
       else {
         toast.error('更新失敗')
@@ -244,7 +245,10 @@ export function InstantSidebar({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={onStartNewInstant}
+                  onClick={() => {
+                    router.push('/?mode=instant')
+                    setIsUpload?.(false)
+                  }}
                   className={cn(
                     'cursor-pointer',
                     pathname === '/' && !isUpload && 'bg-gray-200 dark:bg-gray-700'
@@ -256,7 +260,10 @@ export function InstantSidebar({
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={onStartNewUpload}
+                  onClick={() => {
+                    router.push('/?mode=upload')
+                    setIsUpload?.(true)
+                  }}
                   className={cn(
                     'cursor-pointer',
                     pathname === '/' && isUpload && 'bg-gray-200 dark:bg-gray-700'
@@ -341,7 +348,7 @@ export function InstantSidebar({
                                   : (
                                       <>
                                         <SidebarMenuButton
-                                          onClick={() => { onSelectRecord(record.chatId) }}
+                                          onClick={() => { onSelectRecord?.(record.chatId) }}
                                           isActive={activeRecordId === record.chatId}
                                           className='group-hover/item:bg-sidebar-accent group-hover/item:text-sidebar-accent-foreground w-full min-w-0'
                                         >

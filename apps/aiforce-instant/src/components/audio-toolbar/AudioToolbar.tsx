@@ -1,8 +1,10 @@
 'use client'
 
+import type { TranscriptionData } from '@/types'
+
 import { getAppConfig } from '@msi/config/env'
 import { Button } from '@msi/ui/components/button'
-import { ChevronsRight, LetterTextIcon, Loader2, Play, Upload, X } from 'lucide-react'
+import { LetterTextIcon, Loader2, Play, Square, Upload, X } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -13,15 +15,28 @@ import ModelSelector from './ModelSelector'
 
 interface AudioToolbarProps {
   isUpload: boolean
-  onModelChange?: (model: string) => void
-  onLanChange?: (language: string) => void
+  isRecording?: boolean             // 從 Hook 傳入的錄音狀態
+  onResult: (data: TranscriptionData) => void // 上傳成功的結果回傳
+  // onStartRecording?: (model: string, lang: string) => void // 觸發即時錄音
+  // onStopRecording?: () => void      // 停止錄音
+  onLoadingStatus?: (isLoading: boolean) => void // 傳回載入狀態
+  onLanChange?: (lang: string) => void   // 語言變更回傳
 }
 
-export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelChange, onLanChange }) => {
+export const AudioToolbar: React.FC<AudioToolbarProps> = ({
+  isUpload,
+  isRecording,
+  onResult,
+  // onStartRecording,
+  // onStopRecording,
+  onLoadingStatus,
+  onLanChange
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [targetLang, setTargetLang] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedModel, setSelectedModel] = useState<string>('openai')
 
   // 處理檔案選取
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,14 +46,16 @@ export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelCha
     }
   }
 
-  // 執行 API 串接
+  // 音檔上傳並產生逐字稿 - API串接
   const handleGenerateTranscript = async () => {
+    console.warn('selectedModel', selectedModel)
     if (!selectedFile) {
       toast.error('請先選擇音檔')
       return
     }
 
     setIsLoading(true)
+    onLoadingStatus?.(true)
 
     // 依照 API 格式準備 FormData
     const formData = new FormData()
@@ -57,7 +74,8 @@ export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelCha
       })
 
       if (response.ok) {
-        const data = await response.json()
+        const data: TranscriptionData = await response.json()
+        onResult?.(data)
         toast.success('解析完成！')
         console.warn('Transcription Result:', data)
       } else {
@@ -68,11 +86,8 @@ export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelCha
       console.error(error)
     } finally {
       setIsLoading(false)
+      onLoadingStatus?.(false)
     }
-  }
-
-  const handleModelChange = (value: string) => {
-    if (onModelChange) onModelChange(value)
   }
 
   return (
@@ -94,39 +109,40 @@ export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelCha
               onClick={() => fileInputRef.current?.click()}
               disabled={ isLoading }
             >
-              <Upload className='size-4' /> 音檔上傳
+              <Upload className='size-4' />
+              {selectedFile ? '更換檔案' : '音檔上傳'}
             </Button>
           </>
         )}
 
-        <span className='text-sm font-medium'>轉譯:</span>
+        <span className='text-sm font-medium'>
+          {isUpload ? '轉譯:' : '原文:'}
+        </span>
 
         {/* 當 isUpload 為 false 時顯示前兩個下拉選單 */}
         {!isUpload && (
           <>
             {/* 下拉選單 1: OpenAI */}
-            <ModelSelector onModelChange={handleModelChange} />
-            <ChevronsRight size={20} stroke='gray' className='text-muted-foreground' />
+            <ModelSelector
+              onModelChange={setSelectedModel}
+              disabled={isRecording || isLoading}
+            />
+            {/* <ChevronsRight size={20} stroke='gray' className='text-muted-foreground' /> */}
           </>
         )}
 
-        <LanSelector onLanChange={(val) => {
-          setTargetLang(val)
-          if (onLanChange) onLanChange(val)
-        }} />
-
-        {/* 當 isUpload 為 false 時顯示：開始錄音 */}
-        {!isUpload && (
-          <Button
-            className='flex gap-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-300 dark:hover:bg-blue-400'
-          >
-            <Play className='size-4' />
-            開始錄音
-          </Button>
+        {isUpload && (
+          <LanSelector
+            disabled={isRecording || isLoading}
+            onLanChange={(val) => {
+              setTargetLang(val)
+              if (onLanChange) onLanChange(val)
+            }}
+          />
         )}
 
-        {/* 當 isUpload 為 true 時顯示：生成逐字稿 */}
-        {isUpload && (
+        {/* 主要動作按鈕 */}
+        {isUpload ? (
           <Button
             className='flex gap-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-300 dark:hover:bg-blue-400 dark:disabled:bg-blue-200'
             onClick={handleGenerateTranscript}
@@ -139,12 +155,22 @@ export const AudioToolbar: React.FC<AudioToolbarProps> = ({ isUpload, onModelCha
             )}
             {isLoading ? '逐字稿生成中...' : '生成逐字稿'}
           </Button>
+        ) : (
+          <Button
+            // onClick={isRecording ? onStopRecording : () => { onStartRecording(selectedModel, targetLang) }}
+            className={`flex gap-2 ${isRecording ? 'animate-pulse bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-300 dark:hover:bg-blue-400 dark:disabled:bg-blue-200'}`}
+          >
+            {isRecording ? <Square className='mr-2 size-4 fill-current' /> : <Play className='mr-2 size-4' />}
+            {isRecording ? '停止錄音' : '開始錄音'}
+          </Button>
         )}
+
+        <input type='file' ref={fileInputRef} onChange={(e) => { setSelectedFile(e.target.files?.[0] ?? null) }} className='hidden' />
       </div>
 
       {/* 顯示檔名與檔案類型 */}
       {isUpload && selectedFile && (
-        <div className='flex items-center gap-1' style={{ marginBottom: '-15px' }}>
+        <div className='flex items-center gap-1' style={{ marginBottom: '-5px' }}>
           <X
             strokeWidth={3}
             size={16}
