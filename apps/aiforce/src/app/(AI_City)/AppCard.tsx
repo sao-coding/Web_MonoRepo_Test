@@ -9,7 +9,6 @@
 
 import type { AppType } from '@/types/app'
 import { useTranslations } from '@msi/i18n'
-import { Button } from '@msi/ui/components/button'
 import {
   Dialog,
   DialogContent,
