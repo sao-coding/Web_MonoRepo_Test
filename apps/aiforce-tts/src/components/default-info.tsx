@@ -1,0 +1,30 @@
+'use client'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@msi/ui/components/avatar'
+
+interface DefaultInfoProps {
+  title: string
+  children: React.ReactNode
+  avatarUrl?: string
+}
+
+export function DefaultInfo({
+  title,
+  children,
+  avatarUrl = 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-tts.png'
+}: DefaultInfoProps) {
+  return (
+    <div className='flex flex-col items-center justify-center gap-4'>
+      <Avatar className='size-16'>
+        <AvatarImage src={avatarUrl} />
+        <AvatarFallback>TTS</AvatarFallback>
+      </Avatar>
+      <h1 className='text-2xl font-bold text-gray-800 dark:text-white'>
+        歡迎使用{title}
+      </h1>
+      <p className='max-w-md text-center text-gray-600 dark:text-gray-400'>
+        {children}
+      </p>
+    </div>
+  )
+}

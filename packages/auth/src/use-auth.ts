@@ -38,6 +38,7 @@ export interface LoginResponse {
   message: string
   accessToken: string
   chatbotToken: string
+  aiForumToken?: string // 專門給 AI Forum 跨域登入使用的 token
 }
 
 export type AuthStatus = 'initializing' | 'loading' | 'success' | 'error' | 'idle'
@@ -61,7 +62,7 @@ const decodeJWT = (token: string): User | null => {
     if (!token || typeof token !== 'string') return null
     const parts = token.split('.')
     if (parts.length !== 3) return null
-    const base64Url = parts[1] as string
+    const base64Url = parts[1]!
     // 補齊 base64 padding
     const padded = base64Url.padEnd(base64Url.length + (4 - (base64Url.length % 4)) % 4, '=')
     const base64 = padded.replace(/-/g, '+').replace(/_/g, '/')
@@ -69,12 +70,12 @@ const decodeJWT = (token: string): User | null => {
       atob(base64)
         .split('')
         .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
-        .join(''),
+        .join('')
     )
     return JSON.parse(jsonPayload) as User
   } catch (err) {
     // keep debug log但不拋出
-    // eslint-disable-next-line no-console
+
     console.error('JWT 解碼失敗:', err)
     return null
   }
@@ -94,7 +95,7 @@ export interface AuthConfig {
 
 export const useAuth = (config?: AuthConfig): UseAuthReturn => {
   // Log React version to debug "Invalid hook call"
-  // eslint-disable-next-line no-console
+
   console.log('[@msi/auth] React version:', React.version)
 
   const [user, setUser] = useState<User | null>(null)
@@ -128,15 +129,24 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
       setUser(payload)
       setStatus('success')
       setError(null)
+
+      // 注意：AIforce_token（aiForumToken）與 chatbotToken 是完全分離的
+      // aiForumToken 專門給 AI Forum 使用，只在登入時設置
+      // loadUser 不再處理 AIforce_token，避免混用不同用途的 token
     } else {
       // token 過期，嘗試移除 cookie（同時嘗試有 domain / 無 domain）
       const domain = getCookieDomain()
-      Cookies.remove('accessToken')
-      Cookies.remove('chatbotToken')
-      if (domain) {
-        Cookies.remove('accessToken', { domain })
-        Cookies.remove('chatbotToken', { domain })
+
+      Cookies.remove('accessToken', { domain })
+      Cookies.remove('chatbotToken', { domain })
+
+      // 清除 localStorage 中的 AI Forum 認證資訊
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('AIforce_token')
+        localStorage.removeItem('AIforce_username')
+        localStorage.removeItem('AIforce_region')
       }
+
       setUser(null)
       setStatus('idle')
       setError(null)
@@ -161,14 +171,14 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/System/Login`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             userName: credentials.userName,
             password: credentials.password,
             system: credentials.system || '',
             domain: credentials.domain || ''
-          }),
+          })
         })
 
         if (!res.ok) {
@@ -193,7 +203,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         const domain = getCookieDomain()
         const cookieOptions: Record<string, unknown> = {
           expires: expiresDays,
-          sameSite: 'lax',
+          sameSite: 'lax'
         }
         if (domain) cookieOptions.domain = domain
         // 若在 https 下，啟用 secure
@@ -202,9 +212,19 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         // 儲存 accessToken
         Cookies.set('accessToken', token, cookieOptions)
 
-        // 儲存 chatbotToken（如果有的話）
+        // 儲存 chatbotToken（如果有的話）- 給 ChatGPT 機器人使用
         if (data.chatbotToken) {
           Cookies.set('chatbotToken', data.chatbotToken, cookieOptions)
+        }
+
+        // 儲存 AI Forum 跨網域登入資訊到 localStorage
+        // aiForumToken 專門給 AI Forum 使用，與 chatbotToken 完全分離
+        if (typeof window !== 'undefined') {
+          if (data.aiForumToken) {
+            localStorage.setItem('AIforce_token', data.aiForumToken)
+          }
+          localStorage.setItem('AIforce_username', data.userName || '')
+          localStorage.setItem('AIforce_region', data.domain || 'msi')
         }
 
         // 解析 token 並更新狀態
@@ -219,16 +239,16 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
             domain: data.domain
           }
           setUser(userFromResponse)
-          setTimeout(() => setStatus('success'), 300)
+          setTimeout(() => { setStatus('success') }, 300)
           return { success: true }
         }
 
         setUser(payload)
         // 小幅延遲以便顯示 loading 動畫（如需要可刪除）
-        setTimeout(() => setStatus('success'), 300)
+        setTimeout(() => { setStatus('success') }, 300)
         return { success: true }
       } catch (err) {
-        // eslint-disable-next-line no-console
+
         console.error('登入錯誤:', err)
         const msg = '網路連線錯誤，請稍後再試'
         setError(msg)
@@ -236,7 +256,7 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         return { success: false, error: msg }
       }
     },
-    [config?.loginApiUrl],
+    [config]
   )
 
   const logout = useCallback((): boolean => {
@@ -254,12 +274,20 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
         Cookies.remove(name)
         if (domain) Cookies.remove(name, { domain })
       })
+
+      // 清除 AI Forum 跨網域登入的 localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('AIforce_token')
+        localStorage.removeItem('AIforce_username')
+        localStorage.removeItem('AIforce_region')
+      }
+
       setUser(null)
       setStatus('idle')
       setError(null)
       return true
     } catch (err) {
-      // eslint-disable-next-line no-console
+
       console.error('登出錯誤:', err)
       return false
     }
@@ -288,6 +316,6 @@ export const useAuth = (config?: AuthConfig): UseAuthReturn => {
     login,
     logout,
     refreshUser,
-    getChatbotToken,
+    getChatbotToken
   }
 }

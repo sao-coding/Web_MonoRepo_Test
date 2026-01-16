@@ -56,7 +56,7 @@ export function Banner({
   titleClassName
 }: BannerProps) {
   return (
-    <div className='flex h-16 items-center justify-between border-b border-gray-300 px-4 md:px-6'>
+    <div className='flex h-16 items-center justify-between border-b border-gray-300 px-4 md:px-6 dark:border-gray-700'>
       <Link
         href={homeUrl}
         className='flex cursor-pointer items-center gap-2 overflow-hidden transition-opacity hover:opacity-80'

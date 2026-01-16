@@ -23,5 +23,24 @@
   ],
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.preferTypeOnlyAutoImports": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "cSpell.words": [
+    "addgroup",
+    "adduser",
+    "aicity",
+    "aiforce",
+    "EACCES",
+    "exposedbydefault",
+    "HOSTPORT",
+    "nextjs",
+    "POSTHOG",
+    "productspec",
+    "rdraid",
+    "redirections",
+    "redirectregex",
+    "traefik",
+    "tts",
+    "vercel",
+    "websecure"
+  ]
 }
