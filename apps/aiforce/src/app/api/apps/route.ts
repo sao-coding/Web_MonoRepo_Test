@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma'
 
 // app_id/app_folder → 實際路由的映射 (不使用資料庫的 link)
 const APP_ROUTE_MAP: Record<string, string> = {
-  product_spec: '/AI_City/ProductSpec',
-  asr: '/AI_City/asr',
+  product_spec: '/aiforce/productspec',
+  asr: '/aiforce/asr',
   // 新增其他 app 時在此添加映射
 }
 

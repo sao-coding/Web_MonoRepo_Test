@@ -1,4 +1,4 @@
-import type { PatentFilterData, PatentFilterMeta } from '@/app/(AI_City)/patents/_types'
+import type { PatentFilterData, PatentFilterMeta } from '@/app/(aiforce)/patents/_types'
 import type { ApiResponse } from '@/types/api'
 import Cookies from 'js-cookie'
 

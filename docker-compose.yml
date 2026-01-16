@@ -23,7 +23,7 @@ services:
         APP_ENV: ${APP_ENV:-development}
         NEXT_PUBLIC_RD_SITE_URL: ${NEXT_PUBLIC_RD_SITE_URL:-}
         NEXT_PUBLIC_LOGIN_API_URL: ${NEXT_PUBLIC_LOGIN_API_URL:-}
-        NEXT_PUBLIC_BASE_PATH_URL: ${NEXT_PUBLIC_BASE_PATH_URL:-/AI_City}
+        NEXT_PUBLIC_BASE_PATH_URL: ${NEXT_PUBLIC_BASE_PATH_URL:-/aiforce}
         NEXT_PUBLIC_COOKIE_DOMAIN: ${NEXT_PUBLIC_COOKIE_DOMAIN:-}
         NEXT_PUBLIC_NIM_SERVICE_API_URL: ${NEXT_PUBLIC_NIM_SERVICE_API_URL:-}
         NEXT_PUBLIC_PATENT_SERVICE_API_URL: ${NEXT_PUBLIC_PATENT_SERVICE_API_URL:-}
@@ -42,7 +42,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce.rule=PathPrefix(`/AI_City`)"
+      - "traefik.http.routers.aiforce.rule=PathPrefix(`/aiforce`)"
       - "traefik.http.routers.aiforce.priority=100"
       - "traefik.http.routers.aiforce.entrypoints=websecure"
       - "traefik.http.routers.aiforce.tls=true"
@@ -67,7 +67,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce-productspec.rule=PathPrefix(`/AI_City/ProductSpec`)"
+      - "traefik.http.routers.aiforce-productspec.rule=PathPrefix(`/aiforce/ProductSpec`)"
       - "traefik.http.routers.aiforce-productspec.priority=200"
       - "traefik.http.routers.aiforce-productspec.entrypoints=websecure"
       - "traefik.http.routers.aiforce-productspec.tls=true"
@@ -92,7 +92,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce-asr.rule=PathPrefix(`/AI_City/asr`)"
+      - "traefik.http.routers.aiforce-asr.rule=PathPrefix(`/aiforce/asr`)"
       - "traefik.http.routers.aiforce-asr.priority=200"
       - "traefik.http.routers.aiforce-asr.entrypoints=websecure"
       - "traefik.http.routers.aiforce-asr.tls=true"
@@ -117,7 +117,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce-translate.rule=PathPrefix(`/AI_City/translate`)"
+      - "traefik.http.routers.aiforce-translate.rule=PathPrefix(`/aiforce/translate`)"
       - "traefik.http.routers.aiforce-translate.priority=200"
       - "traefik.http.routers.aiforce-translate.entrypoints=websecure"
       - "traefik.http.routers.aiforce-translate.tls=true"
@@ -142,7 +142,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce-tts.rule=PathPrefix(`/AI_City/tts`)"
+      - "traefik.http.routers.aiforce-tts.rule=PathPrefix(`/aiforce/tts`)"
       - "traefik.http.routers.aiforce-tts.priority=200"
       - "traefik.http.routers.aiforce-tts.entrypoints=websecure"
       - "traefik.http.routers.aiforce-tts.tls=true"
@@ -167,7 +167,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.aiforce-img2text.rule=PathPrefix(`/AI_City/img2text`)"
+      - "traefik.http.routers.aiforce-img2text.rule=PathPrefix(`/aiforce/img2text`)"
       - "traefik.http.routers.aiforce-img2text.priority=200"
       - "traefik.http.routers.aiforce-img2text.entrypoints=websecure"
       - "traefik.http.routers.aiforce-img2text.tls=true"
@@ -196,7 +196,7 @@ services:
   #     - .env
   #   labels:
   #     - "traefik.enable=true"
-  #     - "traefik.http.routers.aiforce-patents.rule=PathPrefix(`/AI_City/patents`)"
+  #     - "traefik.http.routers.aiforce-patents.rule=PathPrefix(`/aiforce/patents`)"
   #     - "traefik.http.routers.aiforce-patents.priority=200"
   #     - "traefik.http.routers.aiforce-patents.entrypoints=websecure"
   #     - "traefik.http.routers.aiforce-patents.tls=true"

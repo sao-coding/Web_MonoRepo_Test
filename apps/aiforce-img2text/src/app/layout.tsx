@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: '圖意探險家 - RD AI City',
+  title: '圖意探險家 - MSI AIforce',
   description: 'AI 圖片識別與文字描述生成',
   icons: {
     icon: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png'

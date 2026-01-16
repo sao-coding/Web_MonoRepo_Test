@@ -70,7 +70,7 @@ const HomePage = () => {
 
   const fetchRecords = async () => {
     try {
-      const res = await fetch(`/AI_City/api/vga/record?Keyin=${user?.userId}`, {
+      const res = await fetch(`/aiforce/api/vga/record?Keyin=${user?.userId}`, {
         method: 'GET',
       })
       if (res.ok) {
@@ -91,7 +91,7 @@ const HomePage = () => {
 
   const deleteRecord = async (seqNo: number) => {
     try {
-      const res = await fetch(`/AI_City/api/vga/record?SeqNo=${seqNo}`, {
+      const res = await fetch(`/aiforce/api/vga/record?SeqNo=${seqNo}`, {
         method: 'DELETE',
       })
       if (res.ok) {
@@ -124,7 +124,7 @@ const HomePage = () => {
       return
     }
     try {
-      const res = await fetch(`/AI_City/api/vga/record`, {
+      const res = await fetch(`/aiforce/api/vga/record`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ const HomePage = () => {
   const insertRecord = async (Title: string) => {
     try {
       const Keyin = user?.userId
-      const res = await fetch('/AI_City/api/vga/record/', {
+      const res = await fetch('/aiforce/api/vga/record/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Keyin, Title }),
@@ -188,7 +188,7 @@ const HomePage = () => {
   const getRecordDetail = async (MasterID: number) => {
     try {
       const Keyin = user?.userId
-      const res = await fetch(`/AI_City/api/vga/recordDetail?Keyin=${Keyin}&MasterID=${MasterID}`, {
+      const res = await fetch(`/aiforce/api/vga/recordDetail?Keyin=${Keyin}&MasterID=${MasterID}`, {
         method: 'GET',
       })
       const result = await res.json()
@@ -224,7 +224,7 @@ const HomePage = () => {
   const insertRecordDetail = async (MasterID: string, Question: string, Answer: string) => {
     try {
       const Keyin = user?.userId
-      const res = await fetch('/AI_City/api/vga/recordDetail', {
+      const res = await fetch('/aiforce/api/vga/recordDetail', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Keyin, MasterID, Question, Answer }),

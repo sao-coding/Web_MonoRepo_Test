@@ -62,7 +62,7 @@ export function ASRInterface() {
       toast.success('已登出')
       const { protocol, hostname, port } = window.location
       const portSuffix = port ? `:${port}` : ''
-      window.location.href = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      window.location.href = `${protocol}//${hostname}${portSuffix}/aiforce/login`
     } else {
       toast.error('登出失敗')
     }

@@ -27,7 +27,7 @@ const LoginPage = () => {
     <div
       className="fixed inset-0 flex items-center justify-center min-h-screen overflow-hidden"
       style={{
-        backgroundImage: `url(${config.NEXT_PUBLIC_BASE_PATH_URL}/images/AIforce_v10_full.jpg)`,
+        backgroundImage: `url(${config.NEXT_PUBLIC_BASE_PATH_URL}/images/AIforce-v10-full.jpg)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -53,16 +53,27 @@ const LoginPage = () => {
           className="absolute inset-0 -z-10 dark:hidden"
           style={{ background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 40%, rgba(255, 255, 255, 0.3) 100%)' }}
         />
-        {/* Logo 區塊 - 放大圖片並增加間距 */}
+        {/* Logo 區塊 - 兩張圖並排顯示 */}
         <div className="flex flex-col items-center mb-10 mt-4">
-          <Image
-            src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce-new.png`}
-            alt="MSI AIforce"
-            width={340}
-            height={40}
-            className="object-contain dark:invert"
-            priority
-          />
+          <div className="flex items-center gap-4">
+            <Image
+              src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/msi-black.png`}
+              alt="MSI"
+              width={90}
+              height={40}
+              className="object-contain h-[30px] w-auto dark:invert"
+              priority
+            />
+            <div className="w-px h-8 bg-gray-400 dark:bg-gray-500" />
+            <Image
+              src={`${config.NEXT_PUBLIC_BASE_PATH_URL}/images/aiforce-logo.png`}
+              alt="AIforce"
+              width={160}
+              height={40}
+              className="object-contain h-[60px] w-auto dark:invert"
+              priority
+            />
+          </div>
           {/* 標題 - 18px，淺色深黑/深色純白 */}
           <p
             className="text-gray-900 dark:text-white font-semibold mt-5"

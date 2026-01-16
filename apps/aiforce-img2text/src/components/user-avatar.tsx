@@ -23,7 +23,7 @@ export function UserAvatar() {
       toast.success('已登出')
       const { protocol, hostname, port } = window.location
       const portSuffix = port ? `:${port}` : ''
-      const redirectUrl = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      const redirectUrl = `${protocol}//${hostname}${portSuffix}/aiforce/login`
       window.location.href = redirectUrl
     } else {
       toast.error('登出失敗')

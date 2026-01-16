@@ -18,27 +18,27 @@ const PORTS = {
 }
 
 const nextConfig: NextConfig = {
-  basePath: '/AI_City',
+  basePath: '/aiforce',
   output: 'standalone', // Docker 部署需要
   transpilePackages: ['@msi/config', '@msi/ui', '@msi/auth', '@msi/i18n'],
   async rewrites() {
     const host = getRewriteHost()
     return [
       {
-        source: '/ProductSpec',
-        destination: `${host}:${PORTS.productSpec}/AI_City/ProductSpec`,
+        source: '/productspec',
+        destination: `${host}:${PORTS.productSpec}/aiforce/productspec`,
       },
       {
-        source: '/ProductSpec/:path*',
-        destination: `${host}:${PORTS.productSpec}/AI_City/ProductSpec/:path*`,
+        source: '/productspec/:path*',
+        destination: `${host}:${PORTS.productSpec}/aiforce/productspec/:path*`,
       },
       {
         source: '/asr',
-        destination: `${host}:${PORTS.asr}/AI_City/asr`,
+        destination: `${host}:${PORTS.asr}/aiforce/asr`,
       },
       {
         source: '/asr/:path*',
-        destination: `${host}:${PORTS.asr}/AI_City/asr/:path*`,
+        destination: `${host}:${PORTS.asr}/aiforce/asr/:path*`,
       },
     ]
   },

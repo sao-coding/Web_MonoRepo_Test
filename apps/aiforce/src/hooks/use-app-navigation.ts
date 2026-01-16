@@ -23,28 +23,28 @@ interface UseAppNavigationReturn {
  */
 const APP_ROUTE_MAP: Record<string, string> = {
   // 已分離為獨立專案 - 英文 key
-  'product_spec': '/AI_City/ProductSpec',
-  'productspec': '/AI_City/ProductSpec',
-  'asr': '/AI_City/asr',
-  'translate': '/AI_City/translate',
-  'tts': '/AI_City/tts',
-  'vga': '/AI_City/vga',
-  'patents': '/AI_City/patents',
-  'pcb': '/AI_City/pcb',
-  'img2text': '/AI_City/img2text',
+  'product_spec': '/aiforce/productspec',
+  'productspec': '/aiforce/productspec',
+  'asr': '/aiforce/asr',
+  'translate': '/aiforce/translate',
+  'tts': '/aiforce/tts',
+  'vga': '/aiforce/vga',
+  'patents': '/aiforce/patents',
+  'pcb': '/aiforce/pcb',
+  'img2text': '/aiforce/img2text',
 
   // 中文 sysName 對應 (根據 API 回傳)
-  '翻譯助手': '/AI_City/translate',
-  '語音轉文字': '/AI_City/asr',
-  '規格書助手': '/AI_City/ProductSpec',
-  '知識管理助手': '/AI_City/km', // 需要確認路徑
-  '線路圖比對助手': '/AI_City/trackcad',
-  '全球專利助手': '/AI_City/patents',
-  'GPU競品分析助手': '/AI_City/vga',
-  '圖意探險家': '/AI_City/img2text',
-  '會議助理': '/AI_City/meeting',
-  '繪圖助手': '/AI_City/draw',
-  '文字轉語音': '/AI_City/tts',
+  '翻譯助手': '/aiforce/translate',
+  '語音轉文字': '/aiforce/asr',
+  '規格書助手': '/aiforce/productspec',
+  '知識管理助手': '/aiforce/km', // 需要確認路徑
+  '線路圖比對助手': '/aiforce/trackcad',
+  '全球專利助手': '/aiforce/patents',
+  'GPU競品分析助手': '/aiforce/vga',
+  '圖意探險家': '/aiforce/img2text',
+  '會議助理': '/aiforce/meeting',
+  '繪圖助手': '/aiforce/draw',
+  '文字轉語音': '/aiforce/tts',
 
   // AI 論壇 - 使用特殊 Form POST 跳轉
   'ai_forum': '__FORUM_REDIRECT__',
@@ -57,8 +57,8 @@ const APP_ROUTE_MAP: Record<string, string> = {
  * 內部路由模式
  */
 const INTERNAL_ROUTE_PATTERNS = [
-  '/AI_City',
-  '/ProductSpec',
+  '/aiforce',
+  '/productspec',
   '/asr',
   '/translate',
   '/tts',
@@ -73,7 +73,7 @@ export function useAppNavigation(): UseAppNavigationReturn {
 
   /**
    * 判斷是否為內部連結
-   * 內部連結：以 /AI_City 或其他內部路由開頭
+   * 內部連結：以 /aiforce 或其他內部路由開頭
    * 外部連結：完整 URL (http://, https://)
    */
   const isInternalLink = useCallback((url: string): boolean => {
@@ -118,7 +118,7 @@ export function useAppNavigation(): UseAppNavigationReturn {
     }
 
     try {
-      const basePath = getAppConfig().NEXT_PUBLIC_BASE_PATH_URL || '/AI_City'
+      const basePath = getAppConfig().NEXT_PUBLIC_BASE_PATH_URL || '/aiforce'
       const response = await fetch(`${basePath}/api/apps/auth/redirect`, {
         method: 'POST',
         headers: {
@@ -220,7 +220,7 @@ export function useAppNavigation(): UseAppNavigationReturn {
       let targetPath: string
 
       if (sysUrl.startsWith('http')) {
-        // 完整 URL (例如 http://10.16.20.11:3001/AI_City/translate)
+        // 完整 URL (例如 http://10.16.20.11:3001/aiforce/translate)
         // 提取 pathname 部分
         try {
           const url = new URL(sysUrl)
@@ -234,9 +234,9 @@ export function useAppNavigation(): UseAppNavigationReturn {
         targetPath = sysUrl
       }
 
-      // 確保有 /AI_City 前綴
-      if (!targetPath.startsWith('/AI_City')) {
-        targetPath = `/AI_City${targetPath.startsWith('/') ? '' : '/'}${targetPath}`
+      // 確保有 /aiforce 前綴
+      if (!targetPath.startsWith('/aiforce')) {
+        targetPath = `/aiforce${targetPath.startsWith('/') ? '' : '/'}${targetPath}`
       }
 
       window.location.href = targetPath

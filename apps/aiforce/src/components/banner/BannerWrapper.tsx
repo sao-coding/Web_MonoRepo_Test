@@ -32,11 +32,11 @@ export default function BannerWrapper() {
   // 取得頁面設定
   const config = titleConfig.find(item => pathname.startsWith(item.pathname))
   const title = config?.title
+  const basePath = getAppConfig().NEXT_PUBLIC_BASE_PATH_URL
 
-  // 根據路徑決定 logo
-  const logoUrl = pathname === '/'
-    ? `${getAppConfig().NEXT_PUBLIC_BASE_PATH_URL}/images/msi-aiforce-new.png`
-    : 'https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/msi_black.png'
+  // 雙 logo 路徑
+  const msiLogoUrl = `${basePath}/images/msi-black.png`
+  const aiforceLogoUrl = `${basePath}/images/aiforce-logo.png`
 
   // 登出處理
   const handleLogout = () => {
@@ -45,7 +45,7 @@ export default function BannerWrapper() {
       toast.success('已登出')
       const { protocol, hostname, port } = window.location
       const portSuffix = port ? `:${port}` : ''
-      window.location.href = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      window.location.href = `${protocol}//${hostname}${portSuffix}/aiforce/login`
     }
     else {
       toast.error('登出失敗')
@@ -61,9 +61,9 @@ export default function BannerWrapper() {
       userName={user?.name}
       userId={user?.userId}
       title={title}
-      logoUrl={logoUrl}
-      className={pathname === '/' ? 'h-7' : ''}
-      titleClassName={pathname === '/' ? 'hidden' : ''}
+      msiLogoUrl={msiLogoUrl}
+      aiforceLogoUrl={aiforceLogoUrl}
+      titleClassName="hidden"
       homeUrl={getAppConfig().NEXT_PUBLIC_RD_SITE_URL || '/'}
       centerContent={pathname === '/' && (
         <div className="flex items-center gap-8">

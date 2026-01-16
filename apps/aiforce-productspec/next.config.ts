@@ -1,8 +1,8 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  basePath: '/AI_City/ProductSpec',
-  assetPrefix: '/AI_City/ProductSpec',
+  basePath: '/aiforce/productspec',
+  assetPrefix: '/aiforce/productspec',
   output: 'standalone', // Docker 部署需要
   transpilePackages: ['@msi/ui', '@msi/auth', '@msi/config'],
   eslint: {

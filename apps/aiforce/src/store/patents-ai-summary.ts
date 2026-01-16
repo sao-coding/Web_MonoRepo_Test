@@ -1,4 +1,4 @@
-import type { Patent, SearchContainer } from '@/app/(AI_City)/patents/_types'
+import type { Patent, SearchContainer } from '@/app/(aiforce)/patents/_types'
 import { create } from 'zustand'
 
 // 定義整個 Zustand Store 的狀態 (State) 和動作 (Actions) 的藍圖

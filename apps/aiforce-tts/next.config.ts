@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  basePath: '/AI_City/tts',
+  basePath: '/aiforce/tts',
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true

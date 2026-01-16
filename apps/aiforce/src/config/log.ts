@@ -1,6 +1,6 @@
 export const logCustomParamsConfig = [
   {
-    pattern: /^\/AI_City\/patents\/\d+$/,
+    pattern: /^\/aiforce\/patents\/\d+$/,
     param: 'page',
     name: 'patents-search',
   },

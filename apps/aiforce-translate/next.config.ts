@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  basePath: '/AI_City/translate',
+  basePath: '/aiforce/translate',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },

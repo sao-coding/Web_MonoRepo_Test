@@ -48,7 +48,7 @@ export function useAuthAdapter(auth: UseAuthReturn, options?: AuthAdapterOptions
       const { protocol, hostname, port } = window.location
       // 保留當前 port（Docker 環境可能是 8080，PM2 可能是 3000）
       const portSuffix = port ? `:${port}` : ''
-      window.location.href = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      window.location.href = `${protocol}//${hostname}${portSuffix}/aiforce/login`
     }
   }, [pathname, router, status, isAuthenticated, logout, options])
 }

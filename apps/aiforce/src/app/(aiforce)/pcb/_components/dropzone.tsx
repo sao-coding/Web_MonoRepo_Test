@@ -1,4 +1,4 @@
-// src\app\(AI_City)\pcb\_components\dropzone.tsx
+// src\app\(aiforce)\pcb\_components\dropzone.tsx
 
 'use client'
 

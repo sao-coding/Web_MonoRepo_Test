@@ -62,7 +62,7 @@ const HomePage = () => {
       // 動態計算登入頁 URL - 使用當前瀏覽器的 port
       const { protocol, hostname, port } = window.location
       const portSuffix = port ? `:${port}` : ''
-      const redirectUrl = `${protocol}//${hostname}${portSuffix}/AI_City/login`
+      const redirectUrl = `${protocol}//${hostname}${portSuffix}/aiforce/login`
       console.log('Logout redirect:', { hostname, protocol, port, redirectUrl })
       window.location.href = redirectUrl
     } else {

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'AI 翻譯 - RD AI City',
+  title: 'AI 翻譯 - MSI AIforce',
   description: '跨越語言障礙，實現無縫溝通',
   icons: {
     icon: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png'

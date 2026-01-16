@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 const TestPage = () => {
   useEffect(() => {
     const fetchData = async () => {
-      await fetch('/AI_City/api/ai-force/signin', {
+      await fetch('/aiforce/api/ai-force/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

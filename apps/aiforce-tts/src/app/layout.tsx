@@ -8,7 +8,7 @@ import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
-  title: '說書人 TTS | RD AI City',
+  title: '說書人 TTS | MSI AIforce',
   description: '將文字轉換為自然流暢的語音，支援多種語言和聲音風格',
   icons: {
     icon: 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/TTS/logo-tts.png'
