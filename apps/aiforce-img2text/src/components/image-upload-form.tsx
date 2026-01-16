@@ -1,103 +1,42 @@
 'use client'
 
-import { getAppConfig } from '@msi/config/env'
 import { Button, cn, Input, Skeleton } from '@msi/ui'
 import { Camera, LoaderIcon, RefreshCw, X } from 'lucide-react'
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
+import { useEffect } from 'react'
 import Typed from 'typed.js'
 
+import { useImg2Text } from '@/features/img2text'
+
 export function ImageUploadForm() {
-  const [data, setData] = useState<{ text: string } | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null)
-  const [imgPreview, setImgPreview] = useState<string | null>(null)
-  const fileRef = useRef<File | null>(null)
-  const el = useRef(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const {
+    data,
+    loading,
+    preview,
+    imgPreview,
+    fileInputRef,
+    typedRef,
+    previewFile,
+    handleSubmit,
+    clearResults,
+    triggerFileInput,
+    cancelPreview
+  } = useImg2Text()
 
   useEffect(() => {
     if (!data) return
 
-    const typed = new Typed(el.current, {
+    const typed = new Typed(typedRef.current, {
       strings: [data.text],
       typeSpeed: 1,
       showCursor: false
     })
 
     return () => typed.destroy()
-  }, [data])
-
-  const previewFile = (imgFile: File | undefined) => {
-    if (imgFile) {
-      const validTypes = ['image/jpeg', 'image/png']
-      if (!validTypes.includes(imgFile.type)) {
-        toast.error('請上傳 JPG 或 PNG 格式的圖片')
-        setPreview(null)
-        fileRef.current = null
-        if (fileInputRef.current) fileInputRef.current.value = ''
-        return
-      }
-
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setPreview(e.target?.result as string)
-        fileRef.current = imgFile
-      }
-      reader.readAsDataURL(imgFile)
-    } else {
-      setPreview(null)
-      fileRef.current = null
-    }
-  }
-
-  const handleImgSubmit = async () => {
-    if (!fileRef.current) {
-      toast.error('請選擇檔案')
-      return
-    }
-
-    setLoading(true)
-    setImgPreview(preview)
-    setPreview(null)
-
-    const formData = new FormData()
-    formData.append('image', fileRef.current)
-    formData.append('Token', '0UET8Lal6hBBqNSE')
-
-    try {
-      const res = await fetch(`${getAppConfig().NEXT_PUBLIC_IMG2TEXT_API_URL}/describe-image`, {
-        method: 'POST',
-        body: formData
-      })
-      const result = await res.json()
-      setData(result)
-    } catch (error) {
-      console.error('Error:', error)
-      toast.error('提交圖片時發生錯誤')
-    } finally {
-      setLoading(false)
-      fileRef.current = null
-      if (fileInputRef.current) fileInputRef.current.value = ''
-    }
-  }
-
-  const clearResults = () => {
-    setData(null)
-    setImgPreview(null)
-  }
-
-  const triggerFileInput = () => { fileInputRef.current?.click() }
-
-  const cancelPreview = () => {
-    setPreview(null)
-    fileRef.current = null
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }
+  }, [data, typedRef])
 
   return (
-    <div className='bg-card overflow-hidden rounded-xl shadow-md'>
+    <div className='bg-card overflow-hidden rounded-xl border border-gray-200 shadow-md dark:border-gray-700'>
       {/* Instructions */}
       <div className='border-b border-blue-100 bg-blue-50 p-6 dark:border-blue-900 dark:bg-blue-950/30'>
         <h2 className='mb-2 text-lg font-semibold text-blue-800 dark:text-blue-200'>使用說明</h2>
@@ -129,7 +68,7 @@ export function ImageUploadForm() {
                   </div>
                 ) : (
                   <div className='text-foreground leading-relaxed'>
-                    <span ref={el} />
+                    <span ref={typedRef} />
                   </div>
                 )}
               </div>
@@ -154,7 +93,7 @@ export function ImageUploadForm() {
 
           {!preview ? (
             <div
-              className='border-border cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors hover:bg-muted/50'
+              className='hover:bg-muted/50 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600'
               onClick={triggerFileInput}
               onDragOver={(e) => {
                 e.preventDefault()
@@ -180,7 +119,7 @@ export function ImageUploadForm() {
                 type='file'
                 accept='.jpg,.png'
                 className='hidden'
-                onChange={(e) => { previewFile(e.target.files?.[0]) }}
+                onChange={(e) => previewFile(e.target.files?.[0])}
               />
             </div>
           ) : (
@@ -196,7 +135,7 @@ export function ImageUploadForm() {
 
           <div className='mt-4 flex justify-end'>
             <Button
-              onClick={handleImgSubmit}
+              onClick={handleSubmit}
               size='lg'
               className={cn('px-6', (loading || !preview) && 'opacity-70 cursor-not-allowed')}
               disabled={loading || !preview}

@@ -286,7 +286,7 @@ export function ChatSidebar({
                       )
                     : records.length > 0
                       ? (
-                          records.map((record) => (
+                          [...records].reverse().map((record) => (
                             <SidebarMenuItem
                               key={record.chatId}
                               className='group/item relative min-w-0'

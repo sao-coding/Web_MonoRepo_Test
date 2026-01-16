@@ -2,17 +2,17 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@msi/ui/components/avatar'
 
-interface DefaltInfoProps {
+interface DefaultInfoProps {
   title: string
   children: React.ReactNode
   avatarUrl?: string
 }
 
-export function DefaltInfo({
+export function DefaultInfo({
   title,
   children,
   avatarUrl = 'https://rd_service.msi.com.tw/sdqaFile/VSS/DQA/icon/dragon.png'
-}: DefaltInfoProps) {
+}: DefaultInfoProps) {
   return (
     <div className='flex flex-col items-center justify-center gap-4'>
       <Avatar className='size-16'>
@@ -28,5 +28,3 @@ export function DefaltInfo({
     </div>
   )
 }
-
-export default DefaltInfo

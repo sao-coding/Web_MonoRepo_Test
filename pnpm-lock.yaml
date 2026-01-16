@@ -719,6 +719,9 @@ importers:
       '@msi/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@msi/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@msi/ui':
         specifier: workspace:*
         version: link:../../packages/ui

@@ -1,20 +1,10 @@
 'use client'
 
-import type { HistoryItem } from '@/features/tts'
-
-import { Button } from '@msi/ui/components/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '@msi/ui/components/collapsible'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@msi/ui/components/select'
 import {
   Sidebar,
   SidebarContent,
@@ -30,43 +20,39 @@ import {
   SidebarTrigger
 } from '@msi/ui/components/sidebar'
 import { cn } from '@msi/ui/lib/utils'
-import { ChevronDown, InfoIcon, Moon, PanelLeft, Sun, Volume2Icon } from 'lucide-react'
+import { ChevronDown, ImageIcon, Moon, PanelLeft, Sun } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
 import * as React from 'react'
-import { toast } from 'sonner'
 
-import { ttsConfig } from '@/features/tts'
+interface HistoryItem {
+  text: string
+  imageUrl: string
+}
 
-interface TtsSidebarProps extends React.ComponentProps<typeof Sidebar> {
+interface Img2TextSidebarProps extends React.ComponentProps<typeof Sidebar> {
   /** Logo URL */
   logoUrl?: string
   /** 頁面標題 */
   title?: string
   /** 歷史紀錄列表 */
   history: HistoryItem[]
-  /** 當前語言 */
-  language: string
-  /** 語言變更回調 */
-  onLanguageChange: (lang: string) => void
   /** 點擊歷史項目回調 */
   onHistoryItemClick: (item: HistoryItem) => void
   /** 首頁連結 */
   homeUrl?: string
 }
 
-export function TtsSidebar({
-  logoUrl = 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-tts.png',
-  title = '說書人',
+export function Img2TextSidebar({
+  logoUrl = 'https://rd_service.msi.com.tw/sdqaFile/AI%20Platform_Test/msi-asr/Logo-City.png',
+  title = '圖意探險家',
   history,
-  language,
-  onLanguageChange,
   onHistoryItemClick,
   homeUrl = '/',
   className,
   ...props
-}: TtsSidebarProps) {
+}: Img2TextSidebarProps) {
   const { theme, setTheme } = useTheme()
 
   return (
@@ -133,42 +119,18 @@ export function TtsSidebar({
 
         {/* 說明文字 - 僅展開時顯示 */}
         <p className='text-muted-foreground px-4 text-sm group-data-[collapsible=icon]:hidden'>
-          將文字轉換為自然流暢的語音，支援多種語言和聲音風格。
+          上傳圖片，AI 將識別圖片內容並生成相應的文字描述。
         </p>
       </SidebarHeader>
 
       <SidebarContent>
-        {/* 語言選擇區 */}
-        <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
-          <SidebarGroupLabel className='flex items-center gap-1'>
-            <InfoIcon className='size-4 text-blue-500' />
-            當前語言
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className='bg-background rounded-md border p-2'>
-              <Select value={language} onValueChange={onLanguageChange}>
-                <SelectTrigger className='hover:bg-accent h-8 w-full border-0 p-0 text-sm font-normal shadow-none'>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className='max-h-60'>
-                  {ttsConfig.languages.map((item) => (
-                    <SelectItem key={item.code} value={item.code}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* 轉換紀錄區 */}
+        {/* 分析紀錄區 */}
         <Collapsible defaultOpen className='group/collapsible group-data-[collapsible=icon]:hidden'>
           <SidebarGroup>
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger className='flex w-full items-center gap-1.5'>
                 <ChevronDown className='size-4 shrink-0 text-gray-400 transition-transform duration-200 group-data-[state=closed]/collapsible:-rotate-90 group-data-[state=open]/collapsible:rotate-0' />
-                <span className='text-muted-foreground truncate text-xs font-medium'>轉換紀錄</span>
+                <span className='text-muted-foreground truncate text-xs font-medium'>分析紀錄</span>
               </CollapsibleTrigger>
             </SidebarGroupLabel>
             <CollapsibleContent className='data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down'>
@@ -186,29 +148,16 @@ export function TtsSidebar({
                           >
                             <span className='flex w-full items-center justify-between'>
                               <span className='text-muted-foreground line-clamp-2 text-xs'>
-                                {item.text}
+                                {item.text.substring(0, 50)}...
                               </span>
-                              <Volume2Icon className='ml-2 size-4 shrink-0 text-blue-500' />
+                              <ImageIcon className='ml-2 size-4 shrink-0 text-blue-500' />
                             </span>
                           </SidebarMenuButton>
-                          <div className='absolute top-1 right-1 opacity-0 transition-opacity group-hover/item:opacity-100'>
-                            <Button
-                              size='sm'
-                              className='h-6 px-2 text-xs'
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                navigator.clipboard.writeText(item.text)
-                                toast.success('已複製到剪貼板')
-                              }}
-                            >
-                              複製
-                            </Button>
-                          </div>
                         </SidebarMenuItem>
                       ))
                   ) : (
                     <div className='text-muted-foreground py-4 text-center text-sm'>
-                      尚無轉換紀錄
+                      尚無分析紀錄
                     </div>
                   )}
                 </SidebarMenu>
@@ -238,4 +187,4 @@ export function TtsSidebar({
   )
 }
 
-export default TtsSidebar
+export default Img2TextSidebar

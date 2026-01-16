@@ -63,7 +63,23 @@ export function LanguageSwitcher() {
           {t('zhTW')}
         </button>
 
-        {/* 分隔線 - 淺色灰、深色白 */}
+        {/* 分隔線 */}
+        <span className="text-gray-300 dark:text-white/50 select-none">|</span>
+
+        <button
+          type="button"
+          onClick={() => handleLocaleChange('zh-CN')}
+          disabled={isPending}
+          className={`px-3 py-1 text-sm rounded-lg transition-all ${
+            locale === 'zh-CN'
+              ? 'text-foreground font-bold'
+              : 'text-muted-foreground hover:text-foreground'
+          } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {t('zhCN')}
+        </button>
+
+        {/* 分隔線 */}
         <span className="text-gray-300 dark:text-white/50 select-none">|</span>
 
         <button

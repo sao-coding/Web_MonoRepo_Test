@@ -12,6 +12,7 @@ import { LanguageProvider } from '@/context/Language'
 
 // 預先載入所有語系的翻譯
 import enMessages from '../../messages/en.json'
+import zhCNMessages from '../../messages/zh-CN.json'
 import zhTWMessages from '../../messages/zh-TW.json'
 
 import Providers from './providers'
@@ -19,6 +20,7 @@ import './globals.css'
 
 const allMessages = {
   'en': enMessages,
+  'zh-CN': zhCNMessages,
   'zh-TW': zhTWMessages,
 }
 

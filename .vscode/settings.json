@@ -27,6 +27,7 @@
   "cSpell.words": [
     "addgroup",
     "adduser",
+    "aicity",
     "aiforce",
     "EACCES",
     "exposedbydefault",
@@ -35,7 +36,11 @@
     "POSTHOG",
     "productspec",
     "rdraid",
+    "redirections",
+    "redirectregex",
     "traefik",
-    "tts"
+    "tts",
+    "vercel",
+    "websecure"
   ]
 }

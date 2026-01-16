@@ -6,6 +6,7 @@ export interface AppType {
   sysUrl: string
   isShow: string
   isFavorite: boolean
+  sourceTable: string
   infos: AppInfoType[]
 }
 

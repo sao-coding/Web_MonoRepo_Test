@@ -185,7 +185,7 @@ const HomePage = () => {
   }
 
   const handleReferencesClick = (recordDetailId: number) => {
-    const url = `References/${recordDetailId}`
+    const url = `ProductSpec/References/${recordDetailId}`
     window.open(url, '_blank')
   }
 

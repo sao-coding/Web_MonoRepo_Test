@@ -24,6 +24,7 @@
     }
   },
   "homepage": {
+    "home": "首頁",
     "loading": "載入中...",
     "noAvailable": "無可用應用",
     "noAvailableD": "目前沒有可用的應用程序。",
@@ -39,6 +40,7 @@
   },
   "language": {
     "zhTW": "繁體中文",
+    "zhCN": "简体中文",
     "en": "English"
   }
 }

@@ -36,10 +36,10 @@ export function TextInputArea({
 
   return (
     <div className={cn('mx-auto w-full', maxWidthClass, className)}>
-      <div className='flex items-end gap-2 rounded-2xl border bg-background p-3 shadow-sm'>
+      <div className='bg-background flex items-end gap-2 rounded-2xl border p-3 shadow-sm'>
         <Textarea
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => { onChange(e.target.value) }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className='min-h-[60px] resize-none border-0 shadow-none focus-visible:ring-0'

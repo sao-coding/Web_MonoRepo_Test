@@ -1,3 +1,4 @@
-export { DefaltInfo } from './defalt-info'
+export { DefaultInfo } from './default-info'
 export { TextInputArea } from './text-input-area'
-export { ttsConfig, TtsSidebar } from './tts-sidebar'
+export { TTSInterface } from './tts-interface'
+export { TtsSidebar } from './tts-sidebar'

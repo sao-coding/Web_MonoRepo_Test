@@ -1,16 +1,20 @@
 'use client'
 
-import { useRef, useState } from 'react'
+/**
+ * useAsr Hook
+ *
+ * 管理 ASR（語音辨識）功能的狀態和邏輯
+ */
+
+import type { HistoryItem } from '../types'
+
+import { useCallback, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-import { AppConfig, translateConfig } from '@/config/asr'
+import { asrConfig, recognizeSpeech, validateAudioFormat } from '../services/asr-service'
 
-interface HistoryItem {
-  file: string
-  text: string
-}
-
-interface UseAsrReturn {
+export interface UseAsrReturn {
+  // 狀態
   selectedFile: string
   selectedFileObj: File | null
   message: string
@@ -18,27 +22,34 @@ interface UseAsrReturn {
   history: HistoryItem[]
   language: string
   dragActive: boolean
+
+  // 方法
   setLanguage: (lang: string) => void
   handleDrag: (e: React.DragEvent) => void
   handleDrop: (e: React.DragEvent) => void
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSendMessage: () => Promise<void>
   clearSelectedFile: () => void
+
+  // Refs
   fileInputRef: React.RefObject<HTMLInputElement | null>
 }
 
+/**
+ * ASR 狀態管理 Hook
+ */
 export function useAsr(): UseAsrReturn {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragActive, setDragActive] = useState(false)
   const [selectedFileObj, setSelectedFileObj] = useState<File | null>(null)
   const [message, setMessage] = useState('')
   const [selectedFile, setSelectedFile] = useState('')
-  const [language, setLanguage] = useState(translateConfig.default_language)
+  const [language, setLanguage] = useState(asrConfig.defaultLanguage)
   const [isLoading, setIsLoading] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
 
   // 處理文件拖拽事件
-  const handleDrag = (e: React.DragEvent) => {
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -47,17 +58,17 @@ export function useAsr(): UseAsrReturn {
     } else if (e.type === 'dragleave') {
       setDragActive(false)
     }
-  }
+  }, [])
 
   // 處理文件拖放
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       const file = e.dataTransfer.files[0]
-      if (file.name.toLowerCase().endsWith('.wav')) {
+      if (validateAudioFormat(file)) {
         setSelectedFileObj(file)
         setSelectedFile(file.name)
         if (fileInputRef.current) {
@@ -69,28 +80,28 @@ export function useAsr(): UseAsrReturn {
         toast.error('請選擇WAV格式的音檔')
       }
     }
-  }
+  }, [])
 
   // 處理文件選擇
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
       const file = e.target.files[0]
       setSelectedFileObj(file)
       setSelectedFile(file.name)
     }
-  }
+  }, [])
 
   // 清除已選文件
-  const clearSelectedFile = () => {
+  const clearSelectedFile = useCallback(() => {
     setSelectedFile('')
     setSelectedFileObj(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
-  }
+  }, [])
 
   // 發送識別請求
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     const inputFile = fileInputRef.current?.files?.[0] || selectedFileObj
 
     if (!inputFile) {
@@ -102,38 +113,22 @@ export function useAsr(): UseAsrReturn {
     setIsLoading(true)
     setSelectedFile(inputFile.name)
 
-    const formData = new FormData()
-    formData.append('file', inputFile)
-    formData.append('language-code', language)
-    formData.append('Token', '0UET8Lal6hBBqNSE')
-
     try {
-      const res = await fetch(`${AppConfig.serviceApiUrl}/asr`, {
-        method: 'POST',
-        body: formData
-      })
-
-      const data = await res.json()
-      if (!res.ok) {
-        console.error('error:', data)
-        if (data.error?.includes('Input audio channel count must be 1')) {
-          toast.error('請確認音檔是否為單聲道')
-        } else {
-          toast.error(data.error || '識別失敗')
-        }
-        setIsLoading(false)
-        return
-      }
-
+      const data = await recognizeSpeech(inputFile, language)
       setMessage(data.output)
       setHistory((prev) => [...prev, { file: inputFile.name, text: data.output }])
     } catch (error) {
       console.error('ASR API 錯誤:', error)
-      toast.error('識別過程中發生錯誤，請稍後重試')
+      const errorMessage = error instanceof Error ? error.message : '識別過程中發生錯誤'
+      if (errorMessage.includes('Input audio channel count must be 1')) {
+        toast.error('請確認音檔是否為單聲道')
+      } else {
+        toast.error(errorMessage)
+      }
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [selectedFileObj, language])
 
   return {
     selectedFile,
@@ -153,4 +148,4 @@ export function useAsr(): UseAsrReturn {
   }
 }
 
-export default useAsr
+export { asrConfig }

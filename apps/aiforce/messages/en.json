@@ -24,6 +24,7 @@
     }
   },
   "homepage": {
+    "home": "Home",
     "loading": "Loading...",
     "noAvailable": "No available applications",
     "noAvailableD": "There are currently no available applications.",
@@ -39,6 +40,7 @@
   },
   "language": {
     "zhTW": "繁體中文",
+    "zhCN": "简体中文",
     "en": "English"
   }
 }
